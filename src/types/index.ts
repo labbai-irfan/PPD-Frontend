@@ -1,0 +1,195 @@
+/* ------------------------------------------------------------------ */
+/* Catalog                                                             */
+/* ------------------------------------------------------------------ */
+
+export interface Category {
+  id: string
+  slug: string
+  name: string
+  /** Material Symbols icon name (design renders categories as icon tiles) */
+  icon: string
+  /** brand accent for the icon, from the design */
+  color: string
+  productCount: number
+}
+
+export interface Brand {
+  id: string
+  name: string
+  logo?: string
+}
+
+export interface ProductVariantOption {
+  /** e.g. "size" | "color" */
+  type: string
+  label: string
+  values: VariantValue[]
+}
+
+export interface VariantValue {
+  value: string
+  label: string
+  /** hex/oklch swatch for color variants */
+  swatch?: string
+  inStock: boolean
+}
+
+export interface Product {
+  id: string
+  slug: string
+  title: string
+  brand: string
+  category: string
+  description: string
+  highlights: string[]
+  images: string[]
+  price: number
+  mrp: number
+  rating: number
+  ratingCount: number
+  reviewCount: number
+  stock: number
+  variants: ProductVariantOption[]
+  tags: ProductTag[]
+  /** social proof label from the design, e.g. "1.5K+ bought" */
+  bought?: string
+  deliveryDays: number
+  returnDays: number
+}
+
+export type ProductTag = 'featured' | 'deal' | 'new' | 'bestseller' | 'trending'
+
+export type SortOption = 'relevance' | 'price-asc' | 'price-desc' | 'rating' | 'newest' | 'discount'
+
+export interface ProductQuery {
+  category?: string
+  q?: string
+  sort?: SortOption
+  minPrice?: number
+  maxPrice?: number
+  minRating?: number
+  brands?: string[]
+  tag?: ProductTag
+  page?: number
+  pageSize?: number
+}
+
+export interface Paginated<T> {
+  items: T[]
+  total: number
+  page: number
+  pageSize: number
+  hasMore: boolean
+}
+
+export interface Review {
+  id: string
+  productId: string
+  author: string
+  avatar?: string
+  rating: number
+  title: string
+  body: string
+  createdAt: string
+  helpfulCount: number
+  verifiedPurchase: boolean
+  images?: string[]
+}
+
+export interface Banner {
+  id: string
+  title: string
+  subtitle: string
+  cta: string
+  href: string
+  image: string
+  /** tailwind gradient classes for the banner backdrop */
+  tone: string
+}
+
+/* ------------------------------------------------------------------ */
+/* User & auth                                                         */
+/* ------------------------------------------------------------------ */
+
+export interface User {
+  id: string
+  name: string
+  email: string
+  phone?: string
+  avatar?: string
+  createdAt: string
+}
+
+export interface Address {
+  id: string
+  name: string
+  phone: string
+  line1: string
+  line2?: string
+  city: string
+  state: string
+  pincode: string
+  type: 'home' | 'work' | 'other'
+  isDefault: boolean
+}
+
+/* ------------------------------------------------------------------ */
+/* Cart & orders                                                       */
+/* ------------------------------------------------------------------ */
+
+export interface CartItem {
+  /** `${productId}` or `${productId}:${variantKey}` */
+  key: string
+  productId: string
+  title: string
+  brand: string
+  image: string
+  price: number
+  mrp: number
+  quantity: number
+  stock: number
+  /** selected variant values, e.g. { size: "M", color: "Black" } */
+  selections: Record<string, string>
+}
+
+export interface Coupon {
+  code: string
+  title: string
+  description: string
+  /** flat amount or percent */
+  kind: 'flat' | 'percent'
+  value: number
+  minOrder: number
+  maxDiscount?: number
+  expiresAt: string
+}
+
+export type OrderStatus = 'placed' | 'confirmed' | 'shipped' | 'out-for-delivery' | 'delivered' | 'cancelled'
+
+export type PaymentMethodKind = 'card' | 'upi' | 'netbanking' | 'wallet' | 'cod'
+
+export interface Order {
+  id: string
+  items: CartItem[]
+  status: OrderStatus
+  createdAt: string
+  address: Address
+  payment: { method: PaymentMethodKind; label: string }
+  pricing: {
+    subtotal: number
+    discount: number
+    couponCode?: string
+    shipping: number
+    total: number
+  }
+}
+
+export interface AppNotification {
+  id: string
+  title: string
+  body: string
+  createdAt: string
+  read: boolean
+  kind: 'order' | 'offer' | 'system'
+  href?: string
+}

@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap">
+<style>
+  *{box-sizing:border-box;}
+  .ppd-scroll::-webkit-scrollbar{width:0;height:0;}
+  .ppd-hscroll::-webkit-scrollbar{display:none;}
+  .ppd-hscroll{-ms-overflow-style:none;scrollbar-width:none;}
+</style>
+</helmet>
+<div style="width:428px; height:926px; margin:0 auto; background:#FDF1E1; font-family:'Poppins',sans-serif; position:relative; overflow:hidden; border-radius:26px; box-shadow:0 24px 70px rgba(80,55,20,0.22); color:#24211e;">
+
+  <!-- ============ HOME ============ -->
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; height:100%;">
+    <div class="ppd-scroll" style="flex:1; overflow-y:auto;">
+      <!-- header -->
+      <div style="padding:16px 16px 6px; display:flex; justify-content:space-between; align-items:flex-start;">
+        <div>
+          <div style="width:42px; height:42px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(120,90,40,0.08);">
+            <span style="font-family:'Material Symbols Outlined'; font-size:24px; color:#3a3733;">menu</span>
+          </div>
+          <div style="margin-top:12px;">
+            <div style="font-size:15px; color:#736c63;">Good Evening,</div>
+            <div style="font-size:26px; font-weight:700; line-height:1.1; color:#24211e;">Ameen</div>
+            <div style="font-size:13px; color:#736c63; margin-top:2px;">Everything for School</div>
+          </div>
+        </div>
+        <div style="display:flex; flex-direction:column; align-items:flex-end; gap:14px;">
+          <div onClick="{{ goCart }}" style="display:flex; align-items:center; gap:6px; background:#fff; border-radius:22px; padding:7px 13px; box-shadow:0 4px 12px rgba(120,90,40,0.09); cursor:pointer;">
+            <span style="font-family:'Material Symbols Outlined'; font-size:21px; color:#F5A623; font-variation-settings:'FILL' 1;">shopping_bag</span>
+            <span style="font-size:14px; font-weight:700;">{{ cartCount }}</span>
+          </div>
+          <div style="display:flex; align-items:center; gap:7px;">
+            <div style="width:38px; height:38px; border-radius:9px; background:#E23744; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:12px;">PPD</div>
+            <div style="font-size:8.5px; color:#8c857c; line-height:1.3; max-width:96px;">India's Trusted Educational Publisher since 1926</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- hero banner -->
+      <div style="padding:8px 16px 0;">
+        <div style="border-radius:20px; background:linear-gradient(115deg,#FBB03B 0%,#F7941E 100%); padding:24px 20px; min-height:150px; display:flex; position:relative; overflow:hidden;">
+          <div style="flex:1; z-index:2;">
+            <div style="font-size:27px; font-weight:800; color:#fff; line-height:1.08;">Smart<br>School<br>Shopping</div>
+            <div style="font-size:11px; color:rgba(255,255,255,0.92); margin-top:8px;">Find Everything<br>For Your School In One Place</div>
+            <div onClick="{{ goCategory }}" style="display:inline-flex; align-items:center; gap:6px; background:#fff; color:#3a3733; font-size:12px; font-weight:600; padding:8px 16px; border-radius:20px; margin-top:12px; cursor:pointer; white-space:nowrap;">Explore Now <span style="font-family:'Material Symbols Outlined'; font-size:15px;">arrow_forward</span></div>
+          </div>
+          <div style="position:absolute; right:-6px; top:12px; bottom:12px; width:150px; border-radius:14px; background:repeating-linear-gradient(135deg,rgba(255,255,255,0.16),rgba(255,255,255,0.16) 8px,rgba(255,255,255,0.06) 8px,rgba(255,255,255,0.06) 16px); display:flex; align-items:center; justify-content:center;">
+            <span style="font-family:ui-monospace,monospace; font-size:9px; color:rgba(255,255,255,0.85); text-align:center;">backpack &amp;<br>supplies</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:6px; justify-content:center; margin-top:12px;">
+          <span style="width:20px; height:6px; border-radius:3px; background:#F7941E;"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+        </div>
+      </div>
+
+      <!-- quick categories -->
+      <div style="display:flex; justify-content:space-between; padding:14px 16px 4px;">
+        <sc-for list="{{ quickCats }}" as="c" hint-placeholder-count="5">
+          <div style="display:flex; flex-direction:column; align-items:center; gap:6px; cursor:pointer;">
+            <div style="width:58px; height:58px; border-radius:16px; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(120,90,40,0.07);">
+              <span style="font-family:'Material Symbols Outlined'; font-size:27px; color:{{ c.color }}; font-variation-settings:'FILL' 1;">{{ c.icon }}</span>
+            </div>
+            <span style="font-size:11px; color:#4a463f; font-weight:500;">{{ c.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+
+      <!-- trending (orange block) -->
+      <div style="background:linear-gradient(180deg,#FBAA2E,#F7941E); padding:18px 0 24px; margin-top:16px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:0 16px 14px;">
+          <div>
+            <div style="font-size:16px; font-weight:700; color:#fff;">Trending Products</div>
+            <div style="font-size:11.5px; color:rgba(255,255,255,0.9);">Top Picks This Week</div>
+          </div>
+          <div style="background:#fff; color:#3a3733; font-size:11.5px; font-weight:600; padding:7px 13px; border-radius:18px; display:flex; align-items:center; gap:4px;">View All <span style="font-family:'Material Symbols Outlined'; font-size:14px;">arrow_forward</span></div>
+        </div>
+        <div class="ppd-hscroll" style="display:flex; gap:12px; padding:0 16px; overflow-x:auto;">
+          <sc-for list="{{ trending }}" as="t" hint-placeholder-count="3">
+            <div style="flex:0 0 148px; background:#fff; border-radius:16px; padding:10px; box-shadow:0 6px 16px rgba(120,80,20,0.12);">
+              <div style="height:96px; border-radius:11px; background:repeating-linear-gradient(135deg,#f5f3f1,#f5f3f1 7px,#fafafa 7px,#fafafa 14px); display:flex; align-items:center; justify-content:center;">
+                <span style="font-family:ui-monospace,monospace; font-size:9px; color:#b6afa6; text-align:center; padding:0 6px;">{{ t.img }}</span>
+              </div>
+              <div style="display:flex; align-items:center; gap:5px; margin-top:8px;">
+                <span style="font-family:'Material Symbols Outlined'; font-size:15px; color:#F5A623; font-variation-settings:'FILL' 1;">group</span>
+                <span style="font-size:11px; color:#6b645b; font-weight:500;">{{ t.bought }}</span>
+              </div>
+              <div style="font-size:12.5px; font-weight:600; color:#2a2723; line-height:1.3; margin-top:4px; min-height:33px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">{{ t.name }}</div>
+              <div style="display:flex; align-items:center; gap:4px; margin-top:4px;">
+                <span style="font-family:'Material Symbols Outlined'; font-size:14px; color:#F5A623; font-variation-settings:'FILL' 1;">star</span>
+                <span style="font-size:11.5px; font-weight:600;">{{ t.rating }}</span>
+                <span style="font-size:11.5px; color:#a7a099;">{{ t.count }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex; gap:6px; justify-content:center; margin-top:14px;">
+          <span style="width:20px; height:6px; border-radius:3px; background:#fff;"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:rgba(255,255,255,0.5);"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:rgba(255,255,255,0.5);"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:rgba(255,255,255,0.5);"></span>
+        </div>
+      </div>
+
+      <!-- house of PPD (red) -->
+      <div style="margin:16px; border-radius:20px; background:linear-gradient(160deg,#E5433F,#D42E2A); padding:16px; box-shadow:0 8px 22px rgba(200,40,40,0.2);">
+        <div style="background:#fff; border-radius:12px; padding:12px 14px; display:flex; align-items:center; justify-content:space-between;">
+          <div style="width:46px; height:46px; border-radius:10px; background:#E23744; display:flex; align-items:center; justify-content:center; color:#fff; font-weight:800; font-size:13px;">PPD</div>
+          <div style="text-align:right;">
+            <div style="font-size:21px; font-weight:800; color:#E23744; line-height:1;">100 Years</div>
+            <div style="font-size:11px; color:#c23; font-weight:500;">of Educational Excellence</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin:14px 0 12px;">
+          <div style="font-size:17px; font-weight:700; color:#fff;">From the House of PPD</div>
+          <div style="border:1px solid rgba(255,255,255,0.7); color:#fff; font-size:11px; font-weight:600; padding:6px 12px; border-radius:16px; display:flex; align-items:center; gap:4px;">Discover PPD <span style="font-family:'Material Symbols Outlined'; font-size:13px;">arrow_forward</span></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <sc-for list="{{ houseCards }}" as="h" hint-placeholder-count="4">
+            <div style="background:#fff; border-radius:12px; padding:11px; display:flex; justify-content:space-between; align-items:flex-start; min-height:78px;">
+              <div style="display:flex; flex-direction:column; justify-content:space-between; height:56px;">
+                <div style="font-size:12.5px; font-weight:600; color:#2a2723; line-height:1.2; max-width:78px;">{{ h.title }}</div>
+                <div style="display:inline-flex; align-items:center; gap:3px; color:#F2790C; font-size:11px; font-weight:600;">Explore <span style="font-family:'Material Symbols Outlined'; font-size:13px;">arrow_forward</span></div>
+              </div>
+              <div style="width:40px; height:52px; border-radius:7px; background:repeating-linear-gradient(135deg,#f0eeec,#f0eeec 6px,#f8f7f6 6px,#f8f7f6 12px); flex-shrink:0;"></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex; gap:6px; justify-content:center; margin-top:14px;">
+          <span style="width:20px; height:6px; border-radius:3px; background:#fff;"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:rgba(255,255,255,0.45);"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:rgba(255,255,255,0.45);"></span>
+        </div>
+      </div>
+
+      <!-- monsoon essentials -->
+      <div style="padding:0 16px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:12px;">
+          <div>
+            <div style="font-size:16px; font-weight:700;">Monsoon Essentials</div>
+            <div style="font-size:12px; color:#8c857c;">Stay Ready, Stay Protected this Season</div>
+          </div>
+          <div style="color:#F2790C; font-size:12px; font-weight:600; display:flex; align-items:center; gap:3px;">View All <span style="font-family:'Material Symbols Outlined'; font-size:14px;">arrow_forward</span></div>
+        </div>
+        <div style="background:linear-gradient(120deg,#cfe6ef,#e4eef2); border-radius:16px; padding:12px; display:flex; gap:10px;">
+          <sc-for list="{{ monsoon }}" as="m" hint-placeholder-count="4">
+            <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;">
+              <div style="width:100%; height:74px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; padding:6px;">
+                <span style="font-family:ui-monospace,monospace; font-size:8px; color:#9aa7ad; text-align:center;">{{ m.img }}</span>
+              </div>
+              <span style="font-size:10.5px; color:#3a4045; font-weight:500;">{{ m.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex; gap:6px; justify-content:center; margin-top:12px;">
+          <span style="width:20px; height:6px; border-radius:3px; background:#F7941E;"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+        </div>
+      </div>
+
+      <!-- recommended for you -->
+      <div style="padding:16px 16px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+          <div style="font-size:16px; font-weight:700;">Recommended for You</div>
+          <div style="color:#F2790C; font-size:12px; font-weight:600; display:flex; align-items:center; gap:3px;">View All <span style="font-family:'Material Symbols Outlined'; font-size:14px;">arrow_forward</span></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+          <sc-for list="{{ recommendAll }}" as="item" hint-placeholder-count="6">
+            <dc-import name="ProductCard" item="{{ item }}" on-open="{{ openProduct }}" on-add="{{ addToCart }}" hint-size="100%,258px"></dc-import>
+          </sc-for>
+        </div>
+        <div style="display:flex; gap:6px; justify-content:center; margin-top:14px;">
+          <span style="width:20px; height:6px; border-radius:3px; background:#F7941E;"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+        </div>
+      </div>
+
+      <!-- yoga day -->
+      <div style="padding:16px 16px 0;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:12px;">
+          <div>
+            <div style="font-size:16px; font-weight:700;">Celebrate Yoga Day!</div>
+            <div style="font-size:12px; color:#8c857c;">Healthy habits start young.</div>
+          </div>
+          <div style="color:#F2790C; font-size:12px; font-weight:600; display:flex; align-items:center; gap:3px;">View All <span style="font-family:'Material Symbols Outlined'; font-size:14px;">arrow_forward</span></div>
+        </div>
+        <div style="background:linear-gradient(120deg,#e6def4,#f0ebf7); border-radius:16px; padding:12px;">
+          <div style="display:flex; gap:10px;">
+            <sc-for list="{{ yogaTiles }}" as="y" hint-placeholder-count="4">
+              <div style="flex:1; display:flex; flex-direction:column; align-items:center; gap:6px;">
+                <div style="width:100%; height:70px; border-radius:12px; background:#fff; display:flex; align-items:center; justify-content:center; padding:6px;">
+                  <span style="font-family:ui-monospace,monospace; font-size:8px; color:#a99fbd; text-align:center;">{{ y.img }}</span>
+                </div>
+                <span style="font-size:10.5px; color:#4a4553; font-weight:500;">{{ y.label }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="display:flex; gap:10px; margin-top:12px;">
+            <sc-for list="{{ yogaPromos }}" as="p" hint-placeholder-count="2">
+              <div style="flex:1; background:#fff; border-radius:12px; padding:11px; display:flex; flex-direction:column;">
+                <div style="font-size:13px; font-weight:700; color:#2a2723;">{{ p.name }}</div>
+                <div style="font-size:10px; color:#8c857c; line-height:1.3; margin-top:3px; min-height:39px;">{{ p.desc }}</div>
+                <div style="height:34px; border-radius:8px; background:repeating-linear-gradient(135deg,#f0eeec,#f0eeec 6px,#f8f7f6 6px,#f8f7f6 12px); margin-top:6px;"></div>
+                <div style="font-size:9.5px; color:#8c857c; margin-top:8px;">Starting From</div>
+                <div style="display:flex; align-items:center; justify-content:space-between; margin-top:2px;">
+                  <span style="font-size:17px; font-weight:700;">₹{{ p.price }}</span>
+                  <span style="background:#F7941E; color:#fff; font-size:10px; font-weight:600; padding:5px 9px; border-radius:14px;">Add to Cart</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex; gap:6px; justify-content:center; margin-top:12px;">
+          <span style="width:20px; height:6px; border-radius:3px; background:#F7941E;"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+          <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+        </div>
+      </div>
+
+      <!-- build your bundle -->
+      <div style="padding:16px 16px 0;">
+        <div style="border-radius:18px; background:linear-gradient(115deg,#FBAA2E,#F5860C); padding:18px; display:flex; align-items:center; position:relative; overflow:hidden;">
+          <div style="flex:1; z-index:2;">
+            <div style="font-size:17px; font-weight:800; color:#fff; line-height:1.15;">Build Your Bundle<br>&amp; Save More!</div>
+            <div style="font-size:10.5px; color:rgba(255,255,255,0.92); margin-top:6px; max-width:180px;">Pick your favourite stationery items and get up to 30% OFF</div>
+            <div style="display:inline-flex; align-items:center; gap:5px; background:#fff; color:#3a3733; font-size:11.5px; font-weight:600; padding:8px 14px; border-radius:18px; margin-top:12px;">Build Bundle <span style="font-family:'Material Symbols Outlined'; font-size:14px;">arrow_forward</span></div>
+          </div>
+          <div style="width:96px; height:90px; border-radius:12px; background:repeating-linear-gradient(135deg,rgba(255,255,255,0.16),rgba(255,255,255,0.16) 8px,rgba(255,255,255,0.06) 8px,rgba(255,255,255,0.06) 16px); display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <span style="font-family:ui-monospace,monospace; font-size:8px; color:rgba(255,255,255,0.85); text-align:center;">supplies</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- shop by packages -->
+      <div style="padding:16px 16px 20px;">
+        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:12px;">
+          <div>
+            <div style="font-size:16px; font-weight:700;">Shop by Packages</div>
+            <div style="font-size:12px; color:#8c857c;">Everything you need, in one smart kit</div>
+          </div>
+          <div style="color:#F2790C; font-size:12px; font-weight:600; display:flex; align-items:center; gap:3px;">View All <span style="font-family:'Material Symbols Outlined'; font-size:14px;">arrow_forward</span></div>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <sc-for list="{{ packages }}" as="k" hint-placeholder-count="4">
+            <div style="background:#fff; border-radius:14px; padding:12px; box-shadow:0 6px 16px rgba(120,90,40,0.06);">
+              <div style="display:flex; justify-content:space-between;">
+                <div style="flex:1;">
+                  <div style="font-size:13px; font-weight:700; color:#2a2723;">{{ k.name }}</div>
+                  <div style="font-size:9.5px; color:#a7a099; line-height:1.3; margin-top:3px; max-width:82px;">Perfect for a fresh start to the year</div>
+                </div>
+                <div style="width:44px; height:44px; border-radius:8px; background:repeating-linear-gradient(135deg,#f0eeec,#f0eeec 6px,#f8f7f6 6px,#f8f7f6 12px); flex-shrink:0;"></div>
+              </div>
+              <div style="font-size:9.5px; color:#8c857c; margin-top:10px;">Starting From</div>
+              <div style="display:flex; align-items:center; justify-content:space-between; margin-top:2px;">
+                <span style="font-size:16px; font-weight:700;">₹311</span>
+                <span style="background:#F7941E; color:#fff; font-size:10px; font-weight:600; padding:5px 10px; border-radius:14px; display:flex; align-items:center; gap:3px;">Explore <span style="font-family:'Material Symbols Outlined'; font-size:12px;">arrow_forward</span></span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+    <!-- home footer: search + nav -->
+    <div style="padding:10px 16px; background:#FDF1E1;">
+      <div onClick="{{ goSearch }}" style="display:flex; align-items:center; gap:10px; background:#fff; border-radius:26px; padding:13px 18px; box-shadow:0 4px 14px rgba(120,90,40,0.09); cursor:pointer;">
+        <span style="font-family:'Material Symbols Outlined'; font-size:21px; color:#a7a099;">search</span>
+        <span style="flex:1; font-size:13.5px; color:#a7a099;">Search by product name</span>
+        <span style="font-family:'Material Symbols Outlined'; font-size:21px; color:#F5A623;">mic</span>
+      </div>
+    </div>
+    <dc-import name="BottomNav" active="home" on-nav="{{ navHandler }}" hint-size="428px,72px"></dc-import>
+  </div>
+  </sc-if>
+
+  <!-- ============ CATEGORY ============ -->
+  <sc-if value="{{ isCategory }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; height:100%;">
+    <div style="padding:14px 16px 0; display:flex; align-items:center; justify-content:space-between;">
+      <div onClick="{{ back }}" style="width:42px; height:42px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(120,90,40,0.08); cursor:pointer;"><span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#3a3733;">arrow_back_ios_new</span></div>
+      <div onClick="{{ goCart }}" style="display:flex; align-items:center; gap:6px; background:#fff; border-radius:22px; padding:7px 13px; box-shadow:0 4px 12px rgba(120,90,40,0.09); cursor:pointer;"><span style="font-family:'Material Symbols Outlined'; font-size:21px; color:#F5A623; font-variation-settings:'FILL' 1;">shopping_bag</span><span style="font-size:14px; font-weight:700;">{{ cartCount }}</span></div>
+    </div>
+    <div class="ppd-scroll" style="flex:1; overflow-y:auto; padding:0 16px;">
+      <!-- banner -->
+      <div style="border-radius:16px; background:linear-gradient(115deg,#FBB03B,#F7941E); padding:20px; margin-top:12px; min-height:110px; display:flex; align-items:center; position:relative; overflow:hidden;">
+        <div style="font-size:24px; font-weight:800; color:#fff; line-height:1.1; z-index:2;">Smart<br>School<br>Shopping</div>
+        <div style="position:absolute; right:0; top:0; bottom:0; width:200px; background:repeating-linear-gradient(135deg,rgba(255,255,255,0.15),rgba(255,255,255,0.15) 8px,rgba(255,255,255,0.05) 8px,rgba(255,255,255,0.05) 16px); display:flex; align-items:center; justify-content:center;"><span style="font-family:ui-monospace,monospace; font-size:9px; color:rgba(255,255,255,0.85);">school supplies</span></div>
+      </div>
+      <!-- filter chips -->
+      <div class="ppd-hscroll" style="display:flex; gap:9px; overflow-x:auto; padding:14px 0 6px;">
+        <sc-for list="{{ categoryChips }}" as="ch" hint-placeholder-count="4">
+          <span style="flex:0 0 auto; background:#fff; color:#4a463f; font-size:12.5px; font-weight:500; padding:8px 16px; border-radius:20px; box-shadow:0 3px 9px rgba(120,90,40,0.06);">{{ ch }}</span>
+        </sc-for>
+      </div>
+      <!-- sort row -->
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:6px 0 12px;">
+        <div style="display:flex; align-items:center; gap:16px;">
+          <span style="font-size:13px; font-weight:600; color:#3a3733; display:flex; align-items:center; gap:3px;">Sort By <span style="font-family:'Material Symbols Outlined'; font-size:17px;">expand_more</span></span>
+          <span style="font-size:13px; font-weight:600; color:#3a3733; display:flex; align-items:center; gap:3px;">Popular <span style="font-family:'Material Symbols Outlined'; font-size:17px;">expand_more</span></span>
+        </div>
+        <div onClick="{{ goAllProducts }}" style="width:40px; height:40px; border-radius:50%; background:#F7941E; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(247,148,30,0.35); cursor:pointer;"><span style="font-family:'Material Symbols Outlined'; font-size:20px; color:#fff;">filter_alt</span></div>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+        <sc-for list="{{ categoryList }}" as="item" hint-placeholder-count="15">
+          <dc-import name="ProductCard" item="{{ item }}" on-open="{{ openProduct }}" on-add="{{ addToCart }}" hint-size="100%,258px"></dc-import>
+        </sc-for>
+      </div>
+      <!-- pagination -->
+      <div style="display:flex; align-items:center; justify-content:center; gap:9px; padding:18px 0;">
+        <span style="width:30px; height:30px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(120,90,40,0.08);"><span style="font-family:'Material Symbols Outlined'; font-size:16px; color:#8c857c;">arrow_back</span></span>
+        <span style="width:30px; height:30px; border-radius:50%; background:#F7941E; color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600;">1</span>
+        <span style="width:30px; height:30px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:#4a463f; box-shadow:0 3px 8px rgba(120,90,40,0.08);">2</span>
+        <span style="font-size:14px; color:#8c857c; letter-spacing:1px;">...</span>
+        <span style="width:30px; height:30px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:#4a463f; box-shadow:0 3px 8px rgba(120,90,40,0.08);">4</span>
+        <span style="width:30px; height:30px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(120,90,40,0.08);"><span style="font-family:'Material Symbols Outlined'; font-size:16px; color:#F7941E;">arrow_forward</span></span>
+      </div>
+    </div>
+    <div style="padding:10px 16px; background:#FDF1E1;">
+      <div onClick="{{ goSearch }}" style="display:flex; align-items:center; gap:10px; background:#fff; border-radius:26px; padding:13px 18px; box-shadow:0 4px 14px rgba(120,90,40,0.09); cursor:pointer;"><span style="font-family:'Material Symbols Outlined'; font-size:21px; color:#a7a099;">search</span><span style="flex:1; font-size:13.5px; color:#a7a099;">Search by product name</span><span style="font-family:'Material Symbols Outlined'; font-size:21px; color:#F5A623;">mic</span></div>
+    </div>
+    <dc-import name="BottomNav" active="category" on-nav="{{ navHandler }}" hint-size="428px,72px"></dc-import>
+  </div>
+  </sc-if>
+
+  <!-- ============ ALL PRODUCTS ============ -->
+  <sc-if value="{{ isAllProducts }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; height:100%;">
+    <div style="padding:14px 16px 0; display:flex; align-items:center; justify-content:space-between;">
+      <div onClick="{{ back }}" style="width:42px; height:42px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(120,90,40,0.08); cursor:pointer;"><span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#3a3733;">arrow_back_ios_new</span></div>
+      <div onClick="{{ goCart }}" style="display:flex; align-items:center; gap:6px; background:#fff; border-radius:22px; padding:7px 13px; box-shadow:0 4px 12px rgba(120,90,40,0.09); cursor:pointer;"><span style="font-family:'Material Symbols Outlined'; font-size:21px; color:#F5A623; font-variation-settings:'FILL' 1;">shopping_bag</span><span style="font-size:14px; font-weight:700;">{{ cartCount }}</span></div>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 16px 2px;">
+      <span style="font-size:19px; font-weight:700;">All Products</span>
+      <span style="font-size:13px; font-weight:600; color:#F2790C;">3 Filters Applied</span>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 16px 6px;">
+      <div style="display:flex; gap:9px;">
+        <sc-for list="{{ allChips }}" as="ch" hint-placeholder-count="3">
+          <span style="display:inline-flex; align-items:center; gap:5px; background:#fff; color:#4a463f; font-size:12.5px; font-weight:500; padding:7px 13px; border-radius:20px; box-shadow:0 3px 9px rgba(120,90,40,0.06);"><span style="font-family:'Material Symbols Outlined'; font-size:16px; color:#F5A623; font-variation-settings:'FILL' 1;">cancel</span>{{ ch }}</span>
+        </sc-for>
+      </div>
+      <div style="width:40px; height:40px; border-radius:50%; background:#F7941E; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(247,148,30,0.35); flex-shrink:0;"><span style="font-family:'Material Symbols Outlined'; font-size:20px; color:#fff;">filter_alt</span></div>
+    </div>
+    <div class="ppd-scroll" style="flex:1; overflow-y:auto; padding:8px 16px 0;">
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+        <sc-for list="{{ allProductsList }}" as="item" hint-placeholder-count="15">
+          <dc-import name="ProductCard" item="{{ item }}" on-open="{{ openProduct }}" on-add="{{ addToCart }}" hint-size="100%,258px"></dc-import>
+        </sc-for>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:center; gap:9px; padding:18px 0;">
+        <span style="width:30px; height:30px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(120,90,40,0.08);"><span style="font-family:'Material Symbols Outlined'; font-size:16px; color:#8c857c;">arrow_back</span></span>
+        <span style="width:30px; height:30px; border-radius:50%; background:#F7941E; color:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600;">1</span>
+        <span style="width:30px; height:30px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:#4a463f; box-shadow:0 3px 8px rgba(120,90,40,0.08);">2</span>
+        <span style="font-size:14px; color:#8c857c; letter-spacing:1px;">...</span>
+        <span style="width:30px; height:30px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:13px; font-weight:600; color:#4a463f; box-shadow:0 3px 8px rgba(120,90,40,0.08);">4</span>
+        <span style="width:30px; height:30px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 8px rgba(120,90,40,0.08);"><span style="font-family:'Material Symbols Outlined'; font-size:16px; color:#F7941E;">arrow_forward</span></span>
+      </div>
+    </div>
+    <div style="padding:10px 16px calc(14px + env(safe-area-inset-bottom)); background:#FDF1E1;">
+      <div onClick="{{ goSearch }}" style="display:flex; align-items:center; gap:10px; background:#fff; border-radius:26px; padding:13px 18px; box-shadow:0 4px 14px rgba(120,90,40,0.09); cursor:pointer;"><span style="font-family:'Material Symbols Outlined'; font-size:21px; color:#a7a099;">search</span><span style="flex:1; font-size:13.5px; color:#a7a099;">Search by product name</span><span style="font-family:'Material Symbols Outlined'; font-size:21px; color:#F5A623;">mic</span></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ PRODUCT ============ -->
+  <sc-if value="{{ isProduct }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; height:100%; background:#FCF3E9;">
+    <div style="padding:14px 16px 0; display:flex; align-items:center; justify-content:space-between;">
+      <div onClick="{{ back }}" style="width:42px; height:42px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(120,90,40,0.08); cursor:pointer;"><span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#3a3733;">arrow_back_ios_new</span></div>
+      <div onClick="{{ goCart }}" style="display:flex; align-items:center; gap:6px; background:#fff; border-radius:22px; padding:7px 13px; box-shadow:0 4px 12px rgba(120,90,40,0.09); cursor:pointer;"><span style="font-family:'Material Symbols Outlined'; font-size:21px; color:#F5A623; font-variation-settings:'FILL' 1;">shopping_bag</span><span style="font-size:14px; font-weight:700;">{{ cartCount }}</span></div>
+    </div>
+    <div class="ppd-scroll" style="flex:1; overflow-y:auto; padding:12px 16px 0;">
+      <!-- gallery -->
+      <div style="display:flex; gap:10px;">
+        <div style="display:flex; flex-direction:column; gap:10px; width:70px;">
+          <sc-for list="{{ productThumbs }}" as="th" hint-placeholder-count="4">
+            <div style="height:66px; border-radius:12px; background:#fff; border:{{ th.border }}; display:flex; align-items:center; justify-content:center; padding:5px;"><span style="font-family:ui-monospace,monospace; font-size:7px; color:#b6afa6; text-align:center;">{{ th.label }}</span></div>
+          </sc-for>
+        </div>
+        <div style="flex:1; height:280px; border-radius:16px; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 6px 16px rgba(120,90,40,0.06);"><span style="font-family:ui-monospace,monospace; font-size:11px; color:#b6afa6;">product image</span></div>
+      </div>
+      <!-- trending + actions -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:14px;">
+        <span style="display:inline-flex; align-items:center; gap:5px; background:#FCE3B8; color:#C77A12; font-size:12px; font-weight:600; padding:7px 13px; border-radius:20px;"><span style="font-family:'Material Symbols Outlined'; font-size:16px; color:#F2790C; font-variation-settings:'FILL' 1;">local_fire_department</span>Trending</span>
+        <div style="display:flex; gap:10px;">
+          <div style="display:flex; align-items:center; gap:5px; background:#fff; border-radius:22px; padding:8px 14px; box-shadow:0 3px 10px rgba(120,90,40,0.08);"><span style="font-family:'Material Symbols Outlined'; font-size:18px; color:#8c857c;">favorite</span><span style="font-size:12px; font-weight:600; color:#4a463f;">1.5K</span></div>
+          <div style="width:40px; height:40px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 3px 10px rgba(120,90,40,0.08);"><span style="font-family:'Material Symbols Outlined'; font-size:19px; color:#4a463f;">ios_share</span></div>
+        </div>
+      </div>
+      <!-- title -->
+      <div style="font-size:21px; font-weight:700; margin-top:14px; line-height:1.2;">{{ productName }}</div>
+      <div style="display:flex; align-items:center; gap:10px; margin-top:8px; font-size:13px;">
+        <span style="display:flex; align-items:center; gap:4px;"><span style="font-family:'Material Symbols Outlined'; font-size:16px; color:#F5A623; font-variation-settings:'FILL' 1;">star</span><span style="font-weight:600;">{{ productRating }}</span><span style="color:#a7a099;">({{ productCount }})</span></span>
+        <span style="color:#d8cfc2;">|</span>
+        <span style="display:flex; align-items:center; gap:5px; color:#736c63;"><span style="font-family:'Material Symbols Outlined'; font-size:17px; color:#F5A623; font-variation-settings:'FILL' 1;">group</span><b style="color:#3a3733; font-weight:600;">1,680</b> Brought this week</span>
+      </div>
+      <!-- price -->
+      <div style="display:flex; align-items:center; gap:10px; margin-top:14px;">
+        <span style="font-size:27px; font-weight:700;">₹{{ productPrice }}</span>
+        <span style="font-size:16px; color:#b6ada2; text-decoration:line-through;">₹{{ productMrp }}</span>
+        <span style="background:#1FA463; color:#fff; font-size:12px; font-weight:600; padding:5px 11px; border-radius:16px;">Save ₹50</span>
+      </div>
+      <!-- delivery -->
+      <div style="display:flex; align-items:center; gap:12px; background:#E4F6EA; border-radius:12px; padding:13px 15px; margin-top:14px;">
+        <span style="font-family:'Material Symbols Outlined'; font-size:26px; color:#1FA463;">local_shipping</span>
+        <div><div style="font-size:13.5px; font-weight:600; color:#1B7A43;">Free delivery on order above ₹499</div><div style="font-size:11.5px; color:#4a8a63;">Dispatch by Tomorrow</div></div>
+      </div>
+      <!-- description -->
+      <div style="border:1px solid #ecdfcb; border-radius:12px; padding:13px 15px; margin-top:12px; font-size:12.5px; color:#5a544b; line-height:1.5;">12-Piece Set | Premium Geometry Box Kit for School kids | Ideal for Learning and Precision | Pack of 1</div>
+      <!-- you may also like -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin:18px 0 12px;">
+        <span style="font-size:16px; font-weight:700;">You May Also Like</span>
+        <span style="color:#F2790C; font-size:12px; font-weight:600; display:flex; align-items:center; gap:3px;">View All <span style="font-family:'Material Symbols Outlined'; font-size:14px;">arrow_forward</span></span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+        <sc-for list="{{ productAlsoLike }}" as="item" hint-placeholder-count="6">
+          <dc-import name="ProductCard" item="{{ item }}" on-open="{{ openProduct }}" on-add="{{ addToCart }}" hint-size="100%,258px"></dc-import>
+        </sc-for>
+      </div>
+      <div style="display:flex; gap:6px; justify-content:center; margin:14px 0;">
+        <span style="width:22px; height:6px; border-radius:3px; background:#F7941E;"></span>
+        <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+        <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+        <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+      </div>
+    </div>
+    <div style="display:flex; gap:12px; padding:12px 16px calc(14px + env(safe-area-inset-bottom)); background:#fff; box-shadow:0 -4px 18px rgba(120,90,40,0.08);">
+      <div onClick="{{ addToCartBtn }}" style="flex:1; text-align:center; background:#FBEAD3; color:#8a5a1a; font-size:15px; font-weight:700; padding:14px; border-radius:26px; cursor:pointer;">Add to Cart</div>
+      <div onClick="{{ goCart }}" style="flex:1; text-align:center; background:linear-gradient(100deg,#FBAA2E,#F5860C); color:#fff; font-size:15px; font-weight:700; padding:14px; border-radius:26px; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:6px;">Buy Now</div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ CART ============ -->
+  <sc-if value="{{ isCart }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; height:100%;">
+    <div style="padding:14px 16px 6px; display:flex; align-items:center; justify-content:space-between;">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <div onClick="{{ back }}" style="width:42px; height:42px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(120,90,40,0.08); cursor:pointer;"><span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#3a3733;">arrow_back_ios_new</span></div>
+        <span style="font-size:22px; font-weight:700;">My Cart</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:6px; background:#F5A623; border-radius:22px; padding:9px 15px; box-shadow:0 4px 12px rgba(245,166,35,0.35);"><span style="font-family:'Material Symbols Outlined'; font-size:20px; color:#fff; font-variation-settings:'FILL' 1;">shopping_bag</span><span style="font-size:14px; font-weight:700; color:#fff;">{{ cartCount }}</span></div>
+    </div>
+    <div class="ppd-scroll" style="flex:1; overflow-y:auto; padding:8px 16px 0;">
+      <sc-for list="{{ cartItems }}" as="ci" hint-placeholder-count="3">
+        <div style="background:#fff; border-radius:16px; padding:14px; margin-bottom:12px; box-shadow:0 5px 14px rgba(120,90,40,0.06); display:flex; gap:12px;">
+          <div style="width:64px; height:64px; border-radius:10px; background:repeating-linear-gradient(135deg,#f5f3f1,#f5f3f1 6px,#fafafa 6px,#fafafa 12px); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="font-family:ui-monospace,monospace; font-size:7px; color:#b6afa6; text-align:center;">{{ ci.img }}</span></div>
+          <div style="flex:1;">
+            <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+              <div style="font-size:13.5px; font-weight:600; color:#2a2723; line-height:1.3; max-width:180px;">{{ ci.name }}</div>
+              <div style="display:flex; gap:12px;"><span style="font-family:'Material Symbols Outlined'; font-size:19px; color:#b0a99f;">favorite</span><span style="font-family:'Material Symbols Outlined'; font-size:19px; color:#b0a99f;">delete</span></div>
+            </div>
+            <div style="display:flex; align-items:center; gap:8px; margin-top:6px;">
+              <span style="font-size:16px; font-weight:700;">₹{{ ci.price }}</span>
+              <span style="font-size:12px; color:#b6ada2; text-decoration:line-through;">₹{{ ci.mrp }}</span>
+              <span style="background:#1FA463; color:#fff; font-size:10px; font-weight:600; padding:3px 9px; border-radius:14px;">Save 22%</span>
+            </div>
+            <div style="display:flex; justify-content:flex-end; margin-top:8px;">
+              <div style="display:flex; align-items:center; gap:14px; background:#FBEAD3; border-radius:16px; padding:5px 14px;">
+                <span onClick="{{ ci.dec }}" style="font-size:17px; font-weight:600; color:#8a5a1a; cursor:pointer;">−</span>
+                <span style="font-size:13px; font-weight:600; color:#3a3733; min-width:18px; text-align:center;">{{ ci.qty }}</span>
+                <span onClick="{{ ci.inc }}" style="font-size:17px; font-weight:600; color:#8a5a1a; cursor:pointer;">+</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+      <!-- summary -->
+      <div style="background:#fff; border-radius:16px; padding:16px; margin-bottom:14px; box-shadow:0 5px 14px rgba(120,90,40,0.06);">
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#6b645b; padding-bottom:11px;"><span>Subtotal (3 items)</span><span style="color:#3a3733; font-weight:500;">₹650.00</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#6b645b; padding-bottom:11px;"><span>Discount</span><span style="color:#1FA463; font-weight:500;">−₹114.00</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:13px; color:#6b645b; padding-bottom:11px; border-bottom:1px solid #f0e6d6;"><span>Delivery Charges</span><span style="color:#3a3733; font-weight:500;">₹0</span></div>
+        <div style="display:flex; justify-content:space-between; font-size:16px; font-weight:700; padding-top:12px;"><span>Total Amount</span><span>₹536.00</span></div>
+        <div style="font-size:10.5px; color:#a7a099; margin-top:10px;">Prices and discounts may change based on stock and ongoing offers.</div>
+      </div>
+      <!-- you may also like -->
+      <div style="display:flex; align-items:center; justify-content:space-between; margin:6px 0 12px;">
+        <span style="font-size:16px; font-weight:700;">You May Also Like</span>
+        <span style="color:#F2790C; font-size:12px; font-weight:600; display:flex; align-items:center; gap:3px;">View All <span style="font-family:'Material Symbols Outlined'; font-size:14px;">arrow_forward</span></span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+        <sc-for list="{{ youMayAlsoLike }}" as="item" hint-placeholder-count="6">
+          <dc-import name="ProductCard" item="{{ item }}" on-open="{{ openProduct }}" on-add="{{ addToCart }}" hint-size="100%,258px"></dc-import>
+        </sc-for>
+      </div>
+      <div style="display:flex; gap:6px; justify-content:center; margin:14px 0;">
+        <span style="width:22px; height:6px; border-radius:3px; background:#F7941E;"></span>
+        <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+        <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+        <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+      </div>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:12px 16px calc(14px + env(safe-area-inset-bottom)); background:#fff; box-shadow:0 -4px 18px rgba(120,90,40,0.08);">
+      <div>
+        <div style="display:flex; align-items:center; gap:8px;"><span style="font-size:18px; font-weight:700;">₹140</span><span style="background:#1FA463; color:#fff; font-size:10px; font-weight:600; padding:3px 9px; border-radius:14px;">Save 22%</span></div>
+        <div style="font-size:11.5px; color:#8c857c;">3 Items</div>
+      </div>
+      <div style="background:linear-gradient(100deg,#FBAA2E,#F5860C); color:#fff; font-size:15px; font-weight:700; padding:14px 26px; border-radius:26px; display:flex; align-items:center; gap:8px;">Proceed to Checkout <span style="font-family:'Material Symbols Outlined'; font-size:18px;">arrow_forward</span></div>
+    </div>
+  </div>
+  </sc-if>
+
+  <!-- ============ ORDERS ============ -->
+  <sc-if value="{{ isOrders }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; height:100%;">
+    <div style="padding:14px 16px 0; display:flex; align-items:center; justify-content:space-between;">
+      <div style="width:42px; height:42px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(120,90,40,0.08);"><span style="font-family:'Material Symbols Outlined'; font-size:24px; color:#3a3733;">menu</span></div>
+      <div onClick="{{ goCart }}" style="display:flex; align-items:center; gap:6px; background:#F5A623; border-radius:22px; padding:9px 15px; box-shadow:0 4px 12px rgba(245,166,35,0.35);"><span style="font-family:'Material Symbols Outlined'; font-size:20px; color:#fff; font-variation-settings:'FILL' 1;">shopping_bag</span><span style="font-size:14px; font-weight:700; color:#fff;">{{ cartCount }}</span></div>
+    </div>
+    <div style="display:flex; align-items:center; justify-content:space-between; padding:10px 16px 12px;">
+      <span style="font-size:19px; font-weight:700;">Your Orders</span>
+      <div style="display:flex; align-items:center; gap:6px; background:#fff; border-radius:22px; padding:5px; box-shadow:0 3px 10px rgba(120,90,40,0.06);">
+        <sc-for list="{{ orderTabs }}" as="tab" hint-placeholder-count="3">
+          <span onClick="{{ tab.set }}" style="font-size:12.5px; font-weight:600; padding:6px 13px; border-radius:18px; background:{{ tab.bg }}; color:{{ tab.color }}; cursor:pointer;">{{ tab.label }}</span>
+        </sc-for>
+      </div>
+    </div>
+    <div class="ppd-scroll" style="flex:1; overflow-y:auto; padding:0 16px;">
+      <sc-for list="{{ orders }}" as="o" hint-placeholder-count="3">
+        <div style="background:#fff; border-radius:16px; padding:14px; margin-bottom:12px; box-shadow:0 5px 14px rgba(120,90,40,0.06);">
+          <div style="display:flex; gap:12px;">
+            <div style="width:58px; height:58px; border-radius:10px; background:repeating-linear-gradient(135deg,#f5f3f1,#f5f3f1 6px,#fafafa 6px,#fafafa 12px); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="font-family:ui-monospace,monospace; font-size:7px; color:#b6afa6; text-align:center;">{{ o.img }}</span></div>
+            <div style="flex:1;">
+              <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+                <span style="background:#CDE8F7; color:#2B7CB8; font-size:10.5px; font-weight:600; padding:3px 10px; border-radius:12px;">{{ o.status }}</span>
+                <span style="font-size:16px; font-weight:700;">₹{{ o.amount }}</span>
+              </div>
+              <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-top:6px;">
+                <div>
+                  <div style="font-size:11.5px; color:#8c857c;">Order ID: <b style="color:#3a3733; font-weight:600;">{{ o.id }}</b></div>
+                  <div style="font-size:12.5px; font-weight:600; color:#2a2723; margin-top:2px; max-width:180px;">{{ o.name }}</div>
+                  <div style="font-size:10.5px; color:#a7a099; margin-top:3px;">Placed on {{ o.placed }}</div>
+                </div>
+                <span style="font-size:11.5px; color:#a7a099; white-space:nowrap;">{{ o.items }} items</span>
+              </div>
+            </div>
+          </div>
+          <div style="border-top:1px solid #f0e6d6; margin-top:11px; padding-top:11px; display:flex; justify-content:space-between; align-items:center;">
+            <span style="font-size:12px; color:#6b645b;">Expected Delivery : <b style="color:#3a3733; font-weight:600;">{{ o.delivery }}</b></span>
+            <span style="font-size:12px; font-weight:600; color:#F2790C; display:flex; align-items:center; gap:3px;">View Details <span style="font-family:'Material Symbols Outlined'; font-size:16px;">expand_more</span></span>
+          </div>
+        </div>
+      </sc-for>
+      <div style="font-size:16px; font-weight:700; margin:8px 0 12px;">Order Again</div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px;">
+        <sc-for list="{{ orderAgain }}" as="item" hint-placeholder-count="6">
+          <dc-import name="ProductCard" item="{{ item }}" on-open="{{ openProduct }}" on-add="{{ addToCart }}" hint-size="100%,258px"></dc-import>
+        </sc-for>
+      </div>
+      <div style="display:flex; gap:6px; justify-content:center; margin:14px 0;">
+        <span style="width:22px; height:6px; border-radius:3px; background:#F7941E;"></span>
+        <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+        <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+        <span style="width:6px; height:6px; border-radius:3px; background:#e6d8c4;"></span>
+      </div>
+    </div>
+    <dc-import name="BottomNav" active="orders" on-nav="{{ navHandler }}" hint-size="428px,72px"></dc-import>
+  </div>
+  </sc-if>
+
+  <!-- ============ PROFILE ============ -->
+  <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; height:100%;">
+    <div style="padding:14px 16px 0; display:flex; align-items:center; justify-content:space-between;">
+      <div style="width:42px; height:42px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 4px 12px rgba(120,90,40,0.08);"><span style="font-family:'Material Symbols Outlined'; font-size:24px; color:#3a3733;">menu</span></div>
+      <div onClick="{{ goCart }}" style="display:flex; align-items:center; gap:6px; background:#F5A623; border-radius:22px; padding:9px 15px; box-shadow:0 4px 12px rgba(245,166,35,0.35);"><span style="font-family:'Material Symbols Outlined'; font-size:20px; color:#fff; font-variation-settings:'FILL' 1;">shopping_bag</span><span style="font-size:14px; font-weight:700; color:#fff;">{{ cartCount }}</span></div>
+    </div>
+    <div style="padding:10px 16px 4px;">
+      <div style="font-size:20px; font-weight:700;">Categories to Explore</div>
+      <div style="font-size:12.5px; color:#8c857c;">Everything you need, in one smart kit</div>
+    </div>
+    <div class="ppd-scroll" style="flex:1; overflow-y:auto; padding:8px 16px 16px;">
+      <!-- profile card -->
+      <div style="background:#fff; border-radius:16px; padding:16px; box-shadow:0 5px 14px rgba(120,90,40,0.06); display:flex; gap:14px;">
+        <div style="width:78px; height:78px; border-radius:50%; background:repeating-linear-gradient(135deg,#f0eeec,#f0eeec 6px,#f8f7f6 6px,#f8f7f6 12px); display:flex; align-items:center; justify-content:center; flex-shrink:0;"><span style="font-family:ui-monospace,monospace; font-size:8px; color:#b6afa6;">photo</span></div>
+        <div style="flex:1;">
+          <div style="display:flex; align-items:center; justify-content:space-between;">
+            <span style="background:#D6ECFB; color:#2B7CB8; font-size:10.5px; font-weight:600; padding:3px 11px; border-radius:12px;">Student Profile</span>
+            <span style="width:30px; height:30px; border-radius:50%; background:#FCE3B8; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Outlined'; font-size:16px; color:#F2790C;">edit</span></span>
+          </div>
+          <div style="font-size:19px; font-weight:700; margin-top:6px; border-bottom:1px solid #f0e6d6; padding-bottom:8px;">Ravi Kumar</div>
+          <div style="display:flex; align-items:center; gap:9px; font-size:12.5px; color:#4a463f; margin-top:8px;"><span style="font-family:'Material Symbols Outlined'; font-size:17px; color:#F5A623; font-variation-settings:'FILL' 1;">mail</span><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="c6b4a7b0afadb3aba7b486a1aba7afaae8a5a9ab">[email&#160;protected]</a></div>
+          <div style="display:flex; align-items:center; gap:9px; font-size:12.5px; color:#4a463f; margin-top:7px;"><span style="font-family:'Material Symbols Outlined'; font-size:17px; color:#F5A623; font-variation-settings:'FILL' 1;">call</span>+91 9876 543210</div>
+          <div style="display:flex; align-items:center; gap:9px; font-size:12.5px; color:#4a463f; margin-top:7px;"><span style="font-family:'Material Symbols Outlined'; font-size:17px; color:#F5A623; font-variation-settings:'FILL' 1;">school</span>Grade 5</div>
+        </div>
+      </div>
+      <!-- my orders stats -->
+      <div style="background:#fff; border-radius:16px; padding:16px; margin-top:14px; box-shadow:0 5px 14px rgba(120,90,40,0.06);">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+          <span style="font-size:15px; font-weight:700;">My Orders</span>
+          <span onClick="{{ goOrders }}" style="color:#F2790C; font-size:12px; font-weight:600; display:flex; align-items:center; gap:3px; cursor:pointer;">View All <span style="font-family:'Material Symbols Outlined'; font-size:14px;">arrow_forward</span></span>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <sc-for list="{{ orderStats }}" as="s" hint-placeholder-count="4">
+            <div style="flex:1; border:1px solid #f0e6d6; border-radius:12px; padding:11px 6px; text-align:center;">
+              <div style="width:34px; height:34px; border-radius:50%; background:{{ s.bg }}; display:flex; align-items:center; justify-content:center; margin:0 auto;"><span style="font-family:'Material Symbols Outlined'; font-size:19px; color:{{ s.color }}; font-variation-settings:'FILL' 1;">{{ s.icon }}</span></div>
+              <div style="font-size:10px; color:#8c857c; margin-top:7px;">{{ s.label }}</div>
+              <div style="font-size:15px; font-weight:700; margin-top:2px;">{{ s.num }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <!-- menu list -->
+      <div style="background:#fff; border-radius:16px; padding:6px 16px; margin-top:14px; box-shadow:0 5px 14px rgba(120,90,40,0.06);">
+        <sc-for list="{{ profileMenu }}" as="mi" hint-placeholder-count="8">
+          <div style="display:flex; align-items:center; justify-content:space-between; padding:15px 0; border-bottom:{{ mi.border }};">
+            <div style="display:flex; align-items:center; gap:14px;"><span style="font-family:'Material Symbols Outlined'; font-size:21px; color:#2a2723; font-variation-settings:'FILL' {{ mi.fill }};">{{ mi.icon }}</span><span style="font-size:14px; font-weight:500; color:#2a2723;">{{ mi.label }}</span></div>
+            <span style="font-family:'Material Symbols Outlined'; font-size:20px; color:#8c857c;">chevron_right</span>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <dc-import name="BottomNav" active="profile" on-nav="{{ navHandler }}" hint-size="428px,72px"></dc-import>
+  </div>
+  </sc-if>
+
+  <!-- ============ SEARCH ============ -->
+  <sc-if value="{{ isSearch }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; flex-direction:column; height:100%; background:rgba(60,45,25,0.28);">
+    <div style="flex:1; overflow-y:auto; padding:14px 14px 0;">
+      <!-- results card -->
+      <div style="background:#FCF2E4; border-radius:20px; padding:16px; box-shadow:0 12px 34px rgba(60,40,15,0.18);">
+        <div style="display:flex; align-items:center; justify-content:space-between;">
+          <span style="font-size:13.5px; color:#4a463f;">Showing results for <b style="font-weight:600;">"Geometry Box"</b></span>
+          <span style="background:#fff; color:#3a3733; font-size:11.5px; font-weight:600; padding:7px 13px; border-radius:18px; display:flex; align-items:center; gap:4px;">View All (126) <span style="font-family:'Material Symbols Outlined'; font-size:13px;">arrow_forward</span></span>
+        </div>
+        <div style="border-top:1px solid #eaddc8; margin:14px 0;"></div>
+        <div style="font-size:13.5px; font-weight:600; margin-bottom:10px;">Popular Searches</div>
+        <div style="display:flex; gap:9px; flex-wrap:wrap;">
+          <sc-for list="{{ searchPopular }}" as="sp" hint-placeholder-count="3">
+            <span style="background:#fff; color:#4a463f; font-size:12.5px; font-weight:500; padding:8px 15px; border-radius:20px; box-shadow:0 2px 7px rgba(120,90,40,0.06);">{{ sp }}</span>
+          </sc-for>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; margin-top:16px;">
+          <sc-for list="{{ searchResults }}" as="r" hint-placeholder-count="3">
+            <div>
+              <div style="height:100px; border-radius:11px; background:repeating-linear-gradient(135deg,#e9e4ef,#e9e4ef 7px,#f2eff6 7px,#f2eff6 14px); display:flex; align-items:center; justify-content:center;"><span style="font-family:ui-monospace,monospace; font-size:8px; color:#a99fbd; text-align:center; padding:0 4px;">{{ r.img }}</span></div>
+              <div style="font-size:12px; font-weight:500; color:#2a2723; line-height:1.3; margin-top:7px; min-height:31px; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;">{{ r.name }}</div>
+              <div style="display:flex; align-items:center; gap:4px; margin-top:4px;"><span style="font-family:'Material Symbols Outlined'; font-size:13px; color:#F5A623; font-variation-settings:'FILL' 1;">star</span><span style="font-size:11px; font-weight:600;">{{ r.rating }}</span><span style="font-size:11px; color:#a7a099;">({{ r.count }})</span></div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; margin:16px 0 10px;">
+          <span style="font-size:13.5px; font-weight:600;">Recent Searches</span>
+          <span style="font-size:13px; font-weight:600; color:#F2790C;">Clear</span>
+        </div>
+        <div style="display:flex; gap:9px; flex-wrap:wrap;">
+          <sc-for list="{{ searchRecent }}" as="sr" hint-placeholder-count="5">
+            <span style="background:#fff; color:#4a463f; font-size:12.5px; font-weight:500; padding:8px 15px; border-radius:20px; box-shadow:0 2px 7px rgba(120,90,40,0.06);">{{ sr }}</span>
+          </sc-for>
+        </div>
+      </div>
+      <!-- search bar -->
+      <div style="display:flex; align-items:center; gap:12px; background:#fff; border-radius:28px; padding:15px 18px; margin-top:16px; box-shadow:0 6px 18px rgba(60,40,15,0.14);">
+        <span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#8c857c;">search</span>
+        <span style="flex:1; font-size:15px; color:#2a2723;">Geometry Box</span>
+        <span onClick="{{ back }}" style="font-family:'Material Symbols Outlined'; font-size:22px; color:#8c857c; cursor:pointer;">close</span>
+        <span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#8c857c;">mic</span>
+      </div>
+    </div>
+    <!-- keyboard -->
+    <div style="background:#1c1c1e; padding:6px 4px calc(8px + env(safe-area-inset-bottom));">
+      <div style="display:flex; align-items:center; justify-content:space-around; padding:8px 12px 10px;">
+        <span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#e8a33d;">auto_awesome</span>
+        <span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#c9c9cd;">mood</span>
+        <span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#c9c9cd;">text_fields</span>
+        <span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#c9c9cd;">content_paste</span>
+        <span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#c9c9cd;">settings</span>
+        <span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#c9c9cd;">more_horiz</span>
+      </div>
+      <sc-for list="{{ keyboardRows }}" as="row" hint-placeholder-count="3">
+        <div style="display:flex; justify-content:center; gap:5px; padding:0 4px 8px;">
+          <sc-for list="{{ row }}" as="key" hint-placeholder-count="10">
+            <span style="flex:1; max-width:36px; height:42px; background:#3a3a3c; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:17px; font-weight:400;">{{ key }}</span>
+          </sc-for>
+        </div>
+      </sc-for>
+      <div style="display:flex; justify-content:center; gap:5px; padding:0 4px 8px;">
+        <span style="width:44px; height:42px; background:#565658; border-radius:6px; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Outlined'; font-size:20px; color:#fff; font-variation-settings:'FILL' 1;">arrow_upward</span></span>
+        <span style="flex:1; display:flex; justify-content:center; gap:5px;">
+          <sc-for list="{{ zRow }}" as="key" hint-placeholder-count="7">
+            <span style="width:32px; height:42px; background:#3a3a3c; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:17px;">{{ key }}</span>
+          </sc-for>
+        </span>
+        <span style="width:44px; height:42px; background:#565658; border-radius:6px; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Outlined'; font-size:20px; color:#fff;">backspace</span></span>
+      </div>
+      <div style="display:flex; gap:5px; padding:0 4px 6px;">
+        <span style="width:52px; height:42px; background:#565658; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:14px;">!#1</span>
+        <span style="width:34px; height:42px; background:#565658; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:17px;">,</span>
+        <span style="flex:1; height:42px; background:#3a3a3c; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#e0e0e0; font-size:14px;">English(India)</span>
+        <span style="width:34px; height:42px; background:#565658; border-radius:6px; display:flex; align-items:center; justify-content:center; color:#fff; font-size:17px;">.</span>
+        <span style="width:52px; height:42px; background:#565658; border-radius:6px; display:flex; align-items:center; justify-content:center;"><span style="font-family:'Material Symbols Outlined'; font-size:20px; color:#fff;">keyboard_return</span></span>
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; padding:8px 18px 0;">
+        <span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#c9c9cd;">mic</span>
+        <span style="font-family:'Material Symbols Outlined'; font-size:22px; color:#c9c9cd;">keyboard_hide</span>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:428,&quot;height&quot;:926}}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    const P = {
+      santoor:   { name: 'Santoor With Activities Class 4 NCERT', rating: 4.8, count: 49, mrp: 400, price: 299, badge: 'ppd', img: 'Santoor NCERT book' },
+      notebook:  { name: 'Single Line Small Notebooks 76 Pages (Set of 6)', rating: 4.5, count: 10, mrp: 180, price: 140, badge: 'save', savePct: 22, img: 'notebook set of 6' },
+      doms:      { name: 'DOMS Hexel Pen Blue 20 Pcs', rating: 4.6, count: 70, mrp: 400, price: 311, badge: 'save', savePct: 22, img: 'DOMS Hexel pens' },
+      classmate: { name: 'Classmate Asteroid Geometry Box', rating: 4.1, count: 65, mrp: 400, price: 311, badge: 'save', savePct: 22, img: 'Classmate geometry box' },
+      supp:      { name: 'Supplementary Sheet 2 Pages', rating: '5.0', count: 13, mrp: 4, price: '3.20', badge: 'ppd', img: 'supplementary sheet' },
+      stateboard:{ name: 'STATE BOARD ANSWER SHEET', rating: 4.5, count: 40, mrp: 400, price: '13.50', badge: 'ppd', img: 'state board answer sheet' },
+      camlin:    { name: 'Camlin Scholar Pro Geometry Box', rating: 4.8, count: 49, mrp: 350, price: 300, badge: 'save', savePct: 22, img: 'Camlin geometry box' },
+    };
+    this.P = P;
+    const r1 = [P.santoor, P.notebook, P.doms];
+    const r2 = [P.classmate, P.supp, P.stateboard];
+    this.lists = {
+      recommendAll: r1.concat(r2),
+      categoryList: [].concat(r1, r1, r1, r1, r1),
+      allProductsList: [].concat(r1, r2, r2, r2, r2),
+      youMayAlsoLike: r1.concat(r1),
+      orderAgain: r1.concat(r1),
+      productAlsoLike: r2.concat(r1),
+    };
+    this.state = {
+      screen: 'home',
+      history: [],
+      cartCount: 3,
+      product: P.camlin,
+      ordersTab: 'Undelivered',
+      cart: [
+        { key: 'c0', name: 'Camlin Scholar Pro Geometry Box', price: 300, mrp: 350, qty: 1, img: 'Camlin geometry box' },
+        { key: 'c1', name: 'Supplementary Sheet 2 Pages', price: '3.20', mrp: 4, qty: 30, img: 'supplementary sheet' },
+        { key: 'c2', name: 'Single Line Small Notebooks 76 Pages (Set of 6)', price: 140, mrp: 180, qty: 1, img: 'notebook set of 6' },
+      ],
+    };
+  }
+  go(s) { this.setState(p => ({ history: [...p.history, p.screen], screen: s })); }
+  back() { this.setState(p => { const h = [...p.history]; const prev = h.pop(); return { history: h, screen: prev || 'home' }; }); }
+  openProduct(it) { this.setState(p => ({ history: [...p.history, p.screen], screen: 'product', product: it || p.product })); }
+  addToCart() { this.setState(p => ({ cartCount: p.cartCount + 1 })); }
+  changeQty(key, d) { this.setState(p => ({ cart: p.cart.map(c => c.key === key ? { ...c, qty: Math.max(1, c.qty + d) } : c) })); }
+  renderVals() {
+    const s = this.state, pr = this.state.product;
+    const tabs = ['All', 'Delivered', 'Undelivered'];
+    return {
+      isHome: s.screen === 'home', isCategory: s.screen === 'category', isAllProducts: s.screen === 'allproducts',
+      isProduct: s.screen === 'product', isCart: s.screen === 'cart', isOrders: s.screen === 'orders',
+      isProfile: s.screen === 'profile', isSearch: s.screen === 'search',
+      cartCount: s.cartCount,
+      go: (x) => this.go(x), back: () => this.back(),
+      goCart: () => this.go('cart'), goSearch: () => this.go('search'),
+      goCategory: () => this.go('category'), goOrders: () => this.go('orders'),
+      goAllProducts: () => this.go('allproducts'),
+      navHandler: (k) => this.go(k),
+      openProduct: (it) => this.openProduct(it),
+      addToCart: () => this.addToCart(),
+      addToCartBtn: () => this.addToCart(),
+      // product page
+      productName: pr.name, productRating: pr.rating, productCount: pr.count, productPrice: pr.price, productMrp: pr.mrp,
+      productThumbs: [
+        { label: 'box open', border: '2px solid #F7941E' },
+        { label: 'box angle', border: '2px solid transparent' },
+        { label: 'contents', border: '2px solid transparent' },
+        { label: 'in use', border: '2px solid transparent' },
+      ],
+      // lists
+      recommendAll: this.lists.recommendAll, categoryList: this.lists.categoryList,
+      allProductsList: this.lists.allProductsList, youMayAlsoLike: this.lists.youMayAlsoLike,
+      orderAgain: this.lists.orderAgain, productAlsoLike: this.lists.productAlsoLike,
+      // home data
+      quickCats: [
+        { label: 'All', icon: 'apps', color: '#F7941E' },
+        { label: 'Books', icon: 'menu_book', color: '#E23744' },
+        { label: 'Stationery', icon: 'edit', color: '#F5A623' },
+        { label: 'Bags', icon: 'backpack', color: '#1FA463' },
+        { label: 'For Kids', icon: 'toys', color: '#7B61FF' },
+      ],
+      trending: [
+        { img: 'A5 spiral notebooks', bought: '1.5K+ bought', name: 'A5 Classic Spiral Bound Notebooks', rating: 4.8, count: '(49)' },
+        { img: 'highlighter set', bought: '1.3K+ bought', name: 'Shuttle Art 6 Pcs Highlighters', rating: 4.8, count: '(49)' },
+        { img: 'dual tip markers', bought: '9K+ bought', name: 'Dual Tips 24 Colours Markers', rating: 4.8, count: '(49)' },
+      ],
+      houseCards: [
+        { title: 'School Books' }, { title: 'General Knowledge' }, { title: 'Yoga' }, { title: 'Cyber World' },
+      ],
+      monsoon: [
+        { label: 'Umbrella', img: 'umbrella' }, { label: 'Raincoats', img: 'raincoat' },
+        { label: 'Bag covers', img: 'bag cover' }, { label: 'Bottles', img: 'water bottle' },
+      ],
+      yogaTiles: [
+        { label: 'Mats', img: 'yoga mats' }, { label: 'Headbands', img: 'headbands' },
+        { label: 'Towels', img: 'towels' }, { label: 'Bottles', img: 'bottles' },
+      ],
+      yogaPromos: [
+        { name: 'Yoga Mat', desc: 'Comfortable mats for yoga, stretching and daily fitness.', price: 99, img: 'yoga mat' },
+        { name: 'Towels', desc: 'Soft, absorbent towels to keep you fresh during every session.', price: 49, img: 'towel' },
+      ],
+      packages: [
+        { name: 'Complete Writing Kit' }, { name: 'Art Kits' }, { name: 'Craft Kits' }, { name: 'Exam Kits' },
+      ],
+      // category / all products
+      categoryChips: ['Textbooks', 'Reference Books', 'Story Books', 'Workbooks'],
+      allChips: ['Grade 1', 'Yoga', 'Gujrati'],
+      // cart
+      cartItems: s.cart.map(c => ({ ...c, inc: () => this.changeQty(c.key, 1), dec: () => this.changeQty(c.key, -1) })),
+      // orders
+      orderTabs: tabs.map(t => ({
+        label: t, set: () => this.setState({ ordersTab: t }),
+        bg: s.ordersTab === t ? '#F7941E' : 'transparent',
+        color: s.ordersTab === t ? '#fff' : '#5a544b',
+      })),
+      orders: [
+        { status: 'Shipped', id: '#PPD00215', name: 'Camlin Scholar Pro Geometry Box &...', placed: '20 May 2026', amount: 300, items: 2, delivery: '22 May 2026', img: 'Camlin geometry box' },
+        { status: 'Shipped', id: '#PPD00232', name: 'Single Line Small Notebooks 76 Page...', placed: '20 May 2026', amount: 624, items: 3, delivery: '22 May 2026', img: 'notebook set of 6' },
+        { status: 'Shipped', id: '#PPD00320', name: 'Supplementary Sheet 2 Pages', placed: '20 May 2026', amount: 32, items: 10, delivery: '22 May 2026', img: 'supplementary sheet' },
+      ],
+      // profile
+      orderStats: [
+        { label: 'All Orders', num: '23', icon: 'assignment', color: '#F2790C', bg: '#FEF0DC' },
+        { label: 'Processing', num: '05', icon: 'menu_book', color: '#2B7CB8', bg: '#E0EFFA' },
+        { label: 'Delivered', num: '18', icon: 'local_shipping', color: '#1FA463', bg: '#E3F5EC' },
+        { label: 'Cancelled', num: '02', icon: 'cancel', color: '#E23744', bg: '#FBE3E6' },
+      ],
+      profileMenu: [
+        { label: 'My Wishlist', icon: 'favorite', fill: 1, border: '1px solid #f4ecdf' },
+        { label: 'Saved Address', icon: 'import_contacts', fill: 0, border: '1px solid #f4ecdf' },
+        { label: 'Preferences', icon: 'info', fill: 1, border: '1px solid #f4ecdf' },
+        { label: 'Password', icon: 'lock', fill: 1, border: '1px solid #f4ecdf' },
+        { label: 'Notification Settings', icon: 'notifications', fill: 1, border: '1px solid #f4ecdf' },
+        { label: 'Help & Support', icon: 'support_agent', fill: 1, border: '1px solid #f4ecdf' },
+        { label: 'About PPD', icon: 'info', fill: 1, border: '1px solid #f4ecdf' },
+        { label: 'Log out', icon: 'logout', fill: 0, border: 'none' },
+      ],
+      // search
+      searchPopular: ['Doms Geometry Box', 'Camlin Box', 'Geometry Box'],
+      searchRecent: ['UKG', 'Grade 1', 'Grade 2', 'Grade 3', 'Grade 4'],
+      searchResults: [
+        { name: 'Complete Harry Potter Series', rating: 4.8, count: 49, img: 'book box set' },
+        { name: 'Complete Harry Potter Series', rating: 4.8, count: 49, img: 'book box set' },
+        { name: 'Complete Harry Potter Series', rating: 4.8, count: 49, img: 'book box set' },
+      ],
+      keyboardRows: [
+        ['1','2','3','4','5','6','7','8','9','0'],
+        ['Q','W','E','R','T','Y','U','I','O','P'],
+        ['A','S','D','F','G','H','J','K','L'],
+      ],
+      zRow: ['Z','X','C','V','B','N','M'],
+    };
+  }
+}
+</script>
+</body>
+</html>

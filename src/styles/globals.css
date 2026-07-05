@@ -1,0 +1,304 @@
+@import "tailwindcss";
+
+/* Dark mode is class-based: `.dark` on <html>, toggled by the UI store. */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* ================================================================== */
+/* PPD STORE DESIGN SYSTEM — extracted from design/PPD Store.dc.html   */
+/* (Claude Design import — single source of truth)                     */
+/* ------------------------------------------------------------------ */
+/* Cream bg #FDF1E1 · Orange #F7941E (grad #FBAA2E→#F5860C)            */
+/* Icon gold #F5A623 · Link #F2790C · Red #E23744 · Green #1FA463      */
+/* Text #24211E / #736C63 / #8C857C · Font: Poppins                    */
+/* ================================================================== */
+:root {
+  /* Surfaces */
+  --background: #fdf1e1;             /* warm cream page bg          */
+  --background-alt: #fcf3e9;         /* product page variant        */
+  --foreground: #24211e;             /* primary text                */
+  --card: #ffffff;
+  --card-foreground: #2a2723;
+  --muted: #f6ecdc;                  /* skeletons, hovers           */
+  --muted-foreground: #8c857c;       /* muted text                  */
+  --subtle-foreground: #736c63;      /* subtitles                   */
+  --faint-foreground: #a7a099;       /* placeholder / tertiary      */
+  --border: #f0e6d6;                 /* card dividers               */
+  --border-strong: #ecdfcb;          /* outlined boxes              */
+  --input: #ecdfcb;
+  --ring: #f7941e;
+
+  /* Brand — orange */
+  --primary: #f7941e;
+  --primary-hover: #f5860c;
+  --primary-foreground: #ffffff;
+  --primary-soft: #fbead3;           /* soft chip / secondary button */
+  --primary-soft-foreground: #8a5a1a;
+  --chip: #fce3b8;                   /* trending chip bg             */
+  --chip-foreground: #c77a12;
+
+  /* Icon gold + link orange */
+  --accent: #f5a623;
+  --accent-foreground: #ffffff;
+  --link: #f2790c;
+
+  /* Status */
+  --destructive: #e23744;            /* PPD red                      */
+  --destructive-foreground: #ffffff;
+  --destructive-soft: #fbe3e6;
+  --success: #1fa463;
+  --success-foreground: #ffffff;
+  --success-soft: #e4f6ea;
+  --success-deep: #1b7a43;
+  --warning: #f5a623;
+  --warning-foreground: #ffffff;
+  --info: #2b7cb8;
+  --info-soft: #d6ecfb;
+
+  /* Commerce */
+  --rating: #f5a623;                 /* filled star                  */
+  --rating-empty: #d9d9d9;
+  --deal: #e23744;                   /* PPD Original badge           */
+  --deal-foreground: #ffffff;
+  --dot: #e6d8c4;                    /* inactive carousel dot        */
+
+  /* Warm-neutral ink ramp (text/icons on theme-aware surfaces) */
+  --ink: #3a3733;                    /* strong ink — back/menu icons, sort text */
+  --ink-soft: #4a463f;               /* chip / secondary label text  */
+  --ink-muted: #5a544b;              /* inactive nav, tertiary label */
+  --ink-label: #6b645b;              /* summary row labels           */
+  --icon-idle: #b0a99f;              /* idle action icons (heart/trash) */
+
+  /* Auxiliary surfaces / lines */
+  --surface-placeholder: #f5f3f1;    /* image placeholder behind media */
+  --surface-search: #fcf2e4;         /* search overlay results card  */
+  --rule: #eaddc8;                   /* hairline inside warm cards    */
+  --rule-soft: #f4ecdf;              /* faint list-row divider        */
+
+  --header-h: 4rem;
+}
+
+.dark {
+  /* Design ships light-only; warm dark equivalents keep the theme toggle working */
+  --background: #1c1712;
+  --background-alt: #1f1913;
+  --foreground: #f6efe5;
+  --card: #282019;
+  --card-foreground: #f6efe5;
+  --muted: #322920;
+  --muted-foreground: #b3a897;
+  --subtle-foreground: #c0b5a4;
+  --faint-foreground: #8d8272;
+  --border: rgba(246, 239, 229, 0.1);
+  --border-strong: rgba(246, 239, 229, 0.2);
+  --input: rgba(246, 239, 229, 0.16);
+  --ring: #f7941e;
+
+  --primary: #f7941e;
+  --primary-hover: #ffa93c;
+  --primary-foreground: #ffffff;
+  --primary-soft: #3d2f1c;
+  --primary-soft-foreground: #f5c98a;
+  --chip: #3d2f1c;
+  --chip-foreground: #f5c98a;
+
+  --accent: #f5a623;
+  --accent-foreground: #ffffff;
+  --link: #ffa044;
+
+  --destructive: #ef5560;
+  --destructive-foreground: #ffffff;
+  --destructive-soft: #43242a;
+  --success: #2fbc78;
+  --success-foreground: #0e2417;
+  --success-soft: #1e3428;
+  --success-deep: #6fd3a4;
+  --warning: #f5a623;
+  --warning-foreground: #1c1712;
+  --info: #5aa5da;
+  --info-soft: #1e3040;
+
+  --rating: #f5a623;
+  --rating-empty: #4a4139;
+  --deal: #ef5560;
+  --deal-foreground: #ffffff;
+  --dot: #4a4139;
+
+  --ink: #e8e0d5;
+  --ink-soft: #d3cabb;
+  --ink-muted: #b3a897;
+  --ink-label: #a89d8d;
+  --icon-idle: #8d8272;
+
+  --surface-placeholder: #322920;
+  --surface-search: #282019;
+  --rule: rgba(246, 239, 229, 0.12);
+  --rule-soft: rgba(246, 239, 229, 0.08);
+}
+
+/* Map tokens to Tailwind utilities (bg-background, text-muted-foreground, …) */
+@theme inline {
+  --color-background: var(--background);
+  --color-background-alt: var(--background-alt);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-faint-foreground: var(--faint-foreground);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-primary-soft-foreground: var(--primary-soft-foreground);
+  --color-chip: var(--chip);
+  --color-chip-foreground: var(--chip-foreground);
+  --color-secondary: var(--primary-soft);
+  --color-secondary-foreground: var(--primary-soft-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-link: var(--link);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-destructive-soft: var(--destructive-soft);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-success-soft: var(--success-soft);
+  --color-success-deep: var(--success-deep);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-rating: var(--rating);
+  --color-rating-empty: var(--rating-empty);
+  --color-deal: var(--deal);
+  --color-deal-foreground: var(--deal-foreground);
+  --color-dot: var(--dot);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-muted: var(--ink-muted);
+  --color-ink-label: var(--ink-label);
+  --color-icon-idle: var(--icon-idle);
+  --color-surface-placeholder: var(--surface-placeholder);
+  --color-surface-search: var(--surface-search);
+  --color-rule: var(--rule);
+  --color-rule-soft: var(--rule-soft);
+
+  --font-sans: "Poppins", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --radius-card: 1rem;               /* 16px cards      */
+  --radius-tile: 0.75rem;            /* 12px inner tiles */
+  --radius-pill: 1.625rem;           /* 26px CTA pills   */
+
+  /* Warm shadows from the design (rgba(120,90,40,…)) */
+  --shadow-card: 0 5px 14px rgba(120, 90, 40, 0.06);
+  --shadow-card-hover: 0 8px 20px rgba(120, 90, 40, 0.12);
+  --shadow-pill: 0 4px 12px rgba(120, 90, 40, 0.08);
+  --shadow-soft: 0 3px 9px rgba(120, 90, 40, 0.06);
+  --shadow-glow: 0 4px 12px rgba(247, 148, 30, 0.35);
+  --shadow-bar: 0 -4px 18px rgba(120, 90, 40, 0.08);
+  --shadow-float: 0 12px 34px rgba(60, 40, 15, 0.18);
+
+  --animate-fade-in: fade-in 0.25s ease both;
+  --animate-slide-up: slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Base                                                                */
+/* ------------------------------------------------------------------ */
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+  }
+
+  ::selection {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(in srgb, var(--muted-foreground) 35%, transparent) transparent;
+  }
+
+  /* Material Symbols icon base (used by <Icon />) */
+  .material-symbol {
+    font-family: "Material Symbols Outlined";
+    font-weight: normal;
+    font-style: normal;
+    line-height: 1;
+    display: inline-block;
+    letter-spacing: normal;
+    text-transform: none;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+  }
+}
+
+@layer utilities {
+  /* Brand gradients from the design */
+  .bg-grad-primary {
+    background: linear-gradient(100deg, #fbaa2e, #f5860c);
+  }
+  .bg-grad-hero {
+    background: linear-gradient(115deg, #fbb03b 0%, #f7941e 100%);
+  }
+  .bg-grad-trending {
+    background: linear-gradient(180deg, #fbaa2e, #f7941e);
+  }
+  .bg-grad-red {
+    background: linear-gradient(160deg, #e5433f, #d42e2a);
+  }
+  .bg-grad-monsoon {
+    background: linear-gradient(120deg, #cfe6ef, #e4eef2);
+  }
+  .bg-grad-yoga {
+    background: linear-gradient(120deg, #e6def4, #f0ebf7);
+  }
+
+  /* Hide scrollbar for horizontal carousels while keeping scrollability */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
