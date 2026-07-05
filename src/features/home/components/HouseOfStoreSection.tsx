@@ -5,7 +5,7 @@ import { Icon } from '@/components/ui/Icon'
 import { Dots } from '@/components/ui/Dots'
 import { Logo } from '@/components/shared/Logo'
 
-/** "From the House of E Store" — the red gradient publisher block. */
+/** "From the House of PPD" — the red gradient publisher block. */
 export function HouseOfStoreSection({ cards }: { cards?: HouseCard[] }) {
   if (!cards?.length) return null
 
@@ -20,12 +20,12 @@ export function HouseOfStoreSection({ cards }: { cards?: HouseCard[] }) {
       </div>
 
       <div className="my-3.5 flex items-center justify-between">
-        <h2 className="text-[17px] font-bold text-white">From the House of E Store</h2>
+        <h2 className="text-[17px] font-bold text-white">From the House of PPD</h2>
         <Link
           to={ROUTES.category('books')}
           className="flex items-center gap-1 rounded-full border border-white/70 px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-white/10"
         >
-          Discover E Store
+          Discover PPD
           <Icon name="arrow_forward" size={13} />
         </Link>
       </div>

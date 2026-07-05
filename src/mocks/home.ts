@@ -32,7 +32,7 @@ export interface PackageCard {
 
 const img = (seed: string, w = 300, h = 300) => `https://picsum.photos/seed/${seed}/${w}/${h}`
 
-/** "From the House of E Store" red block cards. */
+/** "From the House of PPD" red block cards. */
 export const houseCards: HouseCard[] = [
   { title: 'School Books', image: img('ppd-school-books', 160, 200), href: ROUTES.category('books') },
   { title: 'General Knowledge', image: img('ppd-gk', 160, 200), href: ROUTES.category('books') },

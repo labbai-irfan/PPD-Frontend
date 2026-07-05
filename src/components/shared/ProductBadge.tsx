@@ -3,10 +3,10 @@ import type { Product } from '@/types'
 
 /**
  * Product badge from the design cards: own-brand items get the red
- * "E Store Original" pill, everything else a green "Save X%" pill.
+ * "PPD Original" pill, everything else a green "Save X%" pill.
  */
 export function ProductBadge({ product, className }: { product: Product; className?: string }) {
-  const isOwnBrand = product.brand === 'E Store'
+  const isOwnBrand = product.brand === 'PPD'
   const off = discountPercent(product.mrp, product.price)
   if (!isOwnBrand && off === 0) return null
 
@@ -18,7 +18,7 @@ export function ProductBadge({ product, className }: { product: Product; classNa
         className,
       )}
     >
-      {isOwnBrand ? 'E Store Original' : `Save ${off}%`}
+      {isOwnBrand ? 'PPD Original' : `Save ${off}%`}
     </span>
   )
 }

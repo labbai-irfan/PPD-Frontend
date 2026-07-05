@@ -5,7 +5,7 @@ interface LogoProps {
   className?: string
 }
 
-/** The red E Store logo square. */
+/** The red PPD logo square. */
 export function Logo({ size = 38, className }: LogoProps) {
   return (
     <span
@@ -13,10 +13,10 @@ export function Logo({ size = 38, className }: LogoProps) {
         'flex shrink-0 items-center justify-center rounded-[9px] bg-deal font-extrabold text-white select-none',
         className,
       )}
-      style={{ width: size, height: size, fontSize: Math.round(size * 0.5) }}
-      aria-label="E Store"
+      style={{ width: size, height: size, fontSize: Math.round(size * 0.32) }}
+      aria-label="PPD"
     >
-      E
+      PPD
     </span>
   )
 }

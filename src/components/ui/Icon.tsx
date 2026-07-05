@@ -14,7 +14,7 @@ interface IconProps {
 }
 
 /**
- * Material Symbols Outlined icon — the icon system used by the E Store design.
+ * Material Symbols Outlined icon — the icon system used by the PPD design.
  * Color comes from `className` text color (or `style.color`); size in px.
  */
 export function Icon({ name, size = 20, fill = false, weight = 400, className, style }: IconProps) {

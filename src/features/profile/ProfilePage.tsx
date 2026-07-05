@@ -48,7 +48,7 @@ export default function ProfilePage() {
     { label: 'Password', icon: 'lock', fill: true, onClick: () => navigate(ROUTES.forgotPassword) },
     { label: 'Notification Settings', icon: 'notifications', fill: true, onClick: () => toast('Notification settings are coming soon') },
     { label: 'Help & Support', icon: 'support_agent', fill: false, onClick: () => navigate(ROUTES.support) },
-    { label: 'About E Store', icon: 'info', fill: true, onClick: () => navigate(ROUTES.support) },
+    { label: 'About PPD', icon: 'info', fill: true, onClick: () => navigate(ROUTES.support) },
     {
       label: 'Log out',
       icon: 'logout',

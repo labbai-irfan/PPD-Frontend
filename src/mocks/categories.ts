@@ -41,9 +41,9 @@ export const banners: Banner[] = [
   },
   {
     id: 'b4',
-    title: 'From the\nHouse of E Store',
+    title: 'From the\nHouse of PPD',
     subtitle: '100 years of\neducational excellence',
-    cta: 'Discover E Store',
+    cta: 'Discover PPD',
     href: ROUTES.category('books'),
     image: 'https://picsum.photos/seed/ppd-hero-books/600/500',
     tone: 'bg-grad-hero',

@@ -14,7 +14,7 @@ function applyTheme(theme: Theme) {
 
 function initialTheme(): Theme {
   const stored = localStorage.getItem(STORAGE_KEYS.theme)
-  // The E Store design ships light-first, so light is the default.
+  // The PPD design ships light-first, so light is the default.
   return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'light'
 }
 

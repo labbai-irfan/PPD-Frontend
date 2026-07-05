@@ -1,7 +1,7 @@
 import type { Product } from '@/types'
 
 /**
- * E Store catalog — products taken from the imported design
+ * PPD catalog — products taken from the imported design
  * plus the tiles shown in its home sections.
  */
 
@@ -20,7 +20,7 @@ export const products: Product[] = [
     id: 'p1',
     slug: 'santoor-with-activities-class-4-ncert',
     title: 'Santoor With Activities Class 4 NCERT',
-    brand: 'E Store',
+    brand: 'PPD',
     category: 'books',
     description:
       'NCERT-aligned Santoor textbook with in-book activities for Class 4. Colourful illustrations, practice exercises and chapter-wise revision — trusted by schools across India.',
@@ -96,7 +96,7 @@ export const products: Product[] = [
     id: 'p5',
     slug: 'supplementary-sheet-2-pages',
     title: 'Supplementary Sheet 2 Pages',
-    brand: 'E Store',
+    brand: 'PPD',
     category: 'books',
     description:
       'Official 2-page supplementary answer sheet, exam-standard ruling and quality paper. Sold per sheet — stock up for the exam season.',
@@ -115,7 +115,7 @@ export const products: Product[] = [
     id: 'p6',
     slug: 'state-board-answer-sheet',
     title: 'STATE BOARD ANSWER SHEET',
-    brand: 'E Store',
+    brand: 'PPD',
     category: 'books',
     description:
       'State board pattern answer sheet for exam practice at home and school. Matches official layout so students get comfortable before the real exam.',
@@ -213,8 +213,8 @@ export const products: Product[] = [
     ...base,
     id: 'p11',
     slug: 'ppd-school-backpack',
-    title: 'E Store Ergo School Backpack 25L',
-    brand: 'E Store',
+    title: 'PPD Ergo School Backpack 25L',
+    brand: 'PPD',
     category: 'bags',
     description:
       'Ergonomic 25L school backpack with padded straps, ventilated back panel, laptop/tablet sleeve and a rain-ready water-repellent shell.',
@@ -271,7 +271,7 @@ export const products: Product[] = [
     id: 'p14',
     slug: 'yoga-mat-kids',
     title: 'Yoga Mat',
-    brand: 'E Store',
+    brand: 'PPD',
     category: 'for-kids',
     description: 'Comfortable mats for yoga, stretching and daily fitness.',
     highlights: ['6mm cushioning', 'Non-slip texture', 'Easy-clean surface', 'Carry strap included'],
@@ -289,7 +289,7 @@ export const products: Product[] = [
     id: 'p15',
     slug: 'sports-towels',
     title: 'Towels',
-    brand: 'E Store',
+    brand: 'PPD',
     category: 'for-kids',
     description: 'Soft, absorbent towels to keep you fresh during every session.',
     highlights: ['Quick-dry microfibre', 'Super absorbent', 'Compact fold', 'Machine washable'],

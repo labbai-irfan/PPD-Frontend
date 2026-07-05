@@ -1,4 +1,4 @@
-export const APP_NAME = 'E Store'
+export const APP_NAME = 'PPD'
 export const APP_TAGLINE = 'Everything for School'
 export const BRAND_LINE = "India's Trusted Educational Publisher since 1926"
 
@@ -10,14 +10,14 @@ export const FREE_SHIPPING_THRESHOLD = 499
 export const SHIPPING_FEE = 40
 
 export const STORAGE_KEYS = {
-  theme: 'estore:theme',
-  auth: 'estore:auth',
-  cart: 'estore:cart',
-  wishlist: 'estore:wishlist',
-  orders: 'estore:orders',
-  recentlyViewed: 'estore:recently-viewed',
-  recentSearches: 'estore:recent-searches',
-  addresses: 'estore:addresses',
+  theme: 'ppd:theme',
+  auth: 'ppd:auth',
+  cart: 'ppd:cart',
+  wishlist: 'ppd:wishlist',
+  orders: 'ppd:orders',
+  recentlyViewed: 'ppd:recently-viewed',
+  recentSearches: 'ppd:recent-searches',
+  addresses: 'ppd:addresses',
 } as const
 
 /**
