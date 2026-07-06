@@ -10,30 +10,14 @@ export function BundleBanner() {
   return (
     <Link
       to={ROUTES.category('stationery')}
-      className="bg-grad-primary relative flex items-center overflow-hidden rounded-[18px] p-[18px] md:p-7"
+      className="block w-full overflow-hidden rounded-[18px] transition-transform hover:-translate-y-0.5"
     >
-      <div className="z-10 flex-1">
-        <h2 className="text-[17px] font-extrabold leading-[1.15] text-white md:text-2xl">
-          Build Your Bundle
-          <br />
-          &amp; Save More!
-        </h2>
-        <p className="mt-1.5 max-w-[180px] text-[10.5px] text-white/90 md:max-w-xs md:text-xs">
-          Pick your favourite stationery items and get up to 30% OFF
-        </p>
-        <span className="mt-3 inline-flex items-center gap-1.5 rounded-full bg-white px-3.5 py-2 text-[11.5px] font-semibold text-[#3a3733]">
-          Build Bundle
-          <Icon name="arrow_forward" size={14} />
-        </span>
-      </div>
-      <div className="h-[90px] w-24 shrink-0 overflow-hidden rounded-xl md:h-[120px] md:w-40">
-        <img
-          src="https://picsum.photos/seed/ppd-bundle/300/280"
-          alt=""
-          loading="lazy"
-          className="size-full object-cover"
-        />
-      </div>
+      <img
+        src="/components/carousel2.png"
+        alt="Build Your Bundle"
+        loading="lazy"
+        className="w-full object-contain"
+      />
     </Link>
   )
 }
@@ -53,23 +37,30 @@ export function PackagesSection({ packages }: { packages?: PackageCard[] }) {
           <Link
             key={pkg.name}
             to={pkg.href}
-            className="rounded-[14px] bg-card p-3 shadow-card transition-shadow hover:shadow-card-hover"
+            className="flex min-h-[135px] overflow-hidden rounded-[18px] bg-[#fdfaf6] shadow-[0_4px_12px_rgba(120,90,40,0.06)] transition-transform hover:-translate-y-0.5"
           >
-            <div className="flex justify-between gap-2">
-              <div className="flex-1">
-                <h3 className="text-[13px] font-bold text-card-foreground">{pkg.name}</h3>
-                <p className="mt-0.5 max-w-[82px] text-[9.5px] leading-snug text-faint-foreground md:max-w-none">
-                  {pkg.blurb}
-                </p>
+            {/* Left Column */}
+            <div className="flex flex-1 flex-col justify-between p-3 pr-2">
+              <div>
+                <h3 className="text-[12.5px] font-bold leading-snug text-[#2a2723]">{pkg.name}</h3>
+                <p className="mt-1 text-[10px] leading-[1.35] text-[#8c857c]">{pkg.blurb}</p>
               </div>
-              <img src={pkg.image} alt="" loading="lazy" className="size-11 shrink-0 rounded-lg object-cover" />
+              <div className="mt-2 flex flex-col justify-end">
+                <div className="text-[10px] text-[#8c857c]">Starting From</div>
+                <div className="mt-0.5 text-[17px] font-bold leading-none text-[#2a2723]">
+                  {formatCurrency(pkg.price)}
+                </div>
+              </div>
             </div>
-            <div className="mt-2.5 text-[9.5px] text-muted-foreground">Starting From</div>
-            <div className="mt-0.5 flex items-center justify-between">
-              <span className="text-base font-bold text-foreground">{formatCurrency(pkg.price)}</span>
-              <span className="flex items-center gap-1 rounded-full bg-primary px-2.5 py-[5px] text-[10px] font-semibold text-primary-foreground">
+
+            {/* Right Column */}
+            <div className="flex w-[90px] shrink-0 flex-col items-center justify-between bg-white p-2">
+              <div className="pointer-events-none flex h-[72px] w-full items-center justify-center">
+                <img src={pkg.image} alt="" loading="lazy" className="max-h-full max-w-full object-contain" />
+              </div>
+              <span className="flex w-full items-center justify-center gap-[2px] rounded-full bg-[#FBAA2E] py-[5.5px] text-[10.5px] font-bold text-white shadow-[0_3px_10px_rgba(251,170,46,0.35)] transition-transform">
                 Explore
-                <Icon name="arrow_forward" size={12} />
+                <Icon name="arrow_forward" size={13} />
               </span>
             </div>
           </Link>

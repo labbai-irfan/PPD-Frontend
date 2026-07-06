@@ -68,7 +68,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
             }}
             className="flex size-[34px] items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow transition-transform hover:scale-110 active:scale-95 cursor-pointer"
           >
-            <Icon name="shopping_cart" size={17} fill />
+            <img src="/icons/cart.svg" alt="" className="size-[17px] object-contain" />
           </button>
         </div>
       </div>

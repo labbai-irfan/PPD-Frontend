@@ -72,37 +72,51 @@ export default function ProfilePage() {
       </div>
 
       {/* Profile card */}
-      <div className="flex gap-3.5 rounded-2xl bg-card p-4 shadow-card">
-        <Avatar name={user.name} size={78} />
-        <div className="min-w-0 flex-1">
-          <div className="flex items-center justify-between">
-            <span className="rounded-full bg-info-soft px-3 py-[3px] text-[10.5px] font-semibold text-info">
-              Student Profile
-            </span>
-            <button
-              type="button"
-              aria-label="Edit profile"
-              onClick={() => toast('Profile editing is coming soon')}
-              className="flex size-[30px] items-center justify-center rounded-full bg-chip cursor-pointer"
-            >
-              <Icon name="edit" size={16} className="text-link" />
-            </button>
+      <div className="flex w-full gap-[31px] rounded-[20px] bg-white px-[15px] py-[20px] shadow-sm">
+        <div className="flex shrink-0 items-center justify-center">
+          <Avatar name={user.name} size={142} />
+        </div>
+        <div className="min-w-0 flex-1 flex flex-col justify-center">
+          <div className="flex flex-col">
+            <div className="flex items-start justify-between">
+              <div>
+                <span className="inline-block rounded-full bg-[#E5F1FF] px-3 py-[3px] text-[10.5px] font-semibold text-[#1B75FF]">
+                  Student Profile
+                </span>
+                <h2 className="mt-[2px] text-[20px] font-medium text-[#111111]">{user.name}</h2>
+              </div>
+              <button
+                type="button"
+                aria-label="Edit profile"
+                onClick={() => toast('Profile editing is coming soon')}
+                className="mt-0.5 flex size-[30px] shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#FFF0D4]"
+              >
+                <Icon name="edit" size={16} className="text-[#FBAA2E]" />
+              </button>
+            </div>
+            <div className="mt-1.5 w-full border-b border-[#EAEAEA]"></div>
           </div>
-          <h2 className="mt-1.5 truncate border-b border-border pb-2 text-[19px] font-bold text-foreground">
-            {user.name}
-          </h2>
-          <p className="mt-2 flex items-center gap-2 text-[12.5px] text-ink-soft dark:text-foreground">
-            <Icon name="mail" size={17} fill className="text-accent" />
-            <span className="truncate">{user.email}</span>
-          </p>
-          <p className="mt-1.5 flex items-center gap-2 text-[12.5px] text-ink-soft dark:text-foreground">
-            <Icon name="call" size={17} fill className="text-accent" />
-            {user.phone ?? '+91 98765 43210'}
-          </p>
-          <p className="mt-1.5 flex items-center gap-2 text-[12.5px] text-ink-soft dark:text-foreground">
-            <Icon name="school" size={17} fill className="text-accent" />
-            Grade 5
-          </p>
+          
+          <div className="mt-2.5 space-y-[9px]">
+            <p className="flex items-center gap-2.5 text-[13.5px] text-[#2a2723]">
+              <span className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-[#FFF0D4]">
+                <Icon name="mail" size={16} fill className="text-[#FBAA2E]" />
+              </span>
+              <span className="truncate">{user.email}</span>
+            </p>
+            <p className="flex items-center gap-2.5 text-[13.5px] text-[#2a2723]">
+              <span className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-[#FFF0D4]">
+                <Icon name="call" size={16} fill className="text-[#FBAA2E]" />
+              </span>
+              {user.phone ?? '+91 98765 43210'}
+            </p>
+            <p className="flex items-center gap-2.5 text-[13.5px] text-[#2a2723]">
+              <span className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-[#FFF0D4]">
+                <Icon name="school" size={16} fill className="text-[#FBAA2E]" />
+              </span>
+              Grade 5
+            </p>
+          </div>
         </div>
       </div>
 

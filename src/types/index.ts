@@ -10,6 +10,7 @@ export interface Category {
   icon: string
   /** brand accent for the icon, from the design */
   color: string
+  image?: string
   productCount: number
 }
 

@@ -32,7 +32,7 @@ function HomeHeader() {
   return (
     <div className="flex items-start justify-between md:hidden">
       <div>
-        <CircleIconButton icon="menu" iconSize={24} label="Menu" onClick={() => navigate(ROUTES.profile)} />
+        <CircleIconButton icon="/icons/hamburger.svg" iconSize={24} label="Menu" onClick={() => navigate(ROUTES.profile)} />
         <div className="mt-3">
           <p className="text-[15px] text-subtle-foreground">{greeting()}</p>
           <h1 className="text-[26px] font-bold leading-[1.1] text-foreground">{firstName}</h1>
@@ -41,9 +41,9 @@ function HomeHeader() {
       </div>
       <div className="flex flex-col items-end gap-3.5">
         <CartChip />
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col items-center gap-0.5">
           <Logo />
-          <p className="max-w-24 text-[8.5px] leading-[1.3] text-muted-foreground">{BRAND_LINE}</p>
+          <p className="max-w-[110px] text-center text-[8.5px] leading-[1.3] text-muted-foreground">{BRAND_LINE}</p>
         </div>
       </div>
     </div>
@@ -58,7 +58,7 @@ function RecommendedSection() {
 
   return (
     <section>
-      <SectionHeader title="Recommended for You" viewAllHref={ROUTES.products} />
+      <SectionHeader title="Recommended for You" viewAllHref={ROUTES.allProducts} />
       <ProductGrid products={data?.items} loading={isPending} skeletonCount={6} />
       <Dots count={Math.min(totalPages, 5)} active={page - 1} onSelect={(i) => setPage(i + 1)} className="mt-3.5" />
     </section>

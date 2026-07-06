@@ -44,12 +44,14 @@ export function TrendingSection() {
   const pageCount = Math.max(1, Math.ceil(items.length / 2))
 
   return (
-    <section className="bg-grad-trending -mx-4 px-4 py-[18px] md:mx-0 md:rounded-[20px] md:px-6">
+    <section
+      className="bg-grad-trending overflow-hidden rounded-[20px] bg-cover bg-center px-4 py-[18px] md:px-6"
+      style={{ backgroundImage: "url('/components/bg3.png')" }}
+    >
       <SectionHeader
         title="Trending Products"
         subtitle="Top Picks This Week"
-        onColor
-        viewAllHref={`${ROUTES.products}?tag=trending`}
+        viewAllHref={`${ROUTES.allProducts}?tag=trending`}
         viewAllTone="pill"
         className="mb-3.5"
       />
@@ -60,7 +62,7 @@ export function TrendingSection() {
           const ratio = el.scrollLeft / Math.max(1, el.scrollWidth - el.clientWidth)
           setPage(Math.round(ratio * (pageCount - 1)))
         }}
-        className="no-scrollbar -mx-4 flex gap-3 overflow-x-auto px-4 md:mx-0 md:px-0"
+        className="no-scrollbar flex gap-3 overflow-x-auto"
       >
         {isPending
           ? Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-[196px] w-[148px] shrink-0 rounded-2xl bg-white/40" />)

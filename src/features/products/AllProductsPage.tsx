@@ -11,9 +11,53 @@ import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { ProductGrid } from '@/components/shared/ProductGrid'
 import { TopBar } from '@/components/shared/TopBar'
-import { SortInline, sortOptions } from '@/features/products/ProductListingPage'
 
 const PAGE_SIZE = 15
+
+export const sortOptions: Array<{ value: SortOption; label: string }> = [
+  { value: 'relevance', label: 'Popular' },
+  { value: 'price-asc', label: 'Price: Low to High' },
+  { value: 'price-desc', label: 'Price: High to Low' },
+  { value: 'rating', label: 'Top Rated' },
+  { value: 'discount', label: 'Discount' },
+  { value: 'newest', label: 'Newest' },
+]
+
+export function SortInline({
+  value,
+  onChange,
+  className,
+}: {
+  value: SortOption
+  onChange: (value: SortOption) => void
+  className?: string
+}) {
+  const current = sortOptions.find((o) => o.value === value) ?? sortOptions[0]
+  return (
+    <div className={cn('relative flex items-center gap-4', className)}>
+      <span className="flex items-center gap-0.5 text-[13px] font-semibold text-ink dark:text-foreground">
+        Sort By
+        <Icon name="expand_more" size={17} />
+      </span>
+      <span className="flex items-center gap-0.5 text-[13px] font-semibold text-ink dark:text-foreground">
+        {current.label}
+        <Icon name="expand_more" size={17} />
+      </span>
+      <select
+        aria-label="Sort products"
+        value={value}
+        onChange={(e) => onChange(e.target.value as SortOption)}
+        className="absolute inset-0 cursor-pointer opacity-0"
+      >
+        {sortOptions.map((opt) => (
+          <option key={opt.value} value={opt.value}>
+            {opt.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  )
+}
 
 const tagLabels: Record<ProductTag, string> = {
   deal: 'Deals',

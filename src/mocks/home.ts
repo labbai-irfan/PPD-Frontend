@@ -42,18 +42,17 @@ export const houseCards: HouseCard[] = [
 
 /** "Monsoon Essentials" tiles. */
 export const monsoonTiles: CategoryTile[] = [
-  { label: 'Umbrella', image: img('ppd-umbrella'), href: ROUTES.product('p12') },
-  { label: 'Raincoats', image: img('ppd-raincoat'), href: ROUTES.product('p13') },
-  { label: 'Bag covers', image: img('ppd-bagcover'), href: ROUTES.category('for-kids') },
-  { label: 'Bottles', image: img('ppd-bottle'), href: ROUTES.product('p16') },
+  { label: 'Umbrella', image: '/images/image%2010.png', href: ROUTES.product('p12') },
+  { label: 'Raincoats', image: '/images/image%2011.png', href: ROUTES.product('p13') },
+  { label: 'Bag covers', image: '/images/image%2012.png', href: ROUTES.category('for-kids') },
+  { label: 'Bottles', image: '/images/image%2013.png', href: ROUTES.product('p16') },
 ]
 
-/** "Celebrate Yoga Day!" tiles + promo cards. */
 export const yogaTiles: CategoryTile[] = [
-  { label: 'Mats', image: img('ppd-yoga-mats'), href: ROUTES.product('p14') },
-  { label: 'Headbands', image: img('ppd-headbands'), href: ROUTES.category('for-kids') },
-  { label: 'Towels', image: img('ppd-towels'), href: ROUTES.product('p15') },
-  { label: 'Bottles', image: img('ppd-yoga-bottles'), href: ROUTES.product('p16') },
+  { label: 'Mats', image: '/images/image%2020.png', href: ROUTES.product('p14') },
+  { label: 'Headbands', image: '/images/image%2023.png', href: ROUTES.category('for-kids') },
+  { label: 'Towels', image: '/images/image%2024.png', href: ROUTES.product('p15') },
+  { label: 'Bottles', image: '/images/image%2025.png', href: ROUTES.product('p16') },
 ]
 
 export const yogaPromos: PromoCard[] = [
@@ -61,14 +60,14 @@ export const yogaPromos: PromoCard[] = [
     name: 'Yoga Mat',
     desc: 'Comfortable mats for yoga, stretching and daily fitness.',
     price: 99,
-    image: img('ppd-yogamat-promo', 400, 160),
+    image: '/images/image1.png',
     productId: 'p14',
   },
   {
     name: 'Towels',
     desc: 'Soft, absorbent towels to keep you fresh during every session.',
     price: 49,
-    image: img('ppd-towel-promo', 400, 160),
+    image: '/images/image%2023.png',
     productId: 'p15',
   },
 ]

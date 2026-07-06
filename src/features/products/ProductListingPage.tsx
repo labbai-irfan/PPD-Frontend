@@ -1,164 +1,155 @@
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { cn } from '@/lib/utils'
-import { ROUTES } from '@/lib/constants'
-import { useCategories, useProducts } from '@/hooks/use-catalog'
-import type { ProductQuery, ProductTag, SortOption } from '@/types'
-import { Icon } from '@/components/ui/Icon'
-import { CircleIconButton } from '@/components/ui/CircleIconButton'
-import { Pagination } from '@/components/ui/Pagination'
-import { EmptyState } from '@/components/ui/EmptyState'
-import { Button } from '@/components/ui/Button'
-import { ProductGrid } from '@/components/shared/ProductGrid'
 import { TopBar } from '@/components/shared/TopBar'
+import { QuickCategories } from '@/features/home/components/QuickCategories'
+import { BannerCarousel } from '@/components/shared/BannerCarousel'
+import { BundleBanner } from '@/features/home/components/PackagesSection'
+import { SectionHeader } from '@/components/shared/SectionHeader'
+import { ProductGrid } from '@/components/shared/ProductGrid'
+import { useBanners, useProducts } from '@/hooks/use-catalog'
+import { useState } from 'react'
+import { ROUTES } from '@/lib/constants'
+import { Icon } from '@/components/ui/Icon'
+import { Link } from 'react-router-dom'
 
-const PAGE_SIZE = 15
+type CategoryBlock = {
+  title: string
+  desc: string
+  accent: string
+  bg: string
+  img: string
+}
 
-export const sortOptions: Array<{ value: SortOption; label: string }> = [
-  { value: 'relevance', label: 'Popular' },
-  { value: 'price-asc', label: 'Price: Low to High' },
-  { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'rating', label: 'Top Rated' },
-  { value: 'discount', label: 'Discount' },
-  { value: 'newest', label: 'Newest' },
+const categoryBlocks: CategoryBlock[] = [
+  {
+    title: 'Writing Essentials',
+    desc: 'Pens, pencils, markers and everyday writing tools.',
+    accent: 'text-[#E12234] dark:text-[#FF7A88]',
+    bg: 'bg-[#FFF0F2] dark:bg-[#3a2226]',
+    img: 'https://picsum.photos/seed/ppd-writing/300/400',
+  },
+  {
+    title: 'Art & Craft Kits',
+    desc: 'Everything you need to unleash your creativity.',
+    accent: 'text-[#1853A5] dark:text-[#7FB2FF]',
+    bg: 'bg-[#EAF3FF] dark:bg-[#1e2a3d]',
+    img: 'https://picsum.photos/seed/ppd-art/300/400',
+  },
+  {
+    title: 'School Supplies',
+    desc: 'Back-to-school essentials for every student.',
+    accent: 'text-[#E12234] dark:text-[#FF7A88]',
+    bg: 'bg-[#FFF6EB] dark:bg-[#3a3122]',
+    img: 'https://picsum.photos/seed/ppd-school/300/400',
+  },
+  {
+    title: 'Study Materials',
+    desc: 'Books, learning resources in one place.',
+    accent: 'text-[#1853A5] dark:text-[#7FB2FF]',
+    bg: 'bg-[#EAF3FF] dark:bg-[#1e2a3d]',
+    img: 'https://picsum.photos/seed/ppd-study/300/400',
+  },
+  {
+    title: 'Office Essentials',
+    desc: 'Organize your workspace with premium office supplies.',
+    accent: 'text-[#E12234] dark:text-[#FF7A88]',
+    bg: 'bg-[#FFF0F2] dark:bg-[#3a2226]',
+    img: 'https://picsum.photos/seed/ppd-office/300/400',
+  },
+  {
+    title: 'Kids\' Corner',
+    desc: 'Fun, educational and creative products for kids.',
+    accent: 'text-[#1853A5] dark:text-[#7FB2FF]',
+    bg: 'bg-[#EAF3FF] dark:bg-[#1e2a3d]',
+    img: 'https://picsum.photos/seed/ppd-kids/300/400',
+  },
 ]
 
-/** "Sort By ⌄  Popular ⌄" row from the design — a real select drives it. */
-export function SortInline({
-  value,
-  onChange,
-  className,
-}: {
-  value: SortOption
-  onChange: (value: SortOption) => void
-  className?: string
-}) {
-  const current = sortOptions.find((o) => o.value === value) ?? sortOptions[0]
+function CategoryCard({ block }: { block: CategoryBlock }) {
   return (
-    <div className={cn('relative flex items-center gap-4', className)}>
-      <span className="flex items-center gap-0.5 text-[13px] font-semibold text-ink dark:text-foreground">
-        Sort By
-        <Icon name="expand_more" size={17} />
-      </span>
-      <span className="flex items-center gap-0.5 text-[13px] font-semibold text-ink dark:text-foreground">
-        {current.label}
-        <Icon name="expand_more" size={17} />
-      </span>
-      <select
-        aria-label="Sort products"
-        value={value}
-        onChange={(e) => onChange(e.target.value as SortOption)}
-        className="absolute inset-0 cursor-pointer opacity-0"
-      >
-        {sortOptions.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-    </div>
+    <Link
+      to={ROUTES.allProducts}
+      className={`group flex min-h-[130px] overflow-hidden rounded-[18px] sm:min-h-[150px] ${block.bg} shadow-sm ring-1 ring-black/[0.03] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:ring-white/5`}
+    >
+      {/* Text column */}
+      <div className="flex flex-1 flex-col justify-between p-3.5 pr-2 sm:p-4">
+        <div>
+          <h3 className={`text-[13px] font-extrabold leading-[1.2] sm:text-[15px] ${block.accent}`}>
+            {block.title}
+          </h3>
+          <p className="mt-1.5 line-clamp-3 text-[9.5px] font-medium leading-[1.35] text-[#6b645b] sm:text-[11px] dark:text-muted-foreground">
+            {block.desc}
+          </p>
+        </div>
+        <span className="mt-3 inline-flex w-fit items-center gap-[3px] rounded-full bg-[#FBAA2E] px-3 py-1 text-[10px] font-bold text-white shadow-[0_3px_10px_rgba(251,170,46,0.35)] transition-transform group-hover:translate-x-0.5 sm:text-[11.5px]">
+          Explore
+          <Icon name="arrow_forward" size={13} />
+        </span>
+      </div>
+
+      {/* Image column */}
+      <div className="w-[72px] shrink-0 overflow-hidden bg-white sm:w-[90px] dark:bg-white/5">
+        <img
+          src={block.img}
+          alt=""
+          loading="lazy"
+          className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+        />
+      </div>
+    </Link>
   )
 }
 
-/** The design's Category screen: banner, category chips, sort row, 3-col grid. */
-export default function ProductListingPage() {
-  const navigate = useNavigate()
-  const [params, setParams] = useSearchParams()
-  const { data: categories } = useCategories()
-
-  const activeCategory = params.get('category') ?? 'all'
-  const sort = (params.get('sort') as SortOption | null) ?? 'relevance'
-  const tag = (params.get('tag') as ProductTag | null) ?? undefined
-  const page = Number(params.get('page') ?? '1')
-
-  const query: ProductQuery = {
-    category: activeCategory,
-    tag,
-    sort,
-    page,
-    pageSize: PAGE_SIZE,
-  }
-  const { data, isPending } = useProducts(query)
-  const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / PAGE_SIZE))
-
-  function update(mutate: (p: URLSearchParams) => void, resetPage = true) {
-    const next = new URLSearchParams(params)
-    mutate(next)
-    if (resetPage) next.delete('page')
-    setParams(next)
-  }
+function RecommendedSection() {
+  const { data, isPending } = useProducts({ page: 1, pageSize: 6 })
 
   return (
-    <div>
+    <section>
+      <SectionHeader title="Recommended for You" viewAllHref={ROUTES.allProducts} className="mb-3.5" />
+      <ProductGrid products={data?.items} loading={isPending} skeletonCount={6} />
+    </section>
+  )
+}
+
+/** The design's Category screen */
+export default function ProductListingPage() {
+  const banners = useBanners()
+
+  return (
+    <div className="space-y-4 md:space-y-6">
       <TopBar />
 
-      {/* Category banner */}
-      <div className="bg-grad-hero relative mt-3 flex min-h-[110px] items-center overflow-hidden rounded-2xl p-5 md:mt-0 md:min-h-[160px] md:p-8">
-        <h1 className="z-10 text-2xl font-extrabold leading-[1.1] text-white md:text-3xl">
-          Smart
-          <br />
-          School
-          <br />
-          Shopping
-        </h1>
-        <img
-          src="https://picsum.photos/seed/ppd-category-banner/500/300"
-          alt=""
-          loading="lazy"
-          className="absolute bottom-0 right-0 top-0 w-[200px] object-cover md:w-[420px]"
-        />
+      <div className="px-1">
+        <h1 className="text-[20px] font-extrabold text-foreground sm:text-2xl">Categories to Explore</h1>
+        <p className="mt-0.5 text-[12.5px] font-medium text-muted-foreground sm:text-sm">
+          Everything you need, in one smart kit
+        </p>
       </div>
 
-      {/* Category chips */}
-      <div className="no-scrollbar -mx-4 flex gap-2 overflow-x-auto px-4 pb-1.5 pt-3.5 md:mx-0 md:px-0">
-        {categories?.map((category) => {
-          const active = activeCategory === category.slug
-          return (
-            <button
-              key={category.id}
-              type="button"
-              onClick={() =>
-                update((p) => {
-                  if (category.slug === 'all') p.delete('category')
-                  else p.set('category', category.slug)
-                })
-              }
-              className={cn(
-                'shrink-0 rounded-full px-4 py-2 text-[12.5px] font-medium shadow-soft transition-colors cursor-pointer',
-                active ? 'bg-primary font-semibold text-primary-foreground' : 'bg-card text-ink-soft dark:text-foreground',
-              )}
-            >
-              {category.name}
-            </button>
-          )
-        })}
+      <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5 lg:grid-cols-3 xl:grid-cols-4">
+        {categoryBlocks.map((block) => (
+          <CategoryCard key={block.title} block={block} />
+        ))}
       </div>
 
-      {/* Sort row + filter FAB */}
-      <div className="flex items-center justify-between py-1.5">
-        <SortInline value={sort} onChange={(v) => update((p) => (v === 'relevance' ? p.delete('sort') : p.set('sort', v)))} />
-        <CircleIconButton
-          icon="filter_alt"
-          iconSize={20}
-          size={40}
-          tone="solid"
-          label="All products with filters"
-          onClick={() => navigate(ROUTES.allProducts + (activeCategory !== 'all' ? `?category=${activeCategory}` : ''))}
-        />
+      <div className="pt-2">
+        <QuickCategories />
       </div>
 
-      {!isPending && (data?.total ?? 0) === 0 ? (
-        <EmptyState
-          icon={<Icon name="search_off" size={36} />}
-          title="No products found"
-          description="Try a different category or clear the filters."
-          action={<Button onClick={() => setParams(new URLSearchParams())}>Clear filters</Button>}
-        />
-      ) : (
-        <>
-          <ProductGrid products={data?.items} loading={isPending} skeletonCount={9} className="mt-1.5" />
-          <Pagination page={page} totalPages={totalPages} onChange={(p) => update((params2) => params2.set('page', String(p)), false)} />
-        </>
-      )}
+      <div className="pt-2">
+        <BannerCarousel banners={banners.data} loading={banners.isPending} />
+      </div>
+
+      {/* Decorative image break */}
+      <div className="h-[120px] w-full overflow-hidden rounded-[20px]">
+        <img src="https://picsum.photos/seed/ppd-monsoon-bg/800/400" alt="Background" className="size-full object-cover" />
+      </div>
+
+      <RecommendedSection />
+      
+      <div className="py-2">
+        <BundleBanner />
+      </div>
+
+      <RecommendedSection />
     </div>
   )
 }

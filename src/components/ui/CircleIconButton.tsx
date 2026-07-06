@@ -35,7 +35,11 @@ export function CircleIconButton({
       style={{ width: size, height: size }}
       {...props}
     >
-      <Icon name={icon} size={iconSize} fill={fill} />
+      {icon.endsWith('.svg') ? (
+        <img src={icon} alt={label} style={{ width: iconSize, height: iconSize }} className="object-contain" />
+      ) : (
+        <Icon name={icon} size={iconSize} fill={fill} />
+      )}
     </button>
   )
 }

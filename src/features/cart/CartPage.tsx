@@ -169,14 +169,12 @@ export default function CartPage() {
 
       {/* Mobile sticky checkout bar */}
       <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md items-center justify-between bg-card px-4 pb-[calc(14px+env(safe-area-inset-bottom))] pt-3 shadow-bar md:hidden">
-        <div>
-          <div className="flex items-center gap-2">
-            <span className="text-lg font-bold text-foreground">{formatCurrency(totals.total)}</span>
-            {savingsPct > 0 && <SavePill>Save {savingsPct}%</SavePill>}
-          </div>
-          <p className="text-[11.5px] text-muted-foreground">
-            {itemCount} {itemCount === 1 ? 'Item' : 'Items'}
-          </p>
+        <div className="flex items-center gap-2">
+          <span className="text-lg font-bold leading-none text-foreground">{formatCurrency(totals.total)}</span>
+          <span className="text-[12px] font-medium leading-none text-muted-foreground">
+            ({itemCount} {itemCount === 1 ? 'Item' : 'Items'})
+          </span>
+          {savingsPct > 0 && <SavePill className="ml-0.5">Save {savingsPct}%</SavePill>}
         </div>
         <Button size="lg" onClick={() => navigate(ROUTES.checkout)} rightIcon={<Icon name="arrow_forward" size={18} />}>
           Proceed to Checkout

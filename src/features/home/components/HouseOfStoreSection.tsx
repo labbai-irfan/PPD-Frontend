@@ -20,10 +20,10 @@ export function HouseOfStoreSection({ cards }: { cards?: HouseCard[] }) {
       </div>
 
       <div className="my-3.5 flex items-center justify-between">
-        <h2 className="text-[17px] font-bold text-white">From the House of PPD</h2>
+        <h2 className="text-[17px] font-medium text-white">From the House of PPD</h2>
         <Link
           to={ROUTES.category('books')}
-          className="flex items-center gap-1 rounded-full border border-white/70 px-3 py-1.5 text-[11px] font-semibold text-white transition-colors hover:bg-white/10"
+          className="flex items-center gap-1 rounded-full bg-white px-3 py-1.5 text-[11px] font-semibold text-ink shadow-sm transition-colors hover:bg-white/90"
         >
           Discover PPD
           <Icon name="arrow_forward" size={13} />

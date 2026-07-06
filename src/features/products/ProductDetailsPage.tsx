@@ -135,7 +135,6 @@ export default function ProductDetailsPage() {
         </div>
 
         <div>
-          {/* trending + actions row */}
           <div className="mt-3.5 flex items-center justify-between md:mt-0">
             {product.tags.includes('trending') ? (
               <span className="inline-flex items-center gap-1.5 rounded-full bg-chip px-3.5 py-2 text-xs font-semibold text-chip-foreground">
@@ -191,7 +190,7 @@ export default function ProductDetailsPage() {
 
           {/* delivery banner */}
           <div className="mt-3.5 flex items-center gap-3 rounded-xl bg-success-soft px-4 py-3">
-            <Icon name="local_shipping" size={26} className="text-success" />
+            <img src="/icons/truck.svg" alt="Delivery Truck" className="size-[26px] object-contain" />
             <div>
               <p className="text-[13.5px] font-semibold text-success-deep">
                 Free delivery on order above {formatCurrency(FREE_SHIPPING_THRESHOLD)}

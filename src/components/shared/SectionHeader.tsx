@@ -7,8 +7,8 @@ interface SectionHeaderProps {
   subtitle?: string
   viewAllHref?: string
   viewAllLabel?: string
-  /** 'link' = orange text link (cream sections); 'pill' = white pill (colored blocks) */
-  viewAllTone?: 'link' | 'pill'
+  /** 'link' = orange text link (cream sections); 'pill' = white pill (colored blocks); 'glass' = frosted pill (glassmorphic blocks) */
+  viewAllTone?: 'link' | 'pill' | 'glass'
   /** heading colors invert on colored blocks */
   onColor?: boolean
   className?: string
@@ -33,10 +33,18 @@ export function SectionHeader({
         )}
       </div>
       {viewAllHref &&
-        (viewAllTone === 'pill' ? (
+        (viewAllTone === 'glass' ? (
           <Link
             to={viewAllHref}
-            className="flex shrink-0 items-center gap-1 rounded-full bg-white px-3.5 py-[7px] text-[11.5px] font-semibold text-[#3a3733] transition-transform hover:scale-105"
+            className="flex shrink-0 items-center gap-1 rounded-full border border-white/60 bg-white/40 px-3.5 py-[7px] text-[11.5px] font-semibold text-[#2f4a5c] shadow-[0_2px_10px_rgba(90,130,160,0.18)] backdrop-blur-md transition-transform hover:scale-105"
+          >
+            {viewAllLabel}
+            <Icon name="arrow_forward" size={14} />
+          </Link>
+        ) : viewAllTone === 'pill' ? (
+          <Link
+            to={viewAllHref}
+            className="flex shrink-0 items-center gap-1 rounded-full border border-white/50 bg-white/20 px-3.5 py-[7px] text-[11.5px] font-semibold text-white shadow-[0_2px_10px_rgba(0,0,0,0.12)] backdrop-blur-md transition-transform hover:scale-105"
           >
             {viewAllLabel}
             <Icon name="arrow_forward" size={14} />

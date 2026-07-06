@@ -23,7 +23,7 @@ export function TopBar({ leading = 'back', title, cartTone = 'light', className 
         {leading === 'back' ? (
           <CircleIconButton icon="arrow_back_ios_new" label="Go back" onClick={() => navigate(-1)} />
         ) : (
-          <CircleIconButton icon="menu" iconSize={24} label="Menu" onClick={() => navigate(ROUTES.profile)} />
+          <CircleIconButton icon="/icons/hamburger.svg" iconSize={24} label="Menu" onClick={() => navigate(ROUTES.profile)} />
         )}
         {title && <h1 className="text-[22px] font-bold text-foreground">{title}</h1>}
       </div>

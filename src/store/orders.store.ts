@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
 import { STORAGE_KEYS } from '@/lib/constants'
 import { uid } from '@/lib/utils'
+import { seedOrders } from '@/mocks/orders'
 import type { Address, CartItem, Order, PaymentMethodKind } from '@/types'
 
 interface PlaceOrderInput {
@@ -20,7 +21,7 @@ interface OrdersState {
 export const useOrdersStore = create<OrdersState>()(
   persist(
     (set) => ({
-      orders: [],
+      orders: seedOrders(),
 
       placeOrder: (input) => {
         const order: Order = {
@@ -41,6 +42,13 @@ export const useOrdersStore = create<OrdersState>()(
           orders: state.orders.map((o) => (o.id === id ? { ...o, status: 'cancelled' } : o)),
         })),
     }),
-    { name: STORAGE_KEYS.orders },
+    {
+      name: STORAGE_KEYS.orders,
+      merge: (persisted, current) => {
+        const state = { ...current, ...(persisted as OrdersState) }
+        if (!state.orders?.length) state.orders = seedOrders()
+        return state
+      },
+    },
   ),
 )

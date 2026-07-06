@@ -26,7 +26,11 @@ export function CartChip({ tone = 'light', className }: CartChipProps) {
         className,
       )}
     >
-      <Icon name="shopping_bag" size={21} fill className={tone === 'light' ? 'text-accent' : 'text-white'} />
+      <img 
+        src="/icons/bag.svg" 
+        alt="Bag" 
+        className={cn("h-[21px] w-[21px] object-contain", tone === 'solid' && "brightness-0 invert")} 
+      />
       <span className={cn('text-sm font-bold', tone === 'light' ? 'text-foreground' : 'text-white')}>{count}</span>
     </button>
   )

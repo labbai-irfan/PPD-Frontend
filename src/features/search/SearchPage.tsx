@@ -23,14 +23,22 @@ function Chip({ label, onClick }: { label: string; onClick: () => void }) {
 
 function MiniResult({ product }: { product: Product }) {
   return (
-    <Link to={ROUTES.product(product.id)} className="block">
-      <div className="h-[100px] overflow-hidden rounded-[11px] bg-white dark:bg-muted">
-        <img src={product.images[0]} alt={product.title} loading="lazy" className="size-full object-cover" />
+    <Link
+      to={ROUTES.product(product.id)}
+      className="group flex flex-col rounded-[14px] bg-card p-2 shadow-card transition-shadow duration-300 hover:shadow-card-hover"
+    >
+      <div className="aspect-square overflow-hidden rounded-[10px] bg-surface-placeholder dark:bg-muted">
+        <img
+          src={product.images[0]}
+          alt={product.title}
+          loading="lazy"
+          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+        />
       </div>
-      <p className="mt-1.5 line-clamp-2 min-h-[31px] text-xs font-medium leading-snug text-card-foreground dark:text-foreground">
+      <h3 className="mt-2 line-clamp-2 min-h-[31px] px-0.5 text-xs font-medium leading-snug text-card-foreground dark:text-foreground">
         {product.title}
-      </p>
-      <RatingBadge rating={product.rating} count={product.ratingCount} className="mt-1" />
+      </h3>
+      <RatingBadge rating={product.rating} count={product.ratingCount} className="mt-1 px-0.5" />
     </Link>
   )
 }
@@ -46,6 +54,15 @@ export default function SearchPage() {
   const query = value.trim()
 
   const { data, isPending } = useProducts(query ? { q: query, pageSize: 3 } : { pageSize: 0 })
+
+  // Live typeahead: recommended product-name matches from the mock catalog.
+  const { data: suggestData } = useProducts(query ? { q: query, pageSize: 6 } : { pageSize: 0 })
+  const suggestions = query
+    ? Array.from(new Set((suggestData?.items ?? []).map((p) => p.title))).slice(0, 5)
+    : []
+
+  // Empty-state recommendations: trending picks shown before the user types.
+  const { data: recommended, isPending: recPending } = useProducts({ tag: 'trending', pageSize: 6 })
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && navigate(-1)
@@ -86,6 +103,24 @@ export default function SearchPage() {
               </div>
               <div className="my-3.5 border-t border-rule dark:border-border" />
             </>
+          )}
+
+          {suggestions.length > 0 && (
+            <div className="mb-3.5 flex flex-col">
+              {suggestions.map((term) => (
+                <button
+                  key={term}
+                  type="button"
+                  onClick={() => commitSearch(term)}
+                  className="flex items-center gap-2.5 rounded-lg px-1 py-2 text-left transition-colors hover:bg-black/[0.04] cursor-pointer dark:hover:bg-white/5"
+                >
+                  <Icon name="search" size={17} className="shrink-0 text-muted-foreground" />
+                  <span className="truncate text-[13.5px] text-ink-soft dark:text-foreground">{term}</span>
+                  <Icon name="north_west" size={16} className="ml-auto shrink-0 text-faint-foreground" />
+                </button>
+              ))}
+              <div className="mt-3 border-t border-rule dark:border-border" />
+            </div>
           )}
 
           <p className="mb-2.5 text-[13.5px] font-semibold text-foreground">Popular Searches</p>
@@ -129,6 +164,17 @@ export default function SearchPage() {
                 {recent.map((term) => (
                   <Chip key={term} label={term} onClick={() => setValue(term)} />
                 ))}
+              </div>
+            </>
+          )}
+
+          {!query && (
+            <>
+              <p className="mb-2.5 mt-4 text-[13.5px] font-semibold text-foreground">Recommended For You</p>
+              <div className="grid grid-cols-3 gap-3">
+                {recPending
+                  ? Array.from({ length: 6 }, (_, i) => <Skeleton key={i} className="h-[150px] rounded-[11px]" />)
+                  : (recommended?.items ?? []).map((product) => <MiniResult key={product.id} product={product} />)}
               </div>
             </>
           )}

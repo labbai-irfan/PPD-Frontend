@@ -280,7 +280,12 @@
     background: linear-gradient(160deg, #e5433f, #d42e2a);
   }
   .bg-grad-monsoon {
-    background: linear-gradient(120deg, #cfe6ef, #e4eef2);
+    background-color: #cfe6ef;
+    background-image:
+      radial-gradient(120% 90% at 15% 8%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 45%),
+      radial-gradient(90% 80% at 88% 18%, rgba(180, 214, 233, 0.75) 0%, rgba(180, 214, 233, 0) 50%),
+      radial-gradient(110% 100% at 70% 100%, rgba(120, 178, 214, 0.55) 0%, rgba(120, 178, 214, 0) 55%),
+      linear-gradient(120deg, #bcdcec, #dfeef4 55%, #cfe4ee);
   }
   .bg-grad-yoga {
     background: linear-gradient(120deg, #e6def4, #f0ebf7);

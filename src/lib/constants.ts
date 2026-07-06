@@ -34,7 +34,7 @@ export const ROUTES = {
   /** "All Products" screen from the design (applied filters + grid) */
   allProducts: '/products/all',
   product: (id: string) => `/product/${id}`,
-  category: (slug: string) => `/products?category=${slug}`,
+  category: (slug: string) => `/products/all?category=${slug}`,
   categories: '/products',
   search: '/search',
   cart: '/cart',

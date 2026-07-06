@@ -4,10 +4,10 @@ import { ROUTES } from '@/lib/constants'
 import { Icon } from '@/components/ui/Icon'
 
 const tabs = [
-  { label: 'Home', icon: 'home', to: ROUTES.home, end: true },
-  { label: 'Categories', icon: 'grid_view', to: ROUTES.products, end: true },
-  { label: 'Orders', icon: 'shopping_basket', to: ROUTES.orders, end: false },
-  { label: 'Profile', icon: 'person', to: ROUTES.profile, end: true },
+  { label: 'Home', icon: 'home', svgActive: '/icons/home.svg', to: ROUTES.home, end: true },
+  { label: 'Categories', icon: 'grid_view', svgActive: '/icons/menu.svg', to: ROUTES.products, end: true },
+  { label: 'Orders', icon: 'shopping_basket', svgActive: '/icons/order2.svg', svgInactive: '/icons/order.svg', to: ROUTES.orders, end: false },
+  { label: 'Profile', icon: 'person', svgActive: '/icons/profile2.svg', svgInactive: '/icons/profile.svg', to: ROUTES.profile, end: true },
 ]
 
 /**
@@ -36,12 +36,19 @@ export function BottomNav() {
                   isActive ? 'bg-chip px-6' : 'px-4',
                 )}
               >
-                <Icon
-                  name={tab.icon}
-                  size={24}
-                  fill={isActive}
-                  className={isActive ? 'text-primary' : 'text-ink-muted dark:text-muted-foreground'}
-                />
+                {isActive ? (
+                  tab.svgActive ? (
+                    <img src={tab.svgActive} alt={tab.label} className="h-[24px] w-[24px] object-contain" />
+                  ) : (
+                    <Icon name={tab.icon} size={24} fill={true} className="text-primary" />
+                  )
+                ) : (
+                  tab.svgInactive ? (
+                    <img src={tab.svgInactive} alt={tab.label} className="h-[24px] w-[24px] object-contain" />
+                  ) : (
+                    <Icon name={tab.icon} size={24} fill={false} className="text-ink-muted dark:text-muted-foreground" />
+                  )
+                )}
               </span>
             )}
           </NavLink>
