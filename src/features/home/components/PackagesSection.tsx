@@ -37,29 +37,46 @@ export function PackagesSection({ packages }: { packages?: PackageCard[] }) {
           <Link
             key={pkg.name}
             to={pkg.href}
-            className="flex min-h-[142px] overflow-hidden rounded-[18px] bg-[#fdfaf6] p-3 shadow-[0_4px_12px_rgba(120,90,40,0.06)] transition-transform hover:-translate-y-0.5"
+            className="group flex min-h-[145px] overflow-hidden rounded-[18px] bg-white shadow-sm ring-1 ring-black/[0.03] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:bg-card dark:ring-white/5"
           >
-            {/* Left Column */}
-            <div className="flex flex-1 flex-col justify-between pr-2">
+            {/* Left Column (50%) - Warm Off-white background */}
+            <div className="flex w-1/2 flex-col justify-between bg-[#fdfaf6] p-3.5 pr-1.5 sm:p-4 dark:bg-[#25221e]">
               <div>
-                <h3 className="font-urbanist text-[13.5px] font-bold leading-tight text-[#2a2723]">{pkg.name}</h3>
-                <p className="font-inter text-[10.5px] leading-[1.3] text-[#736c63] mt-1 line-clamp-2 min-h-[28px]">{pkg.blurb}</p>
+                <h3 className="font-urbanist text-[12.5px] font-extrabold leading-tight text-[#2a2723] dark:text-white sm:text-[14px]">
+                  {pkg.name}
+                </h3>
+                <p className="font-inter mt-1 line-clamp-2 text-[9.5px] font-medium leading-[1.3] text-[#736c63] sm:text-[11px] dark:text-muted-foreground">
+                  {pkg.blurb}
+                </p>
               </div>
-              <div className="mt-1">
-                <div className="font-inter text-[9px] text-[#8c857c] font-medium leading-none">Starting From</div>
-                <div className="font-inter mt-0.5 text-[18px] font-extrabold leading-none text-[#2a2723]">
+              
+              <div className="mt-2">
+                <span className="font-inter block text-[9px] font-medium leading-none text-[#8c857c] dark:text-muted-foreground">
+                  Starting From
+                </span>
+                <span className="font-inter mt-1 block text-[17px] font-extrabold leading-none text-[#2a2723] dark:text-white">
                   {formatCurrency(pkg.price)}
-                </div>
+                </span>
               </div>
-              <span className="mt-2.5 flex items-center justify-center gap-[2px] rounded-full bg-[#f7941e] py-1.5 font-urbanist text-[11px] font-bold text-white shadow-[0_3px_10px_rgba(247,148,30,0.25)] transition-transform">
-                Explore
-                <Icon name="arrow_forward" size={13} />
-              </span>
             </div>
 
-            {/* Right Column */}
-            <div className="flex w-[80px] shrink-0 items-center justify-center">
-              <img src={pkg.image} alt={pkg.name} loading="lazy" className="max-h-[85px] max-w-full object-contain" />
+            {/* Right Column (50%) - White background */}
+            <div className="flex w-1/2 flex-col justify-between bg-white p-3 dark:bg-card">
+              {/* Product Image centered */}
+              <div className="flex flex-1 items-center justify-center">
+                <img
+                  src={pkg.image}
+                  alt={pkg.name}
+                  loading="lazy"
+                  className="max-h-[66px] max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
+                />
+              </div>
+
+              {/* Explore button at the bottom of the right column */}
+              <span className="mt-2 flex w-full items-center justify-center gap-[3px] rounded-full bg-[#f7941e] py-1.5 font-urbanist text-[10.5px] font-bold text-white shadow-[0_3px_10px_rgba(247,148,30,0.25)] transition-transform group-hover:translate-x-0.5 sm:text-[11px]">
+                Explore
+                <Icon name="arrow_forward" size={12} />
+              </span>
             </div>
           </Link>
         ))}

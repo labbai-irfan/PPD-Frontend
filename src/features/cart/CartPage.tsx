@@ -22,19 +22,19 @@ function CartItemCard({ item }: { item: CartItem }) {
   const off = discountPercent(item.mrp, item.price)
 
   return (
-    <div className="flex gap-3 rounded-2xl bg-card p-3.5 shadow-card">
-      <Link to={ROUTES.product(item.productId)} className="size-16 shrink-0 overflow-hidden rounded-[10px] bg-surface-placeholder dark:bg-muted">
-        <img src={item.image} alt={item.title} className="size-full object-cover" />
+    <div className="flex gap-3 rounded-2xl bg-card p-3 shadow-card">
+      <Link to={ROUTES.product(item.productId)} className="size-[76px] shrink-0 flex items-center justify-center rounded-xl bg-white border border-black/[0.04] p-1.5 shadow-sm dark:bg-muted dark:border-white/5">
+        <img src={item.image} alt={item.title} className="max-h-full max-w-full object-contain" />
       </Link>
-      <div className="min-w-0 flex-1">
+      <div className="min-w-0 flex-1 flex flex-col justify-between py-0.5">
         <div className="flex items-start justify-between gap-2">
           <Link
             to={ROUTES.product(item.productId)}
-            className="line-clamp-2 max-w-[180px] text-[13.5px] font-semibold leading-snug text-card-foreground md:max-w-none"
+            className="line-clamp-1 text-[13.5px] font-semibold leading-tight text-card-foreground hover:underline"
           >
             {item.title}
           </Link>
-          <div className="flex shrink-0 gap-3">
+          <div className="flex shrink-0 gap-3 text-icon-idle">
             <button
               type="button"
               aria-label="Move to wishlist"
@@ -43,9 +43,9 @@ function CartItemCard({ item }: { item: CartItem }) {
                 removeItem(item.key)
                 toast('Moved to wishlist')
               }}
-              className="cursor-pointer text-icon-idle transition-colors hover:text-deal"
+              className="cursor-pointer transition-colors hover:text-deal"
             >
-              <Icon name="favorite" size={19} />
+              <Icon name="favorite" size={18} />
             </button>
             <button
               type="button"
@@ -54,28 +54,31 @@ function CartItemCard({ item }: { item: CartItem }) {
                 removeItem(item.key)
                 toast('Removed from cart')
               }}
-              className="cursor-pointer text-icon-idle transition-colors hover:text-destructive"
+              className="cursor-pointer transition-colors hover:text-destructive"
             >
-              <Icon name="delete" size={19} />
+              <Icon name="delete" size={18} />
             </button>
           </div>
         </div>
-        <div className="mt-1.5 flex items-center gap-2">
-          <span className="text-base font-bold text-foreground">{formatCurrency(item.price)}</span>
-          {off > 0 && (
-            <>
-              <s className="text-xs text-faint-foreground">{formatCurrency(item.mrp)}</s>
-              <SavePill>Save {off}%</SavePill>
-            </>
-          )}
-        </div>
-        <div className="mt-2 flex justify-end">
-          <QuantityStepper
-            size="sm"
-            value={item.quantity}
-            max={Math.min(item.stock, 30)}
-            onChange={(qty) => setQuantity(item.key, qty)}
-          />
+        
+        <div className="mt-2 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-[15px] font-bold text-foreground leading-none">{formatCurrency(item.price)}</span>
+            {off > 0 && (
+              <div className="flex items-center gap-1.5">
+                <s className="text-[10px] text-faint-foreground leading-none">{formatCurrency(item.mrp)}</s>
+                <SavePill className="text-[9px] px-1.5 py-0.5">Save {off}%</SavePill>
+              </div>
+            )}
+          </div>
+          <div className="shrink-0">
+            <QuantityStepper
+              size="sm"
+              value={item.quantity}
+              max={Math.min(item.stock, 30)}
+              onChange={(qty) => setQuantity(item.key, qty)}
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -167,16 +170,17 @@ export default function CartPage() {
         <Dots count={4} active={0} className="mt-3.5" />
       </div>
 
-      {/* Mobile sticky checkout bar */}
       <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md items-center justify-between bg-card px-4 pb-[calc(14px+env(safe-area-inset-bottom))] pt-3 shadow-bar md:hidden">
-        <div className="flex items-center gap-2">
-          <span className="text-lg font-bold leading-none text-foreground">{formatCurrency(totals.total)}</span>
-          <span className="text-[12px] font-medium leading-none text-muted-foreground">
+        <div className="flex flex-col justify-center min-w-0 pr-2">
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className="text-lg font-bold leading-none text-foreground shrink-0">{formatCurrency(totals.total)}</span>
+            {savingsPct > 0 && <SavePill className="shrink-0 text-[10px] px-2 py-0.5">Save {savingsPct}%</SavePill>}
+          </div>
+          <span className="mt-1 text-[11px] font-medium leading-none text-muted-foreground whitespace-nowrap">
             ({itemCount} {itemCount === 1 ? 'Item' : 'Items'})
           </span>
-          {savingsPct > 0 && <SavePill className="ml-0.5">Save {savingsPct}%</SavePill>}
         </div>
-        <Button size="lg" onClick={() => navigate(ROUTES.checkout)} rightIcon={<Icon name="arrow_forward" size={18} />}>
+        <Button size="lg" className="shrink-0" onClick={() => navigate(ROUTES.checkout)} rightIcon={<Icon name="arrow_forward" size={18} />}>
           Proceed to Checkout
         </Button>
       </div>

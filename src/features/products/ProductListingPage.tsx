@@ -23,42 +23,42 @@ const categoryBlocks: CategoryBlock[] = [
     desc: 'Pens, pencils, markers and everyday writing tools.',
     accent: 'text-[#E12234] dark:text-[#FF7A88]',
     bg: 'bg-[#FFF0F2] dark:bg-[#3a2226]',
-    img: 'https://picsum.photos/seed/ppd-writing/300/400',
+    img: '/images/packages/writing-kit.png',
   },
   {
     title: 'Art & Craft Kits',
     desc: 'Everything you need to unleash your creativity.',
     accent: 'text-[#1853A5] dark:text-[#7FB2FF]',
     bg: 'bg-[#EAF3FF] dark:bg-[#1e2a3d]',
-    img: 'https://picsum.photos/seed/ppd-art/300/400',
+    img: '/images/packages/art-kit.png',
   },
   {
     title: 'School Supplies',
     desc: 'Back-to-school essentials for every student.',
     accent: 'text-[#E12234] dark:text-[#FF7A88]',
-    bg: 'bg-[#FFF6EB] dark:bg-[#3a3122]',
-    img: 'https://picsum.photos/seed/ppd-school/300/400',
+    bg: 'bg-[#FFF0F2] dark:bg-[#3a2226]',
+    img: '/images/packages/writing-kit.png',
   },
   {
     title: 'Study Materials',
     desc: 'Books, learning resources in one place.',
     accent: 'text-[#1853A5] dark:text-[#7FB2FF]',
     bg: 'bg-[#EAF3FF] dark:bg-[#1e2a3d]',
-    img: 'https://picsum.photos/seed/ppd-study/300/400',
+    img: '/images/packages/art-kit.png',
   },
   {
     title: 'Office Essentials',
     desc: 'Organize your workspace with premium office supplies.',
     accent: 'text-[#E12234] dark:text-[#FF7A88]',
     bg: 'bg-[#FFF0F2] dark:bg-[#3a2226]',
-    img: 'https://picsum.photos/seed/ppd-office/300/400',
+    img: '/images/packages/writing-kit.png',
   },
   {
     title: 'Kids\' Corner',
     desc: 'Fun, educational and creative products for kids.',
     accent: 'text-[#1853A5] dark:text-[#7FB2FF]',
     bg: 'bg-[#EAF3FF] dark:bg-[#1e2a3d]',
-    img: 'https://picsum.photos/seed/ppd-kids/300/400',
+    img: '/images/packages/art-kit.png',
   },
 ]
 
@@ -66,31 +66,31 @@ function CategoryCard({ block }: { block: CategoryBlock }) {
   return (
     <Link
       to={ROUTES.allProducts}
-      className={`group flex min-h-[130px] overflow-hidden rounded-[18px] sm:min-h-[150px] ${block.bg} shadow-sm ring-1 ring-black/[0.03] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:ring-white/5`}
+      className="group flex min-h-[135px] overflow-hidden rounded-[18px] bg-white shadow-sm ring-1 ring-black/[0.03] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:bg-card dark:ring-white/5"
     >
-      {/* Text column */}
-      <div className="flex flex-1 flex-col justify-between p-3.5 pr-2 sm:p-4">
+      {/* Left Column (50%) */}
+      <div className={`flex w-1/2 flex-col justify-between p-3.5 pr-1.5 sm:p-4 ${block.bg}`}>
         <div>
-          <h3 className={`text-[13px] font-extrabold leading-[1.2] sm:text-[15px] ${block.accent}`}>
+          <h3 className={`text-[12.5px] font-extrabold leading-[1.2] sm:text-[14.5px] ${block.accent}`}>
             {block.title}
           </h3>
-          <p className="mt-1.5 line-clamp-3 text-[9.5px] font-medium leading-[1.35] text-[#6b645b] sm:text-[11px] dark:text-muted-foreground">
+          <p className="mt-1 line-clamp-3 text-[9.5px] font-medium leading-[1.3] text-[#6b645b] sm:text-[11px] dark:text-muted-foreground">
             {block.desc}
           </p>
         </div>
-        <span className="mt-3 inline-flex w-fit items-center gap-[3px] rounded-full bg-[#FBAA2E] px-3 py-1 text-[10px] font-bold text-white shadow-[0_3px_10px_rgba(251,170,46,0.35)] transition-transform group-hover:translate-x-0.5 sm:text-[11.5px]">
+        <span className="mt-3.5 inline-flex w-fit items-center gap-[3px] rounded-full bg-[#FBAA2E] px-3.5 py-[6px] text-[10px] font-bold text-white shadow-[0_3px_10px_rgba(251,170,46,0.35)] transition-transform group-hover:translate-x-0.5 sm:text-[11px]">
           Explore
-          <Icon name="arrow_forward" size={13} />
+          <Icon name="arrow_forward" size={12} />
         </span>
       </div>
 
-      {/* Image column */}
-      <div className="w-[72px] shrink-0 overflow-hidden bg-white sm:w-[90px] dark:bg-white/5">
+      {/* Right Column (50%) */}
+      <div className="flex w-1/2 items-center justify-center bg-white p-3 dark:bg-card">
         <img
           src={block.img}
           alt=""
           loading="lazy"
-          className="size-full object-cover transition-transform duration-300 group-hover:scale-105"
+          className="max-h-[100px] max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
         />
       </div>
     </Link>

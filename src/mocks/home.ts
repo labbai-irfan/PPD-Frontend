@@ -74,10 +74,10 @@ export const yogaPromos: PromoCard[] = [
 
 /** "Shop by Packages" cards. */
 export const packages: PackageCard[] = [
-  { name: 'Complete Writing Kit', blurb: 'Perfect for a fresh start to the year', price: 311, image: img('ppd-writing-kit', 200, 200), href: ROUTES.category('stationery') },
-  { name: 'Art Kits', blurb: 'Perfect for a fresh start to the year', price: 311, image: img('ppd-art-kit', 200, 200), href: ROUTES.category('stationery') },
-  { name: 'Craft Kits', blurb: 'Perfect for a fresh start to the year', price: 311, image: img('ppd-craft-kit', 200, 200), href: ROUTES.category('stationery') },
-  { name: 'Exam Kits', blurb: 'Perfect for a fresh start to the year', price: 311, image: img('ppd-exam-kit', 200, 200), href: ROUTES.category('stationery') },
+  { name: 'Complete Writing Kit', blurb: 'Perfect for a fresh start to the year', price: 311, image: '/images/packages/writing-kit.png', href: ROUTES.category('stationery') },
+  { name: 'Art Kits', blurb: 'Perfect for a fresh start to the year', price: 311, image: '/images/packages/art-kit.png', href: ROUTES.category('stationery') },
+  { name: 'Craft Kits', blurb: 'Perfect for a fresh start to the year', price: 311, image: '/images/packages/craft-kit.png', href: ROUTES.category('stationery') },
+  { name: 'Exam Kits', blurb: 'Perfect for a fresh start to the year', price: 311, image: '/images/packages/exam-kit.png', href: ROUTES.category('stationery') },
 ]
 
 /** Category screen filter chips + All Products applied chips (from the design). */

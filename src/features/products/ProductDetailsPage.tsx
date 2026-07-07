@@ -202,7 +202,7 @@ export default function ProductDetailsPage() {
           </div>
 
           {/* description box */}
-          <div className="mt-3 rounded-xl border border-border-strong px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted dark:text-muted-foreground">
+          <div className="mt-3 rounded-xl border border-border-strong bg-white px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted dark:bg-card/50 dark:text-muted-foreground">
             {product.description}
           </div>
 

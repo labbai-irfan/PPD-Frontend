@@ -45,6 +45,8 @@ export function BottomNav() {
                 ) : (
                   tab.svgInactive ? (
                     <img src={tab.svgInactive} alt={tab.label} className="h-[24px] w-[24px] object-contain" />
+                  ) : tab.svgActive ? (
+                    <img src={tab.svgActive} alt={tab.label} className="h-[24px] w-[24px] object-contain grayscale opacity-50" />
                   ) : (
                     <Icon name={tab.icon} size={24} fill={false} className="text-ink-muted dark:text-muted-foreground" />
                   )
