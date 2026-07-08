@@ -45,30 +45,32 @@ export function ProductCard({ product, className }: ProductCardProps) {
       </div>
 
       <div className="flex flex-1 flex-col px-0.5 pb-1">
-        <h3 className="mt-1 line-clamp-2 min-h-[34px] text-xs font-medium leading-snug text-card-foreground">
+        <h3 className="mt-1 line-clamp-3 sm:line-clamp-none text-xs font-medium leading-snug text-card-foreground">
           {product.title}
         </h3>
         <RatingBadge rating={product.rating} count={product.ratingCount} className="mt-1" />
-        <s className="mt-1 text-[10px] text-faint-foreground font-inter block leading-none">{formatCurrency(product.mrp)}</s>
-        <div className="mt-1 flex items-center justify-between gap-1">
-          <span className="font-urbanist text-[14px] font-extrabold text-foreground shrink-0 leading-none">{formatCurrency(product.price)}</span>
-          <button
-            type="button"
-            aria-label={`Add ${product.title} to cart`}
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-              if (product.variants.length > 0) {
-                navigate(ROUTES.product(product.id))
-                return
-              }
-              addItem(product)
-              toast.success('Added to cart')
-            }}
-            className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow transition-transform hover:scale-110 active:scale-95 cursor-pointer"
-          >
-            <img src="/icons/cart.svg" alt="" className="size-4 object-contain" />
-          </button>
+        <div className="mt-auto pt-1.5">
+          <s className="text-[10px] text-faint-foreground font-inter block leading-none">{formatCurrency(product.mrp)}</s>
+          <div className="mt-1 flex items-center justify-between gap-1">
+            <span className="font-urbanist text-[14px] font-extrabold text-foreground shrink-0 leading-none">{formatCurrency(product.price)}</span>
+            <button
+              type="button"
+              aria-label={`Add ${product.title} to cart`}
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                if (product.variants.length > 0) {
+                  navigate(ROUTES.product(product.id))
+                  return
+                }
+                addItem(product)
+                toast.success('Added to cart')
+              }}
+              className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow transition-transform hover:scale-110 active:scale-95 cursor-pointer"
+            >
+              <img src="/icons/cart.svg" alt="" className="size-4 object-contain" />
+            </button>
+          </div>
         </div>
       </div>
     </Link>

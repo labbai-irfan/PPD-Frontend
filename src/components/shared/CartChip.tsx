@@ -9,8 +9,7 @@ interface CartChipProps {
   className?: string
 }
 
-/** The cart count pill shown in the top-right of every designed screen. */
-export function CartChip({ tone = 'light', className }: CartChipProps) {
+export function CartChip({ tone: _tone, className }: CartChipProps) {
   const navigate = useNavigate()
   const count = useCartCount()
 
@@ -21,16 +20,16 @@ export function CartChip({ tone = 'light', className }: CartChipProps) {
       onClick={() => navigate(ROUTES.cart)}
       className={cn(
         'flex items-center gap-1.5 rounded-full transition-transform hover:scale-105 active:scale-95 cursor-pointer',
-        tone === 'light' ? 'bg-card px-3.5 py-[7px] shadow-pill' : 'bg-accent px-4 py-[9px] shadow-glow',
+        'bg-card px-3.5 py-[7px] shadow-pill',
         className,
       )}
     >
       <img 
         src="/icons/bag.svg" 
         alt="Bag" 
-        className={cn("h-[21px] w-[21px] object-contain", tone === 'solid' && "brightness-0 invert")} 
+        className="h-[21px] w-[21px] object-contain" 
       />
-      <span className={cn('text-sm font-bold', tone === 'light' ? 'text-foreground' : 'text-white')}>{count}</span>
+      <span className="text-sm font-bold text-foreground">{count}</span>
     </button>
   )
 }

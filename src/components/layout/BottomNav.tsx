@@ -4,8 +4,8 @@ import { ROUTES } from '@/lib/constants'
 import { Icon } from '@/components/ui/Icon'
 
 const tabs = [
-  { label: 'Home', icon: 'home', svgActive: '/icons/home.svg', to: ROUTES.home, end: true },
-  { label: 'Categories', icon: 'grid_view', svgActive: '/icons/menu2.svg', svgInactive: '/icons/menu.svg', to: ROUTES.products, end: true },
+  { label: 'Home', icon: 'home', svgActive: '/icons/home.svg', svgInactive: '/icons/home_grey.svg', to: ROUTES.home, end: true },
+  { label: 'Categories', icon: 'grid_view', svgActive: '/icons/menu2.svg', svgInactive: '/icons/menu_grey.svg', to: ROUTES.products, end: true },
   { label: 'Orders', icon: 'shopping_basket', svgActive: '/icons/order2.svg', svgInactive: '/icons/order.svg', to: ROUTES.orders, end: false },
   { label: 'Profile', icon: 'person', svgActive: '/icons/profile2.svg', svgInactive: '/icons/profile.svg', to: ROUTES.profile, end: true },
 ]

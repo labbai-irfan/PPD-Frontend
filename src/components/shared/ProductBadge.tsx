@@ -13,7 +13,7 @@ export function ProductBadge({ product, className }: { product: Product; classNa
   return (
     <span
       className={cn(
-        'inline-flex items-center rounded-full px-2.5 py-[3px] text-[10px] font-semibold text-white',
+        'inline-flex items-center justify-center rounded-full px-1.5 py-[2.5px] text-[8.5px] font-bold text-white whitespace-nowrap shrink-0 sm:px-2.5 sm:py-[3px] sm:text-[10px]',
         isOwnBrand ? 'bg-deal' : 'bg-success',
         className,
       )}

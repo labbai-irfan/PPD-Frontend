@@ -25,7 +25,7 @@ function MiniResult({ product }: { product: Product }) {
   return (
     <Link
       to={ROUTES.product(product.id)}
-      className="group flex flex-col rounded-[14px] bg-card p-2 shadow-card transition-shadow duration-300 hover:shadow-card-hover"
+      className="group flex w-[110px] shrink-0 flex-col rounded-[14px] bg-card p-2 shadow-card transition-shadow duration-300 hover:shadow-card-hover"
     >
       <div className="aspect-square overflow-hidden rounded-[10px] bg-surface-placeholder dark:bg-muted">
         <img
@@ -64,10 +64,45 @@ export default function SearchPage() {
   // Empty-state recommendations: trending picks shown before the user types.
   const { data: recommended, isPending: recPending } = useProducts({ tag: 'trending', pageSize: 6 })
 
+  const [viewportHeight, setViewportHeight] = useState(window.innerHeight)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768)
+      if (window.visualViewport) {
+        setViewportHeight(window.visualViewport.height)
+      } else {
+        setViewportHeight(window.innerHeight)
+      }
+    }
+
+    window.addEventListener('resize', handleResize)
+    if (window.visualViewport) {
+      window.visualViewport.addEventListener('resize', handleResize)
+    }
+    
+    handleResize()
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener('resize', handleResize)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    const originalStyle = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+
     const onKey = (e: KeyboardEvent) => e.key === 'Escape' && navigate(-1)
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+
+    return () => {
+      document.body.style.overflow = originalStyle
+      document.removeEventListener('keydown', onKey)
+    }
   }, [navigate])
 
   function commitSearch(term: string) {
@@ -82,10 +117,16 @@ export default function SearchPage() {
   }
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-[rgba(60,45,25,0.28)] backdrop-blur-[2px]">
-      <div className="mx-auto flex min-h-full w-full max-w-md flex-col p-3.5 md:max-w-xl md:justify-center">
+    <div 
+      className="fixed inset-0 z-50 flex flex-col justify-end bg-[rgba(60,45,25,0.28)] backdrop-blur-[2px] md:justify-center"
+      style={isMobile ? { height: `${viewportHeight}px`, bottom: 'auto' } : undefined}
+    >
+      <div 
+        className="mx-auto flex w-full max-w-md flex-col p-3.5 pb-[calc(10px+env(safe-area-inset-bottom))] md:h-auto md:max-h-[85vh] md:max-w-xl h-full"
+        style={isMobile ? { height: `${viewportHeight}px` } : undefined}
+      >
         {/* Results card */}
-        <div className="rounded-[20px] bg-surface-search p-4 shadow-float animate-slide-up dark:bg-card">
+        <div className="flex-1 min-h-0 overflow-y-auto rounded-[20px] bg-surface-search p-4 shadow-float animate-slide-up dark:bg-card">
           {query && (
             <>
               <div className="flex items-center justify-between gap-3">
@@ -131,14 +172,14 @@ export default function SearchPage() {
           </div>
 
           {query && (
-            <div className="mt-4 grid grid-cols-3 gap-3">
+            <div className="mt-4 flex gap-3 overflow-x-auto no-scrollbar pb-1">
               {isPending ? (
-                Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-[150px] rounded-[11px]" />
+                Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-[150px] w-[110px] shrink-0 rounded-[11px]" />
                 )
               ) : data && data.items.length > 0 ? (
                 data.items.map((product) => <MiniResult key={product.id} product={product} />)
               ) : (
-                <p className="col-span-3 py-4 text-center text-sm text-muted-foreground">
+                <p className="w-full py-4 text-center text-sm text-muted-foreground">
                   No products found for “{query}”
                 </p>
               )}
@@ -171,9 +212,9 @@ export default function SearchPage() {
           {!query && (
             <>
               <p className="mb-2.5 mt-4 text-[13.5px] font-semibold text-foreground">Recommended For You</p>
-              <div className="grid grid-cols-3 gap-3">
+              <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
                 {recPending
-                  ? Array.from({ length: 6 }, (_, i) => <Skeleton key={i} className="h-[150px] rounded-[11px]" />)
+                  ? Array.from({ length: 6 }, (_, i) => <Skeleton key={i} className="h-[150px] w-[110px] shrink-0 rounded-[11px]" />)
                   : (recommended?.items ?? []).map((product) => <MiniResult key={product.id} product={product} />)}
               </div>
             </>
@@ -183,7 +224,7 @@ export default function SearchPage() {
         {/* Live search bar */}
         <form
           onSubmit={onSubmit}
-          className="mt-4 flex items-center gap-3 rounded-full bg-card px-[18px] py-[15px] shadow-float"
+          className="mt-4 shrink-0 flex items-center gap-3 rounded-full bg-card px-[18px] py-[15px] shadow-float"
         >
           <Icon name="search" size={22} className="text-muted-foreground" />
           <input

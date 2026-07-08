@@ -21,7 +21,7 @@ export function HouseOfStoreSection({ cards }: { cards?: HouseCard[] }) {
       <div className="flex items-center justify-between rounded-xl bg-white px-3.5 py-3">
         <Logo size={46} className="rounded-[10px]" />
         <div className="text-right">
-          <div className="font-urbanist text-[22px] font-extrabold leading-none text-deal">100 Years</div>
+          <div className="font-urbanist text-[28px] font-extrabold leading-none text-deal">100 Years</div>
           <div className="font-inter mt-1 text-[11px] font-bold text-[#c23] leading-none">of Educational Excellence</div>
         </div>
       </div>
@@ -42,9 +42,9 @@ export function HouseOfStoreSection({ cards }: { cards?: HouseCard[] }) {
           <Link
             key={card.title}
             to={card.href}
-            className="grid grid-cols-[53%_47%] min-h-[110px] overflow-hidden rounded-xl bg-white shadow-sm transition-transform hover:-translate-y-0.5"
+            className="grid grid-cols-[58%_42%] min-h-[110px] overflow-hidden rounded-xl bg-white shadow-sm transition-transform hover:-translate-y-0.5"
           >
-            <div className="bg-[#faf5ec] flex flex-col justify-between p-3 pr-1">
+            <div className="relative z-10 bg-[#faf5ec] flex flex-col justify-between p-3 pr-1">
               <span className="font-urbanist text-[13px] font-bold leading-tight text-[#2a2723]">{card.title}</span>
               <span className="mt-2 inline-flex items-center justify-center gap-0.5 rounded-full bg-[#f7941e] px-2.5 py-1 font-urbanist text-[9.5px] font-bold text-white shadow-sm hover:bg-[#f5860c] transition-colors w-fit shrink-0">
                 Explore

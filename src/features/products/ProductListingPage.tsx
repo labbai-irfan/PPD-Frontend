@@ -66,10 +66,10 @@ function CategoryCard({ block }: { block: CategoryBlock }) {
   return (
     <Link
       to={ROUTES.allProducts}
-      className="group flex min-h-[135px] overflow-hidden rounded-[18px] bg-white shadow-sm ring-1 ring-black/[0.03] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:bg-card dark:ring-white/5"
+      className="group grid grid-cols-[57%_43%] min-h-[135px] overflow-hidden rounded-[18px] bg-white shadow-sm ring-1 ring-black/[0.03] transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md dark:bg-card dark:ring-white/5"
     >
-      {/* Left Column (50%) */}
-      <div className={`flex w-1/2 flex-col justify-between p-3.5 pr-1.5 sm:p-4 ${block.bg}`}>
+      {/* Left Column (57%) */}
+      <div className={`relative z-10 flex flex-col justify-between p-3.5 pr-1.5 sm:p-4 ${block.bg}`}>
         <div>
           <h3 className={`text-[12.5px] font-extrabold leading-[1.2] sm:text-[14.5px] ${block.accent}`}>
             {block.title}
@@ -84,8 +84,8 @@ function CategoryCard({ block }: { block: CategoryBlock }) {
         </span>
       </div>
 
-      {/* Right Column (50%) */}
-      <div className="flex w-1/2 items-center justify-center bg-white p-3 dark:bg-card">
+      {/* Right Column (43%) */}
+      <div className="flex items-center justify-center bg-white p-3 dark:bg-card">
         <img
           src={block.img}
           alt=""
