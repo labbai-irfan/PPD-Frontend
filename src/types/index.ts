@@ -8,6 +8,8 @@ export interface Category {
   name: string
   /** Material Symbols icon name (design renders categories as icon tiles) */
   icon: string
+  /** Short blurb shown on category cards */
+  description?: string
   /** brand accent for the icon, from the design */
   color: string
   image?: string
@@ -56,6 +58,9 @@ export interface Product {
   bought?: string
   deliveryDays: number
   returnDays: number
+  isPpdOriginal?: boolean
+  isFreeDelivery?: boolean
+  freeDeliveryThreshold?: number
 }
 
 export type ProductTag = 'featured' | 'deal' | 'new' | 'bestseller' | 'trending'
@@ -130,8 +135,36 @@ export interface Address {
   city: string
   state: string
   pincode: string
-  type: 'home' | 'work' | 'other'
-  isDefault: boolean
+  type?: 'home' | 'work' | 'other'
+  isDefault?: boolean
+}
+
+export interface PaymentMethod {
+  id: string
+  type: 'card' | 'upi' | 'wallet'
+  brand?: string
+  last4?: string
+  expiry?: string
+  isDefault?: boolean
+}
+
+export interface Notification {
+  id: string
+  title: string
+  message: string
+  timestamp: Date
+  read: boolean
+  type: 'order' | 'promo' | 'info'
+}
+
+export interface ReturnRequest {
+  id: string
+  orderId: string
+  productName: string
+  reason: string
+  status: 'pending' | 'approved' | 'rejected' | 'completed'
+  requestDate: Date
+  refundAmount: number
 }
 
 /* ------------------------------------------------------------------ */
@@ -169,13 +202,15 @@ export type OrderStatus = 'placed' | 'confirmed' | 'shipped' | 'out-for-delivery
 
 export type PaymentMethodKind = 'card' | 'upi' | 'netbanking' | 'wallet' | 'cod'
 
+export type PaymentStatus = 'pending' | 'paid' | 'failed' | 'refunded'
+
 export interface Order {
   id: string
   items: CartItem[]
   status: OrderStatus
   createdAt: string
   address: Address
-  payment: { method: PaymentMethodKind; label: string }
+  payment: { method: PaymentMethodKind; label: string; status?: PaymentStatus; transactionId?: string }
   pricing: {
     subtotal: number
     discount: number

@@ -11,7 +11,7 @@ function TrendingCard({ product }: { product: Product }) {
   return (
     <Link
       to={ROUTES.product(product.id)}
-      className="w-[148px] shrink-0 rounded-2xl bg-white p-2.5 shadow-[0_6px_16px_rgba(120,80,20,0.12)] transition-transform hover:-translate-y-0.5 md:w-[190px]"
+      className="w-[148px] shrink-0 snap-start rounded-2xl bg-white p-2.5 shadow-[0_6px_16px_rgba(120,80,20,0.12)] transition-transform hover:-translate-y-0.5 md:w-[190px]"
     >
       <div className="h-24 overflow-hidden rounded-[11px] bg-[#f5f3f1] md:h-32">
         <img src={product.images[0]} alt={product.title} loading="lazy" className="size-full object-cover" />
@@ -47,14 +47,14 @@ export function TrendingSection() {
       className="bg-grad-trending overflow-hidden rounded-[20px] bg-cover bg-center px-4 py-[18px] md:px-6"
       style={{ backgroundImage: "url('/components/bg3.png')" }}
     >
-      <div className="mb-4 flex items-center justify-between rounded-[20px] border border-white/20 bg-white/20 px-5 py-3.5 backdrop-blur-md">
-        <div className="flex flex-col">
+      <div className="mb-4 flex items-center justify-between gap-3 rounded-[20px] border border-white/20 bg-white/20 px-4 py-3.5 backdrop-blur-md md:px-5">
+        <div className="flex min-w-0 flex-col">
           <h2 className="text-[17px] font-bold text-[#24211e] leading-tight">Trending Products</h2>
           <p className="text-[12px] font-medium text-[#24211e] mt-0.5">Top Picks This Week</p>
         </div>
         <Link
           to={`${ROUTES.allProducts}?tag=trending`}
-          className="flex items-center gap-1 rounded-full bg-[#fdf1e1] px-[18px] py-[7px] text-[11.5px] font-bold text-[#24211e] shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition-transform hover:scale-105"
+          className="flex min-h-[44px] shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-[#fdf1e1] px-[18px] py-2.5 text-[11.5px] font-bold text-[#24211e] shadow-[0_2px_10px_rgba(0,0,0,0.06)] transition-transform hover:scale-105"
         >
           View All
           <Icon name="arrow_forward" size={14} />
@@ -67,10 +67,10 @@ export function TrendingSection() {
           const ratio = el.scrollLeft / Math.max(1, el.scrollWidth - el.clientWidth)
           setPage(Math.round(ratio * (pageCount - 1)))
         }}
-        className="no-scrollbar flex gap-3 overflow-x-auto"
+        className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4"
       >
         {isPending
-          ? Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-[196px] w-[148px] shrink-0 rounded-2xl bg-white/40" />)
+          ? Array.from({ length: 3 }, (_, i) => <Skeleton key={i} className="h-[196px] w-[148px] shrink-0 snap-start rounded-2xl bg-white/40" />)
           : items.map((product) => <TrendingCard key={product.id} product={product} />)}
       </div>
       <Dots count={pageCount} active={page} tone="light" className="mt-3.5" />

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
@@ -50,7 +50,7 @@ function OrderCard({ order }: { order: Order }) {
               <p className="text-[11.5px] text-muted-foreground">
                 Order ID: <b className="font-semibold text-ink dark:text-foreground">#{order.id}</b>
               </p>
-              <p className="mt-0.5 line-clamp-1 max-w-[180px] text-[12.5px] font-semibold text-card-foreground md:max-w-none">
+              <p className="mt-0.5 line-clamp-1 text-[12.5px] font-semibold text-card-foreground">
                 {first?.title}
                 {order.items.length > 1 ? ' &…' : ''}
               </p>
@@ -62,12 +62,12 @@ function OrderCard({ order }: { order: Order }) {
           </div>
         </div>
       </div>
-      <div className="mt-3 flex items-center justify-between border-t border-border pt-3">
+      <div className="mt-3 flex items-center justify-between gap-2 border-t border-border pt-3">
         <span className="text-xs text-ink-label dark:text-muted-foreground">
           Expected Delivery :{' '}
           <b className="font-semibold text-ink dark:text-foreground">{expectedDelivery(order)}</b>
         </span>
-        <Link to={ROUTES.order(order.id)} className="flex items-center gap-0.5 text-xs font-semibold text-link">
+        <Link to={ROUTES.order(order.id)} className="-my-2.5 flex shrink-0 items-center gap-0.5 whitespace-nowrap py-2.5 text-xs font-semibold text-link">
           View Details
           <Icon name="expand_more" size={16} />
         </Link>
@@ -78,8 +78,13 @@ function OrderCard({ order }: { order: Order }) {
 
 export default function OrdersPage() {
   const orders = useOrdersStore((s) => s.orders)
+  const fetchOrders = useOrdersStore((s) => s.fetchOrders)
   const [tab, setTab] = useState<OrderTab>('All')
   const orderAgain = useProducts({ pageSize: 6 })
+
+  useEffect(() => {
+    void fetchOrders().catch(() => {})
+  }, [fetchOrders])
 
   const filtered = orders.filter((o) => matchesOrderTab(o, tab))
 
@@ -87,7 +92,7 @@ export default function OrdersPage() {
     <div>
       <TopBar leading="menu" cartTone="solid" />
 
-      <div className="flex items-center justify-between gap-3 pb-3 pt-2.5 md:pt-0">
+      <div className="flex flex-col items-start gap-3 pb-3 pt-2.5 sm:flex-row sm:items-center sm:justify-between md:pt-0">
         <h1 className="text-[19px] font-bold text-foreground md:text-2xl">Your Orders</h1>
         <div className="flex items-center rounded-full bg-card p-1 shadow-soft">
           {ORDER_TABS.map((t) => (
@@ -96,7 +101,7 @@ export default function OrdersPage() {
               type="button"
               onClick={() => setTab(t)}
               className={cn(
-                'rounded-full px-3 py-1.5 text-[12.5px] font-semibold transition-colors cursor-pointer md:px-4',
+                'whitespace-nowrap rounded-full px-3 py-2.5 text-[12.5px] font-semibold transition-colors cursor-pointer md:px-4',
                 tab === t ? 'bg-primary text-primary-foreground' : 'text-ink-muted dark:text-muted-foreground',
               )}
             >

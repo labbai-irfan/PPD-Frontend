@@ -23,7 +23,7 @@ function Gallery({ product }: { product: Product }) {
 
   return (
     <div className="flex gap-2.5">
-      <div className="flex w-[70px] shrink-0 flex-col gap-2.5">
+      <div className="flex max-h-[280px] w-[70px] shrink-0 flex-col gap-2.5 overflow-y-auto md:max-h-[420px]">
         {product.images.map((image, i) => (
           <button
             key={image}
@@ -39,7 +39,7 @@ function Gallery({ product }: { product: Product }) {
           </button>
         ))}
       </div>
-      <div className="h-[280px] flex-1 overflow-hidden rounded-2xl bg-card shadow-card md:h-[420px]">
+      <div className="aspect-[3/4] flex-1 overflow-hidden rounded-2xl bg-card shadow-card sm:aspect-square md:aspect-auto md:h-[420px]">
         <img src={product.images[active]} alt={product.title} className="size-full object-cover" />
       </div>
     </div>
@@ -126,7 +126,7 @@ export default function ProductDetailsPage() {
   }
 
   return (
-    <div className="pb-24 md:pb-0">
+    <div className="pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0">
       <TopBar />
 
       <div className="md:grid md:grid-cols-2 md:gap-10">
@@ -162,7 +162,7 @@ export default function ProductDetailsPage() {
 
           <h1 className="mt-3.5 text-[21px] font-bold leading-tight text-foreground md:text-2xl">{product.title}</h1>
 
-          <div className="mt-2 flex items-center gap-2.5 text-[13px]">
+          <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[13px]">
             <span className="flex items-center gap-1">
               <Icon name="star" size={16} fill className="text-rating" />
               <span className="font-semibold text-foreground">{product.rating.toFixed(1)}</span>
@@ -178,8 +178,8 @@ export default function ProductDetailsPage() {
             </span>
           </div>
 
-          <div className="mt-3.5 flex items-center gap-2.5">
-            <span className="text-[27px] font-bold text-foreground">{formatCurrency(product.price)}</span>
+          <div className="mt-3.5 flex flex-wrap items-center gap-x-2.5 gap-y-1">
+            <span className="text-[22px] font-bold text-foreground sm:text-[27px]">{formatCurrency(product.price)}</span>
             <s className="text-base text-faint-foreground">{formatCurrency(product.mrp)}</s>
             {save > 0 && (
               <SavePill className="px-3 py-1.5 text-xs">
@@ -236,7 +236,7 @@ export default function ProductDetailsPage() {
       </div>
 
       {/* Mobile sticky action bar */}
-      <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md gap-3 bg-card px-4 pb-[calc(14px+env(safe-area-inset-bottom))] pt-3 shadow-bar md:hidden">
+      <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md gap-3 bg-card px-4 pb-[calc(14px+env(safe-area-inset-bottom))] pt-3 shadow-bar sm:max-w-xl md:hidden">
         <Button variant="secondary" size="lg" className="flex-1" onClick={handleAddToCart} disabled={outOfStock}>
           {outOfStock ? 'Out of stock' : 'Add to Cart'}
         </Button>

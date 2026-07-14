@@ -10,13 +10,13 @@ export function BundleBanner() {
   return (
     <Link
       to={ROUTES.category('stationery')}
-      className="block w-full overflow-hidden rounded-[18px] transition-transform hover:-translate-y-0.5"
+      className="block aspect-[3/1] w-full overflow-hidden rounded-[18px] transition-transform hover:-translate-y-0.5"
     >
       <img
         src="/components/carousel2.png"
         alt="Build Your Bundle"
         loading="lazy"
-        className="w-full object-contain"
+        className="h-full w-full max-w-full object-cover"
       />
     </Link>
   )
@@ -32,7 +32,7 @@ export function PackagesSection({ packages }: { packages?: PackageCard[] }) {
         subtitle="Everything you need, in one smart kit"
         viewAllHref={ROUTES.category('stationery')}
       />
-      <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4 md:gap-4">
+      <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-2.5 md:grid-cols-4 md:gap-4">
         {packages.map((pkg) => (
           <Link
             key={pkg.name}

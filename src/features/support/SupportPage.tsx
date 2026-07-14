@@ -45,12 +45,12 @@ export default function SupportPage() {
         <p className="mt-1 text-sm text-muted-foreground">Answers to common questions, or reach us directly.</p>
       </div>
 
-      <div className="mb-8 grid gap-3 sm:grid-cols-3">
+      <div className="mb-8 grid grid-cols-1 gap-3 md:grid-cols-3">
         {channels.map((channel) => (
           <Card key={channel.label} className="flex flex-col items-center gap-1.5 p-4 text-center">
             <channel.icon className="size-5 text-primary" />
             <p className="text-sm font-bold text-foreground">{channel.label}</p>
-            <p className="text-xs text-muted-foreground">{channel.detail}</p>
+            <p className="text-xs text-muted-foreground break-words">{channel.detail}</p>
           </Card>
         ))}
       </div>

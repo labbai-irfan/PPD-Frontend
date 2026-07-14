@@ -1,7 +1,9 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import RootLayout from '@/components/layout/RootLayout'
 import AuthLayout from '@/components/layout/AuthLayout'
+import AdminLayout from '@/components/admin/AdminLayout'
 import RequireAuth from '@/app/RequireAuth'
+import AdminGuard from '@/app/AdminGuard'
 import { ROUTES } from '@/lib/constants'
 
 /** Route-level code splitting: each page loads on demand. */
@@ -26,10 +28,54 @@ export const router = createBrowserRouter([
       { path: '/support', lazy: lazyPage(() => import('@/features/support/SupportPage')) },
       { path: '/orders', lazy: lazyPage(() => import('@/features/orders/OrdersPage')) },
       { path: '/orders/:id', lazy: lazyPage(() => import('@/features/orders/OrderDetailsPage')) },
+
+      /* Address Management */
+      { path: '/addresses', lazy: lazyPage(() => import('@/features/address/AddressesPage')) },
+      { path: '/address/add', lazy: lazyPage(() => import('@/features/address/AddAddressPage')) },
+      { path: '/address/:id/edit', lazy: lazyPage(() => import('@/features/address/AddAddressPage')) },
+
+      /* Payment & Account */
+      { path: '/payment-methods', lazy: lazyPage(() => import('@/features/payment/PaymentMethodsPage')) },
+      { path: '/account-settings', lazy: lazyPage(() => import('@/features/profile/AccountSettingsPage')) },
+      { path: '/notifications', lazy: lazyPage(() => import('@/features/notifications/NotificationsPage')) },
+
+      /* Returns & RMA */
+      { path: '/returns', lazy: lazyPage(() => import('@/features/returns/ReturnsPage')) },
+
+      /* Reviews & Ratings */
+      { path: '/my-reviews', lazy: lazyPage(() => import('@/features/reviews/MyReviewsPage')) },
+      { path: '/review/:productId', lazy: lazyPage(() => import('@/features/reviews/ReviewProductPage')) },
+
+      /* Products - Advanced */
+      { path: '/compare', lazy: lazyPage(() => import('@/features/products/CompareProductsPage')) },
+
+      /* Orders & Tracking */
+      { path: '/track/:id', lazy: lazyPage(() => import('@/features/orders/TrackOrderPage')) },
+
+      /* Referral & Rewards */
+      { path: '/referral', lazy: lazyPage(() => import('@/features/referral/ReferralPage')) },
+      { path: '/rewards', lazy: lazyPage(() => import('@/features/rewards/RewardsPage')) },
+
+      /* Bulk & Special */
+      { path: '/bulk-order', lazy: lazyPage(() => import('@/features/bulk/BulkOrderPage')) },
+      { path: '/gift-cards', lazy: lazyPage(() => import('@/features/giftcards/GiftCardsPage')) },
+
+      /* Support & Contact */
+      { path: '/contact-us', lazy: lazyPage(() => import('@/features/support/ContactUsPage')) },
+
+      /* Info Pages */
+      { path: '/help', lazy: lazyPage(() => import('@/features/info/HelpPage')) },
+      { path: '/terms', lazy: lazyPage(() => import('@/features/info/TermsPage')) },
+      { path: '/privacy', lazy: lazyPage(() => import('@/features/info/PrivacyPage')) },
+      { path: '/about', lazy: lazyPage(() => import('@/features/info/AboutPage')) },
+
       {
         element: <RequireAuth />,
         children: [
           { path: '/checkout', lazy: lazyPage(() => import('@/features/checkout/CheckoutPage')) },
+          { path: '/checkout/payment/card', lazy: lazyPage(() => import('@/features/checkout/payment/CardPaymentPage')) },
+          { path: '/checkout/payment/upi', lazy: lazyPage(() => import('@/features/checkout/payment/UpiPaymentPage')) },
+          { path: '/checkout/payment/netbanking', lazy: lazyPage(() => import('@/features/checkout/payment/NetbankingPaymentPage')) },
           { path: '/checkout/success/:orderId', lazy: lazyPage(() => import('@/features/checkout/OrderSuccessPage')) },
           { path: '/profile', lazy: lazyPage(() => import('@/features/profile/ProfilePage')) },
         ],
@@ -43,6 +89,34 @@ export const router = createBrowserRouter([
       { path: '/auth/login', lazy: lazyPage(() => import('@/features/auth/LoginPage')) },
       { path: '/auth/register', lazy: lazyPage(() => import('@/features/auth/RegisterPage')) },
       { path: '/auth/forgot-password', lazy: lazyPage(() => import('@/features/auth/ForgotPasswordPage')) },
+      { path: '/auth/phone-verify', lazy: lazyPage(() => import('@/features/auth/PhoneVerificationPage')) },
+      { path: '/auth/otp-verify', lazy: lazyPage(() => import('@/features/auth/OtpVerificationPage')) },
+      { path: '/auth/reset-password', lazy: lazyPage(() => import('@/features/auth/ResetPasswordPage')) },
+      { path: '/admin', lazy: lazyPage(() => import('@/features/admin/AdminLoginPage')) },
+      { path: '/admin/forgot-password', lazy: lazyPage(() => import('@/features/admin/AdminForgotPasswordPage')) },
+    ],
+  },
+  {
+    element: <AdminGuard />,
+    children: [
+      {
+        element: <AdminLayout />,
+        children: [
+          { path: '/admin/dashboard', lazy: lazyPage(() => import('@/features/admin/AdminDashboardPage')) },
+          { path: '/admin/products', lazy: lazyPage(() => import('@/features/admin/AdminProductsPage')) },
+          { path: '/admin/products/add', lazy: lazyPage(() => import('@/features/admin/AddProductPage')) },
+          { path: '/admin/products/:id/edit', lazy: lazyPage(() => import('@/features/admin/AddProductPage')) },
+          { path: '/admin/orders', lazy: lazyPage(() => import('@/features/admin/AdminOrdersPage')) },
+          { path: '/admin/users', lazy: lazyPage(() => import('@/features/admin/AdminUsersPage')) },
+          { path: '/admin/reviews', lazy: lazyPage(() => import('@/features/admin/AdminReviewsPage')) },
+          { path: '/admin/coupons', lazy: lazyPage(() => import('@/features/admin/AdminCouponsPage')) },
+              { path: '/admin/categories', lazy: lazyPage(() => import('@/features/admin/AdminCategoriesPage')) },
+          { path: '/admin/admins', lazy: lazyPage(() => import('@/features/admin/AdminsPage')) },
+          { path: '/admin/settings', lazy: lazyPage(() => import('@/features/admin/SettingsPage')) },
+          { path: '/admin/security', lazy: lazyPage(() => import('@/features/admin/AdminSecurityPage')) },
+          { path: '/admin/bulk-import', lazy: lazyPage(() => import('@/features/admin/AdminBulkImportPage')) },
+        ],
+      },
     ],
   },
 ])

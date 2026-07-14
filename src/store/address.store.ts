@@ -1,52 +1,60 @@
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
-import { STORAGE_KEYS } from '@/lib/constants'
-import { uid } from '@/lib/utils'
+import { apiClient } from '@/services/api/client'
 import type { Address } from '@/types'
 
 interface AddressState {
   addresses: Address[]
-  add: (address: Omit<Address, 'id'>) => Address
-  update: (id: string, patch: Partial<Omit<Address, 'id'>>) => void
-  remove: (id: string) => void
-  setDefault: (id: string) => void
+  loaded: boolean
+  fetchAddresses: () => Promise<void>
+  add: (address: Omit<Address, 'id'>) => Promise<Address>
+  update: (id: string, patch: Partial<Omit<Address, 'id'>>) => Promise<void>
+  remove: (id: string) => Promise<void>
+  setDefault: (id: string) => Promise<void>
 }
 
-export const useAddressStore = create<AddressState>()(
-  persist(
-    (set) => ({
-      addresses: [],
+/** API-backed address book (backend enforces default rules). */
+export const useAddressStore = create<AddressState>()((set) => ({
+  addresses: [],
+  loaded: false,
 
-      add: (input) => {
-        const address: Address = { ...input, id: uid('addr') }
-        set((state) => ({
-          addresses: [
-            ...state.addresses.map((a) => (address.isDefault ? { ...a, isDefault: false } : a)),
-            state.addresses.length === 0 ? { ...address, isDefault: true } : address,
-          ],
-        }))
-        return address
-      },
+  fetchAddresses: async () => {
+    const { data } = await apiClient.get<Address[]>('/addresses')
+    set({ addresses: data, loaded: true })
+  },
 
-      update: (id, patch) =>
-        set((state) => ({
-          addresses: state.addresses.map((a) => (a.id === id ? { ...a, ...patch } : a)),
-        })),
+  add: async (input) => {
+    const { data } = await apiClient.post<Address>('/addresses', {
+      name: input.name,
+      phone: input.phone,
+      line1: input.line1,
+      line2: input.line2,
+      city: input.city,
+      state: input.state,
+      pincode: input.pincode,
+      type: input.type ?? 'home',
+      isDefault: input.isDefault ?? false,
+    })
+    // Refetch keeps default flags consistent with the server
+    const { data: all } = await apiClient.get<Address[]>('/addresses')
+    set({ addresses: all, loaded: true })
+    return data
+  },
 
-      remove: (id) =>
-        set((state) => {
-          const remaining = state.addresses.filter((a) => a.id !== id)
-          if (remaining.length > 0 && !remaining.some((a) => a.isDefault)) {
-            remaining[0] = { ...remaining[0], isDefault: true }
-          }
-          return { addresses: remaining }
-        }),
+  update: async (id, patch) => {
+    await apiClient.patch(`/addresses/${id}`, patch)
+    const { data } = await apiClient.get<Address[]>('/addresses')
+    set({ addresses: data })
+  },
 
-      setDefault: (id) =>
-        set((state) => ({
-          addresses: state.addresses.map((a) => ({ ...a, isDefault: a.id === id })),
-        })),
-    }),
-    { name: STORAGE_KEYS.addresses },
-  ),
-)
+  remove: async (id) => {
+    await apiClient.delete(`/addresses/${id}`)
+    const { data } = await apiClient.get<Address[]>('/addresses')
+    set({ addresses: data })
+  },
+
+  setDefault: async (id) => {
+    await apiClient.post(`/addresses/${id}/default`)
+    const { data } = await apiClient.get<Address[]>('/addresses')
+    set({ addresses: data })
+  },
+}))

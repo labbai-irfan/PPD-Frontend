@@ -46,7 +46,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <Card className="p-6 sm:p-8">
+    <Card className="p-4 sm:p-8">
       <h1 className="text-xl font-bold tracking-tight text-foreground">Create your account</h1>
       <p className="mt-1 text-sm text-muted-foreground">Join Shopora — it takes less than a minute.</p>
 
@@ -79,7 +79,7 @@ export default function RegisterPage() {
               type="button"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               onClick={() => setShowPassword((v) => !v)}
-              className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground cursor-pointer"
+              className="flex size-11 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground cursor-pointer"
             >
               {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>

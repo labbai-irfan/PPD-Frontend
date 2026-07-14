@@ -32,7 +32,12 @@ export default function WishlistPage() {
       <p className="mb-6 text-sm text-muted-foreground">
         {ids.length} saved {ids.length === 1 ? 'item' : 'items'}
       </p>
-      <ProductGrid products={data} loading={isPending} skeletonCount={ids.length} />
+      <ProductGrid
+        products={data}
+        loading={isPending}
+        skeletonCount={ids.length}
+        className="grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+      />
     </div>
   )
 }

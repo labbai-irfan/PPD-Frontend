@@ -40,8 +40,15 @@ export function ProductCard({ product, className }: ProductCardProps) {
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-1 px-0.5">
-        <ProductBadge product={product} />
-        <WishlistButton productId={product.id} className="ml-auto" />
+        <div className="flex flex-wrap items-center gap-1">
+          <ProductBadge product={product} />
+          {product.isFreeDelivery && (
+            <span className="inline-flex items-center justify-center rounded-full bg-info-soft px-1.5 py-[2.5px] text-[8.5px] font-bold text-info whitespace-nowrap shrink-0 sm:px-2.5 sm:py-[3px] sm:text-[10px]">
+              {product.freeDeliveryThreshold ? `Free Delivery > ₹${product.freeDeliveryThreshold}` : 'Free Delivery'}
+            </span>
+          )}
+        </div>
+        <WishlistButton productId={product.id} className="ml-auto shrink-0" />
       </div>
 
       <div className="flex flex-1 flex-col px-0.5 pb-1">

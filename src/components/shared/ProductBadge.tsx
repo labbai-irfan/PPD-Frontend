@@ -6,7 +6,7 @@ import type { Product } from '@/types'
  * "PPD Original" pill, everything else a green "Save X%" pill.
  */
 export function ProductBadge({ product, className }: { product: Product; className?: string }) {
-  const isOwnBrand = product.brand === 'PPD'
+  const isOwnBrand = product.isPpdOriginal ?? product.brand === 'PPD'
   const off = discountPercent(product.mrp, product.price)
   if (!isOwnBrand && off === 0) return null
 

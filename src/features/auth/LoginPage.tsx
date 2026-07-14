@@ -39,7 +39,7 @@ export default function LoginPage() {
   }
 
   return (
-    <Card className="p-6 sm:p-8">
+    <Card className="p-4 sm:p-8">
       <h1 className="text-xl font-bold tracking-tight text-foreground">Welcome back</h1>
       <p className="mt-1 text-sm text-muted-foreground">Sign in to continue shopping.</p>
 
@@ -64,7 +64,7 @@ export default function LoginPage() {
               type="button"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
               onClick={() => setShowPassword((v) => !v)}
-              className="flex size-8 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground cursor-pointer"
+              className="flex size-11 items-center justify-center rounded-lg text-muted-foreground hover:text-foreground cursor-pointer"
             >
               {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
             </button>
@@ -74,7 +74,7 @@ export default function LoginPage() {
         />
 
         <div className="flex justify-end">
-          <Link to={ROUTES.forgotPassword} className="text-sm font-semibold text-primary hover:underline">
+          <Link to={ROUTES.forgotPassword} className="inline-block p-2.5 -m-2.5 text-sm font-semibold text-primary hover:underline">
             Forgot password?
           </Link>
         </div>

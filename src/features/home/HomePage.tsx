@@ -15,6 +15,7 @@ import { TrendingSection } from '@/features/home/components/TrendingSection'
 import { HouseOfStoreSection } from '@/features/home/components/HouseOfStoreSection'
 import { YogaSection } from '@/features/home/components/SeasonalSections'
 import { BundleBanner, PackagesSection } from '@/features/home/components/PackagesSection'
+import RazorpayCheckout from '@/features/checkout/components/RazorpayCheckout'
 
 function greeting(): string {
   const hour = new Date().getHours()
@@ -31,15 +32,15 @@ function HomeHeader() {
 
   return (
     <div className="flex items-start justify-between md:hidden">
-      <div>
+      <div className="min-w-0 flex-1 pr-2">
         <CircleIconButton icon="/icons/hamburger.svg" iconSize={24} label="Menu" onClick={() => navigate(ROUTES.profile)} />
         <div className="mt-3">
           <p className="text-[15px] text-subtle-foreground">{greeting()}</p>
-          <h1 className="text-[26px] font-bold leading-[1.1] text-foreground">{firstName}</h1>
+          <h1 className="break-words text-[26px] font-bold leading-[1.1] text-foreground">{firstName}</h1>
           <p className="mt-0.5 text-[13px] text-subtle-foreground">{APP_TAGLINE}</p>
         </div>
       </div>
-      <div className="flex flex-col items-end gap-3.5">
+      <div className="flex shrink-0 flex-col items-end gap-3.5">
         <CartChip />
         <div className="flex flex-col items-center gap-0.5">
           <Logo />
@@ -72,6 +73,16 @@ export default function HomePage() {
   return (
     <div className="space-y-4 md:space-y-8">
       <HomeHeader />
+      
+      {/* Razorpay Test Button */}
+      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h3 className="font-bold">Test Razorpay Integration</h3>
+          <p className="text-sm text-gray-500">Click to start a ₹100 test payment</p>
+        </div>
+        <RazorpayCheckout amount={100} />
+      </div>
+
       <BannerCarousel banners={banners.data} loading={banners.isPending} className="mt-2 md:mt-0" />
       <QuickCategories />
       <TrendingSection />

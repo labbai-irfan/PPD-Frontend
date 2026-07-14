@@ -10,16 +10,16 @@ import { SectionHeader } from '@/components/shared/SectionHeader'
 
 function TileStrip({ tiles, tileHeight = 74 }: { tiles: CategoryTile[]; tileHeight?: number }) {
   return (
-    <div className="flex gap-2.5">
+    <div className="flex gap-2.5 overflow-x-auto no-scrollbar snap-x">
       {tiles.map((tile) => (
-        <Link key={tile.label} to={tile.href} className="flex flex-1 flex-col items-center gap-1.5">
+        <Link key={tile.label} to={tile.href} className="flex min-w-[72px] flex-1 shrink-0 snap-start flex-col items-center gap-1.5">
           <span
             className="flex w-full items-center justify-center overflow-hidden rounded-xl bg-white p-2.5 transition-transform hover:-translate-y-0.5"
             style={{ height: tileHeight }}
           >
             <img src={tile.image} alt="" loading="lazy" className="max-h-full max-w-full object-contain" />
           </span>
-          <span className="font-urbanist text-[11px] font-bold text-[#2a2723]">{tile.label}</span>
+          <span className="w-full truncate text-center font-urbanist text-[11px] font-bold text-[#2a2723]">{tile.label}</span>
         </Link>
       ))}
     </div>
@@ -79,7 +79,7 @@ function YogaPromoCard({ promo }: { promo: PromoCard }) {
         <button
           type="button"
           onClick={handleAdd}
-          className="mt-2 flex w-full items-center justify-center rounded-full bg-[#f7941e] py-1.5 font-urbanist text-[10.5px] font-bold text-white shadow-[0_3px_10px_rgba(247,148,30,0.25)] transition-transform group-hover:translate-x-0.5 sm:text-[11px] cursor-pointer"
+          className="mt-2 flex min-h-[44px] w-full items-center justify-center rounded-full bg-[#f7941e] py-2.5 font-urbanist text-[10.5px] font-bold text-white shadow-[0_3px_10px_rgba(247,148,30,0.25)] transition-transform group-hover:translate-x-0.5 sm:text-[11px] cursor-pointer"
         >
           Add to Cart
         </button>
@@ -104,7 +104,7 @@ export function YogaSection({ tiles, promos }: { tiles?: CategoryTile[]; promos?
       >
         <TileStrip tiles={tiles} tileHeight={70} />
         {promos && promos.length > 0 && (
-          <div className="mt-3 flex gap-2.5 md:gap-4">
+          <div className="mt-3 flex flex-col gap-2.5 min-[400px]:flex-row md:gap-4">
             {promos.map((promo) => (
               <YogaPromoCard key={promo.productId} promo={promo} />
             ))}

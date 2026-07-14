@@ -1,11 +1,12 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
-import { Banknote, Check, CreditCard, MapPin, Plus, Smartphone, Wallet } from 'lucide-react'
+import { Banknote, Check, CreditCard, Landmark, MapPin, Plus, ShieldCheck, Smartphone } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn, formatCurrency } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
 import { getCartTotals, useCartStore } from '@/store/cart.store'
 import { useAddressStore } from '@/store/address.store'
+import { useCheckoutStore } from '@/store/checkout.store'
 import { useOrdersStore } from '@/store/orders.store'
 import type { PaymentMethodKind } from '@/types'
 import { Badge } from '@/components/ui/Badge'
@@ -13,11 +14,13 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { AddressForm } from '@/features/address/AddressForm'
 
-const paymentOptions: Array<{ method: PaymentMethodKind; label: string; description: string; icon: typeof Wallet }> = [
+type CheckoutMethod = Exclude<PaymentMethodKind, 'wallet'>
+
+const paymentOptions: Array<{ method: CheckoutMethod; label: string; description: string; icon: typeof Smartphone }> = [
   { method: 'upi', label: 'UPI', description: 'Google Pay, PhonePe, Paytm & more', icon: Smartphone },
   { method: 'card', label: 'Credit / Debit Card', description: 'Visa, Mastercard, RuPay, Amex', icon: CreditCard },
-  { method: 'wallet', label: 'Wallet', description: 'Pay with Shopora wallet balance', icon: Wallet },
-  { method: 'cod', label: 'Cash on Delivery', description: 'Pay when your order arrives', icon: Banknote },
+  { method: 'netbanking', label: 'Netbanking', description: 'All major Indian banks', icon: Landmark },
+  { method: 'cod', label: 'Cash on Delivery', description: 'Pay in cash when your order arrives', icon: Banknote },
 ]
 
 function StepHeading({ step, title, done }: { step: number; title: string; done?: boolean }) {
@@ -41,14 +44,19 @@ export default function CheckoutPage() {
   const { items, coupon, clear } = useCartStore()
   const totals = getCartTotals(items, coupon)
 
-  const { addresses, add } = useAddressStore()
+  const { addresses, add, fetchAddresses, loaded } = useAddressStore()
   const placeOrder = useOrdersStore((s) => s.placeOrder)
+  const startCheckout = useCheckoutStore((s) => s.start)
+
+  useEffect(() => {
+    if (!loaded) void fetchAddresses().catch(() => {})
+  }, [loaded, fetchAddresses])
 
   const [selectedAddressId, setSelectedAddressId] = useState<string | null>(
     () => addresses.find((a) => a.isDefault)?.id ?? addresses[0]?.id ?? null,
   )
   const [showAddressForm, setShowAddressForm] = useState(addresses.length === 0)
-  const [payment, setPayment] = useState<PaymentMethodKind>('upi')
+  const [payment, setPayment] = useState<CheckoutMethod>('upi')
   const [placing, setPlacing] = useState(false)
 
   if (items.length === 0) return <Navigate to={ROUTES.cart} replace />
@@ -60,23 +68,50 @@ export default function CheckoutPage() {
       toast.error('Please select a delivery address')
       return
     }
-    setPlacing(true)
-    await new Promise((r) => setTimeout(r, 900)) // simulate payment processing
     const paymentLabel = paymentOptions.find((p) => p.method === payment)?.label ?? payment
-    const order = placeOrder({
-      items,
-      address: selectedAddress,
-      payment: { method: payment, label: paymentLabel },
-      pricing: {
-        subtotal: totals.subtotal,
-        discount: totals.savings,
+
+    if (payment !== 'cod') {
+      // Prepaid — hand the draft to the payment flow; the cart stays intact
+      // until the payment pages complete the order and clear it themselves
+      startCheckout({
+        items,
+        address: selectedAddress,
+        method: payment,
         couponCode: coupon?.code,
-        shipping: totals.shipping,
-        total: totals.total,
-      },
-    })
-    clear()
-    navigate(ROUTES.checkoutSuccess(order.id), { replace: true })
+        totals: {
+          subtotal: totals.subtotal,
+          couponDiscount: totals.couponDiscount,
+          savings: totals.savings,
+          shipping: totals.shipping,
+          total: totals.total,
+        },
+      })
+      navigate(ROUTES.checkoutPayment(payment))
+      return
+    }
+
+    setPlacing(true)
+    try {
+      // Backend recomputes pricing, checks stock, and creates the order
+      const order = await placeOrder({
+        items,
+        address: selectedAddress,
+        payment: { method: payment, label: paymentLabel },
+        pricing: {
+          subtotal: totals.subtotal,
+          discount: totals.savings,
+          couponCode: coupon?.code,
+          shipping: totals.shipping,
+          total: totals.total,
+        },
+        couponCode: coupon?.code,
+      })
+      clear()
+      navigate(ROUTES.checkoutSuccess(order.id), { replace: true })
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to place order')
+      setPlacing(false)
+    }
   }
 
   return (
@@ -112,11 +147,11 @@ export default function CheckoutPage() {
                         <Badge variant="secondary" className="capitalize">{address.type}</Badge>
                         {address.isDefault && <Badge>Default</Badge>}
                       </span>
-                      <span className="mt-1 block text-muted-foreground">
+                      <span className="mt-1 block break-words text-muted-foreground">
                         {address.line1}
                         {address.line2 ? `, ${address.line2}` : ''}, {address.city}, {address.state} — {address.pincode}
                       </span>
-                      <span className="mt-0.5 block text-muted-foreground">Phone: {address.phone}</span>
+                      <span className="mt-0.5 block text-muted-foreground">Phone: +91 {address.phone}</span>
                     </span>
                   </label>
                 ))}
@@ -126,8 +161,8 @@ export default function CheckoutPage() {
             {showAddressForm ? (
               <div className="mt-4 border-t border-border pt-4">
                 <AddressForm
-                  onSave={(values) => {
-                    const created = add(values)
+                  onSave={async (values) => {
+                    const created = await add(values)
                     setSelectedAddressId(created.id)
                     setShowAddressForm(false)
                     toast.success('Address saved')
@@ -136,7 +171,7 @@ export default function CheckoutPage() {
                 />
               </div>
             ) : (
-              <Button variant="outline" size="sm" className="mt-4" leftIcon={<Plus className="size-4" />} onClick={() => setShowAddressForm(true)}>
+              <Button variant="outline" size="sm" className="mt-4 w-full sm:w-auto" leftIcon={<Plus className="size-4" />} onClick={() => setShowAddressForm(true)}>
                 Add new address
               </Button>
             )}
@@ -215,8 +250,18 @@ export default function CheckoutPage() {
             </dl>
 
             <Button size="lg" className="mt-4 w-full" loading={placing} onClick={handlePlaceOrder}>
-              {placing ? 'Processing…' : `Place order · ${formatCurrency(totals.total)}`}
+              {placing
+                ? 'Processing…'
+                : payment === 'cod'
+                  ? `Place order · ${formatCurrency(totals.total)}`
+                  : `Continue to payment · ${formatCurrency(totals.total)}`}
             </Button>
+            {payment !== 'cod' && (
+              <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
+                <ShieldCheck className="size-3.5 text-success" />
+                100% secure payments
+              </p>
+            )}
             <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
               <MapPin className="size-3.5" />
               {selectedAddress ? `Delivering to ${selectedAddress.city}, ${selectedAddress.pincode}` : 'Select a delivery address'}

@@ -26,18 +26,18 @@ export function HouseOfStoreSection({ cards }: { cards?: HouseCard[] }) {
         </div>
       </div>
 
-      <div className="my-3.5 flex items-center justify-between">
-        <h2 className="font-urbanist text-[17px] font-extrabold text-white leading-none">From the House of PPD</h2>
+      <div className="my-3.5 flex items-center justify-between gap-2">
+        <h2 className="min-w-0 font-urbanist text-[17px] font-extrabold text-white leading-none">From the House of PPD</h2>
         <Link
           to={ROUTES.category('books')}
-          className="flex items-center gap-1 rounded-full bg-white px-3 py-1.5 font-urbanist text-[11px] font-bold text-[#2a2723] shadow-sm transition-colors hover:bg-white/90"
+          className="flex min-h-[44px] shrink-0 items-center gap-1 whitespace-nowrap rounded-full bg-white px-3 py-2.5 font-urbanist text-[11px] font-bold text-[#2a2723] shadow-sm transition-colors hover:bg-white/90"
         >
           Discover PPD
           <Icon name="arrow_forward" size={13} />
         </Link>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5 md:grid-cols-4">
+      <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-2.5 md:grid-cols-4">
         {cards.map((card) => (
           <Link
             key={card.title}
@@ -46,7 +46,7 @@ export function HouseOfStoreSection({ cards }: { cards?: HouseCard[] }) {
           >
             <div className="relative z-10 bg-[#faf5ec] flex flex-col justify-between p-3 pr-1">
               <span className="font-urbanist text-[13px] font-bold leading-tight text-[#2a2723]">{card.title}</span>
-              <span className="mt-2 inline-flex items-center justify-center gap-0.5 rounded-full bg-[#f7941e] px-2.5 py-1 font-urbanist text-[9.5px] font-bold text-white shadow-sm hover:bg-[#f5860c] transition-colors w-fit shrink-0">
+              <span className="mt-2 inline-flex max-w-full items-center justify-center gap-0.5 overflow-hidden rounded-full bg-[#f7941e] px-2.5 py-1 font-urbanist text-[9.5px] font-bold text-white shadow-sm hover:bg-[#f5860c] transition-colors w-fit">
                 Explore
                 <Icon name="arrow_forward" size={10} />
               </span>

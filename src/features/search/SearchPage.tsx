@@ -14,7 +14,7 @@ function Chip({ label, onClick }: { label: string; onClick: () => void }) {
     <button
       type="button"
       onClick={onClick}
-      className="rounded-full bg-white px-[15px] py-2 text-[12.5px] font-medium text-ink-soft shadow-[0_2px_7px_rgba(120,90,40,0.06)] transition-transform hover:scale-105 cursor-pointer dark:bg-muted dark:text-foreground"
+      className="min-h-[44px] rounded-full bg-white px-[15px] py-2.5 text-[12.5px] font-medium text-ink-soft shadow-[0_2px_7px_rgba(120,90,40,0.06)] transition-transform hover:scale-105 cursor-pointer dark:bg-muted dark:text-foreground"
     >
       {label}
     </button>
@@ -130,7 +130,7 @@ export default function SearchPage() {
           {query && (
             <>
               <div className="flex items-center justify-between gap-3">
-                <p className="text-[13.5px] text-ink-soft dark:text-foreground">
+                <p className="min-w-0 break-words text-[13.5px] text-ink-soft dark:text-foreground">
                   Showing results for <b className="font-semibold">“{query}”</b>
                 </p>
                 <button
@@ -226,7 +226,7 @@ export default function SearchPage() {
           onSubmit={onSubmit}
           className="mt-4 shrink-0 flex items-center gap-3 rounded-full bg-card px-[18px] py-[15px] shadow-float"
         >
-          <Icon name="search" size={22} className="text-muted-foreground" />
+          <Icon name="search" size={22} className="shrink-0 text-muted-foreground" />
           <input
             autoFocus
             type="search"
@@ -237,10 +237,15 @@ export default function SearchPage() {
             aria-label="Search products"
             className="min-w-0 flex-1 bg-transparent text-[15px] text-foreground outline-none placeholder:text-faint-foreground"
           />
-          <button type="button" aria-label="Close search" onClick={() => navigate(-1)} className="cursor-pointer">
+          <button
+            type="button"
+            aria-label="Close search"
+            onClick={() => navigate(-1)}
+            className="-mr-2 flex size-11 shrink-0 items-center justify-center cursor-pointer"
+          >
             <Icon name="close" size={22} className="text-muted-foreground" />
           </button>
-          <Icon name="mic" size={22} className="text-muted-foreground" />
+          <Icon name="mic" size={22} className="shrink-0 text-muted-foreground" />
         </form>
       </div>
     </div>

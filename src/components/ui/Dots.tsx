@@ -23,18 +23,24 @@ export function Dots({ count, active, tone = 'brand', onSelect, className }: Dot
             aria-label={`Go to slide ${i + 1}`}
             onClick={onSelect ? () => onSelect(i) : undefined}
             className={cn(
-              'h-1.5 rounded-full transition-all duration-300',
-              onSelect ? 'cursor-pointer' : 'cursor-default',
-              isActive ? 'w-5' : 'w-1.5',
-              tone === 'brand'
-                ? isActive
-                  ? 'bg-primary'
-                  : 'bg-dot'
-                : isActive
-                  ? 'bg-white'
-                  : 'bg-white/50',
+              'flex items-center justify-center',
+              onSelect ? '-m-1.5 cursor-pointer p-2.5' : 'cursor-default',
             )}
-          />
+          >
+            <span
+              className={cn(
+                'h-1.5 rounded-full transition-all duration-300',
+                isActive ? 'w-5' : 'w-1.5',
+                tone === 'brand'
+                  ? isActive
+                    ? 'bg-primary'
+                    : 'bg-dot'
+                  : isActive
+                    ? 'bg-white'
+                    : 'bg-white/50',
+              )}
+            />
+          </button>
         )
       })}
     </div>

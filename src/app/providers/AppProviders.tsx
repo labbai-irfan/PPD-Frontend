@@ -2,6 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
 import type { ReactNode } from 'react'
 import { useUiStore } from '@/store/ui.store'
+import NoInternetPage from '@/pages/NoInternetPage'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,6 +27,7 @@ export function AppProviders({ children }: { children: ReactNode }) {
         toastOptions={{ style: { borderRadius: '12px' } }}
         mobileOffset={{ bottom: 84 }}
       />
+      <NoInternetPage />
     </QueryClientProvider>
   )
 }

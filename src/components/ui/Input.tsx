@@ -1,4 +1,4 @@
-import { useId, type ComponentProps, type ReactNode } from 'react'
+import { useId, type ChangeEvent, type ComponentProps, type ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
 export interface InputProps extends ComponentProps<'input'> {
@@ -7,11 +7,21 @@ export interface InputProps extends ComponentProps<'input'> {
   hint?: string
   leftIcon?: ReactNode
   rightSlot?: ReactNode
+  /** Accept digits 0-9 only — strips other characters on type/paste and shows the numeric keyboard */
+  digitsOnly?: boolean
 }
 
-export function Input({ label, error, hint, leftIcon, rightSlot, className, id, ...props }: InputProps) {
+export function Input({ label, error, hint, leftIcon, rightSlot, className, id, digitsOnly, onChange, inputMode, ...props }: InputProps) {
   const autoId = useId()
   const inputId = id ?? autoId
+
+  function handleChange(e: ChangeEvent<HTMLInputElement>) {
+    if (digitsOnly) {
+      const digits = e.target.value.replace(/\D/g, '')
+      if (digits !== e.target.value) e.target.value = digits
+    }
+    onChange?.(e)
+  }
 
   return (
     <div className="w-full">
@@ -38,6 +48,8 @@ export function Input({ label, error, hint, leftIcon, rightSlot, className, id, 
             className,
           )}
           aria-invalid={error ? true : undefined}
+          inputMode={inputMode ?? (digitsOnly ? 'numeric' : undefined)}
+          onChange={handleChange}
           {...props}
         />
         {rightSlot && <span className="absolute inset-y-0 right-2 flex items-center">{rightSlot}</span>}
