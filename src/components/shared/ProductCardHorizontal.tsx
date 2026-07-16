@@ -46,8 +46,8 @@ export function ProductCardHorizontal({ product, className }: ProductCardHorizon
         />
       </div>
 
-      {/* Right Column - Details with Orange background */}
-      <div className="flex flex-col justify-between bg-[#f7941e]/10 p-3.5 sm:p-4">
+      {/* Right Column - Details */}
+      <div className="flex flex-col justify-between bg-white dark:bg-card p-3.5 sm:p-4">
         <div>
           <div className="mb-1.5">
             <ProductBadge product={product} />
