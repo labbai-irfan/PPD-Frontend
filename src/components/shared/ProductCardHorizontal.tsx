@@ -8,7 +8,6 @@ import { Icon } from '@/components/ui/Icon'
 import { RatingBadge } from '@/components/ui/Rating'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { ProductBadge } from '@/components/shared/ProductBadge'
-import { WishlistButton } from '@/components/shared/WishlistButton'
 import { useState, useEffect, useRef } from 'react'
 
 interface ProductCardHorizontalProps {
@@ -50,13 +49,8 @@ export function ProductCardHorizontal({ product, className }: ProductCardHorizon
       {/* Right Column - Details with Orange background */}
       <div className="flex flex-col justify-between bg-[#f7941e]/10 p-3.5 sm:p-4">
         <div>
-          <div className="flex items-start justify-between gap-2 mb-1.5">
-            <div className="flex-1">
-              <ProductBadge product={product} />
-            </div>
-            <div className="shrink-0">
-              <WishlistButton productId={product.id} size={20} />
-            </div>
+          <div className="mb-1.5">
+            <ProductBadge product={product} />
           </div>
           <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-card-foreground sm:text-[14px]">
             {product.title}
