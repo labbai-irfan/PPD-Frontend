@@ -25,7 +25,8 @@ export const router = createBrowserRouter([
       { path: '/search', lazy: lazyPage(() => import('@/features/search/SearchPage')) },
       { path: '/cart', lazy: lazyPage(() => import('@/features/cart/CartPage')) },
       { path: '/wishlist', lazy: lazyPage(() => import('@/features/wishlist/WishlistPage')) },
-      { path: '/coupons', lazy: lazyPage(() => import('@/features/coupons/CouponsPage')) },
+      // Feature downgraded for client — re-enable by uncommenting:
+      // { path: '/coupons', lazy: lazyPage(() => import('@/features/coupons/CouponsPage')) },
       { path: '/support', lazy: lazyPage(() => import('@/features/support/SupportPage')) },
 
       /* Products - Advanced */
@@ -111,12 +112,13 @@ export const router = createBrowserRouter([
           { path: '/admin/orders', lazy: lazyPage(() => import('@/features/admin/AdminOrdersPage')) },
           { path: '/admin/users', lazy: lazyPage(() => import('@/features/admin/AdminUsersPage')) },
           { path: '/admin/reviews', lazy: lazyPage(() => import('@/features/admin/AdminReviewsPage')) },
-          { path: '/admin/coupons', lazy: lazyPage(() => import('@/features/admin/AdminCouponsPage')) },
+          // Feature downgraded for client — re-enable by uncommenting:
+          // { path: '/admin/coupons', lazy: lazyPage(() => import('@/features/admin/AdminCouponsPage')) },
           { path: '/admin/categories', lazy: lazyPage(() => import('@/features/admin/AdminCategoriesPage')) },
           { path: '/admin/banners', lazy: lazyPage(() => import('@/features/admin/AdminBannersPage')) },
           { path: '/admin/admins', lazy: lazyPage(() => import('@/features/admin/AdminsPage')) },
           { path: '/admin/settings', lazy: lazyPage(() => import('@/features/admin/SettingsPage')) },
-          { path: '/admin/security', lazy: lazyPage(() => import('@/features/admin/AdminSecurityPage')) },
+          // { path: '/admin/security', lazy: lazyPage(() => import('@/features/admin/AdminSecurityPage')) },
           { path: '/admin/bulk-import', lazy: lazyPage(() => import('@/features/admin/AdminBulkImportPage')) },
         ],
       },

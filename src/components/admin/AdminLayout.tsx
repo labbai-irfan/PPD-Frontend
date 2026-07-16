@@ -7,13 +7,11 @@ import {
   Users,
   Star,
   FolderTree,
-  Ticket,
   UserCog,
   Settings,
   LogOut,
   ChevronLeft,
   ChevronRight,
-  Lock,
   Upload,
   Menu,
   X,
@@ -30,11 +28,12 @@ const menuItems = [
   { icon: Users, label: 'Users', path: '/admin/users' },
   { icon: Star, label: 'Reviews', path: '/admin/reviews' },
   { icon: FolderTree, label: 'Categories', path: '/admin/categories' },
-  { icon: Ticket, label: 'Coupons', path: '/admin/coupons' },
+  // Feature downgraded for client — re-enable by uncommenting:
+  // { icon: Ticket, label: 'Coupons', path: '/admin/coupons' },
   { icon: Image, label: 'Banners', path: '/admin/banners' },
   { icon: UserCog, label: 'Admins', path: '/admin/admins' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
-  { icon: Lock, label: 'Security', path: '/admin/security' },
+  // { icon: Lock, label: 'Security', path: '/admin/security' },
 ]
 
 export default function AdminLayout() {
