@@ -3,7 +3,7 @@ import { QuickCategories } from '@/features/home/components/QuickCategories'
 import { BannerCarousel } from '@/components/shared/BannerCarousel'
 import { BundleBanner } from '@/features/home/components/PackagesSection'
 import { SectionHeader } from '@/components/shared/SectionHeader'
-import { ProductGrid } from '@/components/shared/ProductGrid'
+import { ProductGridHorizontal } from '@/components/shared/ProductGridHorizontal'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { useBanners, useCategories, useProducts } from '@/hooks/use-catalog'
 import { ROUTES } from '@/lib/constants'
@@ -85,7 +85,7 @@ function RecommendedSection() {
   return (
     <section>
       <SectionHeader title="Recommended for You" viewAllHref={ROUTES.allProducts} className="mb-3.5" />
-      <ProductGrid products={data?.items} loading={isPending} skeletonCount={6} />
+      <ProductGridHorizontal products={data?.items} loading={isPending} skeletonCount={6} />
     </section>
   )
 }

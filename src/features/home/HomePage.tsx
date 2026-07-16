@@ -18,6 +18,7 @@ import { BundleBanner, PackagesSection } from '@/features/home/components/Packag
 
 function greeting(): string {
   const hour = new Date().getHours()
+  if (hour < 6 || hour >= 21) return 'Good Night,'
   if (hour < 12) return 'Good Morning,'
   if (hour < 17) return 'Good Afternoon,'
   return 'Good Evening,'

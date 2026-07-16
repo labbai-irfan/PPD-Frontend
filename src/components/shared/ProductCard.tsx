@@ -1,9 +1,11 @@
+import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { cn, formatCurrency } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
 import type { Product } from '@/types'
 import { useCartStore } from '@/store/cart.store'
+import { Icon } from '@/components/ui/Icon'
 import { RatingBadge } from '@/components/ui/Rating'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { ProductBadge } from '@/components/shared/ProductBadge'
@@ -21,6 +23,10 @@ interface ProductCardProps {
 export function ProductCard({ product, className }: ProductCardProps) {
   const navigate = useNavigate()
   const addItem = useCartStore((s) => s.addItem)
+  const [justAdded, setJustAdded] = useState(false)
+  const revertTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
+
+  useEffect(() => () => clearTimeout(revertTimer.current), [])
 
   return (
     <Link
@@ -37,6 +43,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
           loading="lazy"
           className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        <div className="absolute right-2 top-2">
+          <WishlistButton productId={product.id} size={22} />
+        </div>
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-1 px-0.5">
@@ -48,7 +57,6 @@ export function ProductCard({ product, className }: ProductCardProps) {
             </span>
           )}
         </div>
-        <WishlistButton productId={product.id} className="ml-auto shrink-0" />
       </div>
 
       <div className="flex flex-1 flex-col px-0.5 pb-1">
@@ -72,10 +80,20 @@ export function ProductCard({ product, className }: ProductCardProps) {
                 }
                 addItem(product)
                 toast.success('Added to cart')
+                setJustAdded(true)
+                clearTimeout(revertTimer.current)
+                revertTimer.current = setTimeout(() => setJustAdded(false), 1200)
               }}
-              className="flex size-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-glow transition-transform hover:scale-110 active:scale-95 cursor-pointer"
+              className={cn(
+                'flex size-8 shrink-0 items-center justify-center rounded-full text-primary-foreground shadow-glow transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer',
+                justAdded ? 'scale-110 bg-success' : 'bg-primary',
+              )}
             >
-              <img src="/icons/cart.svg" alt="" className="size-4 object-contain" />
+              {justAdded ? (
+                <Icon name="check" size={16} weight={700} className="text-white" />
+              ) : (
+                <img src="/icons/cart.svg" alt="" className="size-4 object-contain" />
+              )}
             </button>
           </div>
         </div>

@@ -22,8 +22,11 @@ function Gallery({ product }: { product: Product }) {
   const [active, setActive] = useState(0)
 
   return (
-    <div className="flex gap-2.5">
-      <div className="flex max-h-[280px] w-[70px] shrink-0 flex-col gap-2.5 overflow-y-auto md:max-h-[420px]">
+    // One shared row height: the thumb rail and the main image both fill it,
+    // so the main image can never grow taller than the thumbnail column.
+    // 294px = 4 thumbs (4×66px) + 3 gaps (3×10px).
+    <div className="flex h-[294px] gap-2.5 md:h-[420px]">
+      <div className="flex w-[70px] shrink-0 flex-col gap-2.5 overflow-y-auto no-scrollbar">
         {product.images.map((image, i) => (
           <button
             key={image}
@@ -31,7 +34,7 @@ function Gallery({ product }: { product: Product }) {
             aria-label={`View image ${i + 1}`}
             onClick={() => setActive(i)}
             className={cn(
-              'h-[66px] overflow-hidden rounded-xl border-2 bg-card p-1 transition-colors cursor-pointer',
+              'h-[66px] shrink-0 overflow-hidden rounded-xl border-2 bg-card p-1 transition-colors cursor-pointer',
               i === active ? 'border-primary' : 'border-transparent',
             )}
           >
@@ -39,7 +42,7 @@ function Gallery({ product }: { product: Product }) {
           </button>
         ))}
       </div>
-      <div className="aspect-[3/4] flex-1 overflow-hidden rounded-2xl bg-card shadow-card sm:aspect-square md:aspect-auto md:h-[420px]">
+      <div className="h-full flex-1 overflow-hidden rounded-2xl bg-card shadow-card">
         <img src={product.images[active]} alt={product.title} className="size-full object-cover" />
       </div>
     </div>

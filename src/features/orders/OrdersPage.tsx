@@ -92,16 +92,16 @@ export default function OrdersPage() {
     <div>
       <TopBar leading="menu" cartTone="solid" />
 
-      <div className="flex flex-col items-start gap-3 pb-3 pt-2.5 sm:flex-row sm:items-center sm:justify-between md:pt-0">
-        <h1 className="text-[19px] font-bold text-foreground md:text-2xl">Your Orders</h1>
-        <div className="flex items-center rounded-full bg-card p-1 shadow-soft">
+      <div className="flex flex-row items-center justify-between gap-2 pb-3 pt-2.5 md:pt-0">
+        <h1 className="shrink-0 text-[19px] font-bold text-foreground md:text-2xl">Your Orders</h1>
+        <div className="flex min-w-0 items-center rounded-full bg-card p-0.5 shadow-soft flex-nowrap overflow-x-auto no-scrollbar">
           {ORDER_TABS.map((t) => (
             <button
               key={t}
               type="button"
               onClick={() => setTab(t)}
               className={cn(
-                'whitespace-nowrap rounded-full px-3 py-2.5 text-[12.5px] font-semibold transition-colors cursor-pointer md:px-4',
+                'flex-shrink-0 whitespace-nowrap rounded-full px-3.5 py-1.5 text-[12.5px] font-semibold transition-colors cursor-pointer md:px-4',
                 tab === t ? 'bg-primary text-primary-foreground' : 'text-ink-muted dark:text-muted-foreground',
               )}
             >
