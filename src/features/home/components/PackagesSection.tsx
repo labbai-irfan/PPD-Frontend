@@ -26,7 +26,7 @@ export function BundleBanner() {
 export function PackagesSection({ packages }: { packages?: PackageCard[] }) {
   if (!packages?.length) return null
   return (
-    <section>
+    <section className="bg-[#FDF1E1] rounded-[20px] px-4 py-6 md:px-6 md:py-8 dark:bg-[#2a251f]">
       <SectionHeader
         title="Shop by Packages"
         subtitle="Everything you need, in one smart kit"
