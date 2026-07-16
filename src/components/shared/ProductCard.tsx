@@ -36,12 +36,12 @@ export function ProductCard({ product, className }: ProductCardProps) {
         className,
       )}
     >
-      <div className="relative aspect-square overflow-hidden bg-surface-placeholder dark:bg-muted">
+      <div className="relative aspect-square overflow-hidden bg-white p-1.5 dark:bg-card">
         <img
           src={product.images[0]}
           alt={product.title}
           loading="lazy"
-          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="size-full object-contain transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute right-2 top-2">
           <WishlistButton productId={product.id} size={22} />

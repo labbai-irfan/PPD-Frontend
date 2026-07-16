@@ -37,12 +37,12 @@ export function ProductCardHorizontal({ product, className }: ProductCardHorizon
       )}
     >
       {/* Left Column - Image */}
-      <div className="relative overflow-hidden bg-surface-placeholder dark:bg-muted flex items-center justify-center">
+      <div className="relative overflow-hidden bg-white p-2 dark:bg-card flex items-center justify-center">
         <img
           src={product.images[0]}
           alt={product.title}
           loading="lazy"
-          className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="size-full object-contain transition-transform duration-500 group-hover:scale-105"
         />
       </div>
 
