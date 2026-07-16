@@ -96,7 +96,7 @@ export default function ProductListingPage() {
 
   return (
     <div className="space-y-4 md:space-y-6">
-      <TopBar />
+      <TopBar leading="menu" />
 
       <div className="px-1">
         <h1 className="text-[20px] font-extrabold text-foreground sm:text-2xl">Categories to Explore</h1>
