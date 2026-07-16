@@ -24,7 +24,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
   return (
     <Link
-      to={ROUTES.product(product.id)}
+      to={ROUTES.product(product.slug)}
       className={cn(
         'group flex w-full min-h-[277px] flex-col rounded-[15px] border border-border bg-card p-2 shadow-card transition-shadow duration-300 hover:shadow-card-hover',
         className,
@@ -67,7 +67,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
                 e.preventDefault()
                 e.stopPropagation()
                 if (product.variants.length > 0) {
-                  navigate(ROUTES.product(product.id))
+                  navigate(ROUTES.product(product.slug))
                   return
                 }
                 addItem(product)

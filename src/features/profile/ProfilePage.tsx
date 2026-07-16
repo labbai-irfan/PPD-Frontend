@@ -115,12 +115,12 @@ export default function ProfilePage() {
 
   const menu: Array<{ label: string; icon: string; fill: boolean; onClick: () => void }> = [
     { label: 'My Wishlist', icon: 'favorite', fill: true, onClick: () => navigate(ROUTES.wishlist) },
-    { label: 'Saved Address', icon: 'import_contacts', fill: false, onClick: () => toast('Saved addresses are coming soon') },
+    { label: 'Saved Address', icon: 'import_contacts', fill: false, onClick: () => navigate(ROUTES.addresses) },
     { label: 'Preferences', icon: 'tune', fill: false, onClick: () => setPreferencesOpen(true) },
-    { label: 'Password', icon: 'lock', fill: true, onClick: () => navigate(ROUTES.forgotPassword) },
-    { label: 'Notification Settings', icon: 'notifications', fill: true, onClick: () => toast('Notification settings are coming soon') },
+    { label: 'Password', icon: 'lock', fill: true, onClick: () => navigate(ROUTES.accountSettings) },
+    { label: 'Notification Settings', icon: 'notifications', fill: true, onClick: () => navigate(ROUTES.accountSettings) },
     { label: 'Help & Support', icon: 'support_agent', fill: false, onClick: () => navigate(ROUTES.support) },
-    { label: 'About PPD', icon: 'info', fill: true, onClick: () => navigate(ROUTES.support) },
+    { label: 'About PPD', icon: 'info', fill: true, onClick: () => navigate(ROUTES.about) },
     {
       label: 'Log out',
       icon: 'logout',

@@ -15,7 +15,6 @@ import { TrendingSection } from '@/features/home/components/TrendingSection'
 import { HouseOfStoreSection } from '@/features/home/components/HouseOfStoreSection'
 import { YogaSection } from '@/features/home/components/SeasonalSections'
 import { BundleBanner, PackagesSection } from '@/features/home/components/PackagesSection'
-import RazorpayCheckout from '@/features/checkout/components/RazorpayCheckout'
 
 function greeting(): string {
   const hour = new Date().getHours()
@@ -73,16 +72,6 @@ export default function HomePage() {
   return (
     <div className="space-y-4 md:space-y-8">
       <HomeHeader />
-      
-      {/* Razorpay Test Button */}
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <h3 className="font-bold">Test Razorpay Integration</h3>
-          <p className="text-sm text-gray-500">Click to start a ₹100 test payment</p>
-        </div>
-        <RazorpayCheckout amount={100} />
-      </div>
-
       <BannerCarousel banners={banners.data} loading={banners.isPending} className="mt-2 md:mt-0" />
       <QuickCategories />
       <TrendingSection />

@@ -40,7 +40,7 @@ export default function AddProductPage() {
   const [dragActive, setDragActive] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const apiBase = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/api\/v1$/, '')
+  const apiBase = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/api$/, '')
 
   async function uploadFiles(files: FileList | File[]) {
     const list = Array.from(files).filter((f) => f.type.startsWith('image/'))

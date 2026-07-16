@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
-import { Navigate, useNavigate } from 'react-router-dom'
-import { Banknote, Check, CreditCard, Landmark, MapPin, Plus, ShieldCheck, Smartphone } from 'lucide-react'
+import { Navigate, useNavigate, Link } from 'react-router-dom'
+import { Banknote, Check, CreditCard, MapPin, Plus, ShieldCheck, ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn, formatCurrency } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
@@ -8,18 +8,15 @@ import { getCartTotals, useCartStore } from '@/store/cart.store'
 import { useAddressStore } from '@/store/address.store'
 import { useCheckoutStore } from '@/store/checkout.store'
 import { useOrdersStore } from '@/store/orders.store'
-import type { PaymentMethodKind } from '@/types'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { AddressForm } from '@/features/address/AddressForm'
 
-type CheckoutMethod = Exclude<PaymentMethodKind, 'wallet'>
+type CheckoutMethod = 'online' | 'cod'
 
-const paymentOptions: Array<{ method: CheckoutMethod; label: string; description: string; icon: typeof Smartphone }> = [
-  { method: 'upi', label: 'UPI', description: 'Google Pay, PhonePe, Paytm & more', icon: Smartphone },
-  { method: 'card', label: 'Credit / Debit Card', description: 'Visa, Mastercard, RuPay, Amex', icon: CreditCard },
-  { method: 'netbanking', label: 'Netbanking', description: 'All major Indian banks', icon: Landmark },
+const paymentOptions: Array<{ method: CheckoutMethod; label: string; description: string; icon: typeof CreditCard }> = [
+  { method: 'online', label: 'Online Payment', description: 'UPI, Cards, Netbanking & more via Razorpay', icon: CreditCard },
   { method: 'cod', label: 'Cash on Delivery', description: 'Pay in cash when your order arrives', icon: Banknote },
 ]
 
@@ -56,7 +53,7 @@ export default function CheckoutPage() {
     () => addresses.find((a) => a.isDefault)?.id ?? addresses[0]?.id ?? null,
   )
   const [showAddressForm, setShowAddressForm] = useState(addresses.length === 0)
-  const [payment, setPayment] = useState<CheckoutMethod>('upi')
+  const [payment, setPayment] = useState<CheckoutMethod>('online')
   const [placing, setPlacing] = useState(false)
 
   if (items.length === 0) return <Navigate to={ROUTES.cart} replace />
@@ -76,7 +73,7 @@ export default function CheckoutPage() {
       startCheckout({
         items,
         address: selectedAddress,
-        method: payment,
+        method: 'upi', // default online method; user picks inside Razorpay/forms
         couponCode: coupon?.code,
         totals: {
           subtotal: totals.subtotal,
@@ -86,7 +83,7 @@ export default function CheckoutPage() {
           total: totals.total,
         },
       })
-      navigate(ROUTES.checkoutPayment(payment))
+      navigate(ROUTES.checkoutPayment('upi'))
       return
     }
 
@@ -116,7 +113,16 @@ export default function CheckoutPage() {
 
   return (
     <div>
-      <h1 className="mb-6 text-2xl font-bold tracking-tight text-foreground">Checkout</h1>
+      <div className="mb-6 flex items-center gap-4">
+        <Link
+          to={ROUTES.cart}
+          className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-background transition-colors hover:bg-muted hover:text-foreground group"
+        >
+          <ArrowLeft className="size-5 text-muted-foreground transition-transform group-hover:-translate-x-0.5" />
+          <span className="sr-only">Back to cart</span>
+        </Link>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground">Checkout</h1>
+      </div>
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div className="space-y-5">

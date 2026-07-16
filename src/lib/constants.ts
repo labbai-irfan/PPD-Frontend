@@ -38,7 +38,7 @@ export const ROUTES = {
   /* Shopping */
   products: '/products',
   allProducts: '/products/all',
-  product: (id: string) => `/product/${id}`,
+  product: (idOrSlug: string) => `/product/${idOrSlug}`,
   category: (slug: string) => `/products/all?category=${slug}`,
   categories: '/products',
   search: '/search',
@@ -104,6 +104,7 @@ export const ROUTES = {
   adminCoupons: '/admin/coupons',
   addCoupon: '/admin/coupons/add',
   adminCategories: '/admin/categories',
+  adminBanners: '/admin/banners',
   adminAdmins: '/admin/admins',
   adminSettings: '/admin/settings',
   adminSecurity: '/admin/security',

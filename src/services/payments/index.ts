@@ -5,23 +5,30 @@ import type { PaymentGateway } from '@/services/payments/types'
 
 export * from '@/services/payments/types'
 
-interface PaymentsConfig {
+export interface PaymentsConfig {
   provider: 'mock' | 'razorpay'
   keyId: string | null
 }
 
-let gatewayPromise: Promise<PaymentGateway> | null = null
+let configPromise: Promise<PaymentsConfig> | null = null
 
 /**
- * Resolve the active gateway once per session from GET /payments/config;
- * if the config endpoint is unreachable we fall back to the mock gateway.
+ * Resolve the active payment config once per session from GET /payments/config;
+ * if the config endpoint is unreachable we fall back to the mock provider so
+ * checkout stays usable (the backend still decides the real provider per intent).
  */
-export async function getPaymentGateway(): Promise<PaymentGateway> {
-  if (!gatewayPromise) {
-    gatewayPromise = apiClient
+export function getPaymentsConfig(): Promise<PaymentsConfig> {
+  if (!configPromise) {
+    configPromise = apiClient
       .get<PaymentsConfig>('/payments/config')
-      .then(({ data }) => (data.provider === 'razorpay' ? new RazorpayGateway() : new MockGateway()))
-      .catch(() => new MockGateway())
+      .then(({ data }) => data)
+      .catch(() => ({ provider: 'mock' as const, keyId: null }))
   }
-  return gatewayPromise
+  return configPromise
+}
+
+/** The gateway matching the active provider — Razorpay checkout or the built-in mock. */
+export async function getPaymentGateway(): Promise<PaymentGateway> {
+  const config = await getPaymentsConfig()
+  return config.provider === 'razorpay' ? new RazorpayGateway() : new MockGateway()
 }

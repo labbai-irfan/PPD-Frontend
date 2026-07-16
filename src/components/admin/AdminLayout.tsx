@@ -11,13 +11,13 @@ import {
   UserCog,
   Settings,
   LogOut,
-  ChevronDown,
   ChevronLeft,
   ChevronRight,
   Lock,
   Upload,
   Menu,
   X,
+  Image,
 } from 'lucide-react'
 import { Logo } from '@/components/shared/Logo'
 import { useAuthStore } from '@/store/auth.store'
@@ -31,6 +31,7 @@ const menuItems = [
   { icon: Star, label: 'Reviews', path: '/admin/reviews' },
   { icon: FolderTree, label: 'Categories', path: '/admin/categories' },
   { icon: Ticket, label: 'Coupons', path: '/admin/coupons' },
+  { icon: Image, label: 'Banners', path: '/admin/banners' },
   { icon: UserCog, label: 'Admins', path: '/admin/admins' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
   { icon: Lock, label: 'Security', path: '/admin/security' },
@@ -134,11 +135,6 @@ export default function AdminLayout() {
               <Menu className="size-5" />
             </button>
             <h1 className="text-lg md:text-xl font-semibold text-foreground">Admin Panel</h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <button className="p-2 hover:bg-muted rounded-lg transition-colors">
-              <ChevronDown className="size-5" />
-            </button>
           </div>
         </div>
 

@@ -26,7 +26,7 @@ export default function AdminCategoriesPage() {
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const apiBase = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/api\/v1$/, '')
+  const apiBase = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/api$/, '')
 
   const load = () =>
     apiClient

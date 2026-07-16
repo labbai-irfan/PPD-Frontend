@@ -1,12 +1,13 @@
 import { useCallback, useState, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ArrowLeft, XCircle } from 'lucide-react'
+import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
 import { useCartStore } from '@/store/cart.store'
 import { useCheckoutStore, type CheckoutDraft } from '@/store/checkout.store'
 import { useOrdersStore } from '@/store/orders.store'
-import { getPaymentGateway, type PaymentDetails } from '@/services/payments'
+import { getPaymentGateway, PaymentError, type PaymentDetails } from '@/services/payments'
 import type { PaymentMethodKind } from '@/types'
 import { Button, buttonVariants } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -79,6 +80,12 @@ export function usePaymentFlow(): PaymentFlow {
         clearCart()
         clearCheckout()
       } catch (err) {
+        // Closing the gateway window isn't a failure — return to the form quietly.
+        if (err instanceof PaymentError && err.code === 'cancelled') {
+          setStatus('idle')
+          toast.info('Payment cancelled — you have not been charged.')
+          return
+        }
         setStatus('failed')
         setError(err instanceof Error ? err.message : 'Payment failed. Please try again.')
       }
@@ -117,18 +124,19 @@ export function PaymentShell({
 
   return (
     <div>
-      <Link
-        to={ROUTES.checkout}
-        className="mb-4 inline-flex items-center gap-1.5 py-2 -my-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
-      >
-        <ArrowLeft className="size-4" />
-        Back to checkout
-      </Link>
-
-      <div className="mb-6 flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">{title}</h1>
-          {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
+      <div className="mb-6 flex flex-wrap items-start justify-between gap-x-6 gap-y-4">
+        <div className="flex items-start gap-4">
+          <Link
+            to={ROUTES.checkout}
+            className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-background transition-colors hover:bg-muted group"
+          >
+            <ArrowLeft className="size-5 text-muted-foreground transition-transform group-hover:-translate-x-0.5" />
+            <span className="sr-only">Back to checkout</span>
+          </Link>
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{title}</h1>
+            {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
+          </div>
         </div>
         <p className="text-sm text-muted-foreground">
           Amount payable{' '}

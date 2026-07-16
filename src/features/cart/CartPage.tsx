@@ -30,7 +30,7 @@ function CartItemCard({ item }: { item: CartItem }) {
         <div className="flex items-start justify-between gap-2">
           <Link
             to={ROUTES.product(item.productId)}
-            className="line-clamp-1 text-[13.5px] font-semibold leading-tight text-card-foreground hover:underline"
+            className="line-clamp-2 pr-2 text-[13.5px] font-semibold leading-tight text-card-foreground hover:underline"
           >
             {item.title}
           </Link>
@@ -61,12 +61,12 @@ function CartItemCard({ item }: { item: CartItem }) {
           </div>
         </div>
         
-        <div className="mt-2 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-1.5 flex-wrap">
+        <div className="mt-2 flex flex-wrap items-end justify-between gap-y-3 gap-x-1">
+          <div className="flex flex-col gap-1">
             <span className="text-[15px] font-bold text-foreground leading-none">{formatCurrency(item.price)}</span>
             {off > 0 && (
               <div className="flex items-center gap-1.5">
-                <s className="text-[10px] text-faint-foreground leading-none">{formatCurrency(item.mrp)}</s>
+                <s className="text-[11px] text-faint-foreground leading-none">{formatCurrency(item.mrp)}</s>
                 <SavePill className="text-[9px] px-1.5 py-0.5">Save {off}%</SavePill>
               </div>
             )}

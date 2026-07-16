@@ -30,6 +30,8 @@ function detectCardBrand(digits: string): string {
  * Confirm receives only { last4, brand } for cards; vpa / bank pass through.
  */
 function sanitizeDetails(details: PaymentDetails): Record<string, unknown> {
+  // Gateway-driven payments carry no instrument details to sanitize.
+  if ('gateway' in details) return {}
   switch (details.method) {
     case 'card': {
       const digits = details.card.number.replace(/\D/g, '')

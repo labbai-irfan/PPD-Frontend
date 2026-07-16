@@ -1,5 +1,6 @@
 import type { ChangeEvent } from 'react'
 import { Input, type InputProps } from '@/components/ui/Input'
+import { cn } from '@/lib/utils'
 
 /** Keep only the 10-digit Indian mobile number — strips +91 / 0 prefixes and formatting. */
 function normalizeIndianMobile(raw: string): string {
@@ -25,7 +26,12 @@ export function PhoneInput({ onChange, ...props }: InputProps) {
     <Input
       type="tel"
       inputMode="numeric"
-      leftIcon={<span className="text-sm font-medium text-foreground">+91</span>}
+      className={cn('pl-[3.75rem]', props.className)}
+      leftIcon={
+        <div className="flex h-full items-center pr-2 border-r border-input/50 mr-2">
+          <span className="text-sm font-semibold text-foreground/80 tracking-wide">+91</span>
+        </div>
+      }
       onChange={handleChange}
       {...props}
     />

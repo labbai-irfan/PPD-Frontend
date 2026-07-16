@@ -49,7 +49,11 @@ function Gallery({ product }: { product: Product }) {
 function LikeChip({ product }: { product: Product }) {
   const wishlisted = useIsWishlisted(product.id)
   const toggle = useWishlistStore((s) => s.toggle)
-  const likeCount = ((product.ratingCount * 31) % 900) / 100 + 1.1 // stable pseudo count, e.g. "1.5K"
+  const calculatedLikes = Math.floor(product.ratingCount * 12.5 + product.reviewCount * 3.2 + (product.stock > 0 ? 14 : 5))
+  const formattedLikes = new Intl.NumberFormat('en-US', {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(calculatedLikes)
 
   return (
     <button
@@ -63,13 +67,14 @@ function LikeChip({ product }: { product: Product }) {
       className="flex items-center gap-1.5 rounded-full bg-card px-3.5 py-2 shadow-soft transition-transform hover:scale-105 cursor-pointer"
     >
       <Icon name="favorite" size={18} fill={wishlisted} className={wishlisted ? 'text-deal' : 'text-muted-foreground'} />
-      <span className="text-xs font-semibold text-ink-soft dark:text-foreground">{likeCount.toFixed(1)}K</span>
+      <span className="text-xs font-semibold text-ink-soft dark:text-foreground">{formattedLikes}</span>
     </button>
   )
 }
 
 export default function ProductDetailsPage() {
-  const { id = '' } = useParams()
+  const { idOrSlug = '' } = useParams()
+  const id = idOrSlug
   const navigate = useNavigate()
   const { data: product, isPending, isError } = useProduct(id)
   const related = useRelatedProducts(id)
@@ -172,7 +177,9 @@ export default function ProductDetailsPage() {
             <span className="flex items-center gap-1.5 text-subtle-foreground">
               <Icon name="group" size={17} fill className="text-accent" />
               <b className="font-semibold text-ink dark:text-foreground">
-                {product.bought?.split(' ')[0] ?? '1,680'}
+                {product.bought
+                  ? product.bought.split(' ')[0]
+                  : new Intl.NumberFormat('en-US').format(Math.floor(product.ratingCount * 3.4 + product.reviewCount * 1.2 + 21))}
               </b>
               Brought this week
             </span>
@@ -183,7 +190,7 @@ export default function ProductDetailsPage() {
             <s className="text-base text-faint-foreground">{formatCurrency(product.mrp)}</s>
             {save > 0 && (
               <SavePill className="px-3 py-1.5 text-xs">
-                Save {save >= 1 ? formatCurrency(Math.round(save)) : `${discountPercent(product.mrp, product.price)}%`}
+                {discountPercent(product.mrp, product.price)}% OFF
               </SavePill>
             )}
           </div>

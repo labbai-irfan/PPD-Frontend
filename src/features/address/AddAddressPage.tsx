@@ -12,7 +12,7 @@ import { useAddressStore } from '@/store/address.store'
 
 const schema = z.object({
   name: z.string().min(2, 'Address name is required'),
-  phone: z.string().regex(/^[6-9]\d{9}$/, 'Enter a valid 10-digit mobile number'),
+  phone: z.string().regex(/^\d{10}$/, 'Enter a valid 10-digit mobile number'),
   line1: z.string().min(3, 'Street address is required'),
   line2: z.string().optional(),
   city: z.string().min(2, 'City is required'),
