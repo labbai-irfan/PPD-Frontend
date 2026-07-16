@@ -116,12 +116,10 @@ export default function ProductListingPage() {
       </div>
 
       <RecommendedSection />
-      
+
       <div className="py-2">
         <BundleBanner />
       </div>
-
-      <RecommendedSection />
     </div>
   )
 }
