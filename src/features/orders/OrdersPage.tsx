@@ -29,17 +29,21 @@ function OrderCard({ order }: { order: Order }) {
   return (
     <div className="rounded-2xl bg-card p-3.5 shadow-card">
       <div className="flex gap-3">
-        {/* 3D Stacked Card-on-card Layer */}
-        <div className="relative h-[92px] w-[94px] shrink-0 select-none">
+        {/* 3D Stacked Card-on-card Layer — navigates to the first product */}
+        <Link
+          to={first ? ROUTES.product(first.productId) : ROUTES.order(order.id)}
+          aria-label={first ? `View ${first.title}` : 'View order'}
+          className="relative block h-[92px] w-[94px] shrink-0 cursor-pointer select-none transition-transform hover:-translate-y-0.5"
+        >
           {/* Back Card (Layer 3) */}
           <div className="absolute left-0 top-[2px] h-[78px] w-[78px] rounded-2xl border border-black/[0.04] bg-white opacity-40 shadow-sm dark:border-white/5 dark:bg-muted"></div>
           {/* Middle Card (Layer 2) */}
           <div className="absolute left-[6px] top-[6px] h-[78px] w-[78px] rounded-2xl border border-black/[0.04] bg-white opacity-70 shadow-sm dark:border-white/5 dark:bg-muted"></div>
           {/* Front Card (Layer 1) */}
           <div className="absolute left-[12px] top-[10px] flex h-[78px] w-[78px] items-center justify-center rounded-2xl border border-black/[0.06] bg-white p-1 shadow-[0_2px_8px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-muted">
-            {first && <img src={first.image} alt="" className="max-h-full max-w-full object-contain rounded-xl" />}
+            {first && <img src={first.image} alt={first.title} className="max-h-full max-w-full object-contain rounded-xl" />}
           </div>
-        </div>
+        </Link>
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <StatusPill tone={status.tone}>{status.label}</StatusPill>

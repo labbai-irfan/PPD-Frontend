@@ -344,7 +344,7 @@ export default function AddProductPage() {
                     key={url + i}
                     className="group relative aspect-square rounded-lg overflow-hidden border border-border bg-muted"
                   >
-                    <img src={url} alt="" className="w-full h-full object-cover" />
+                    <img src={url} alt={i === 0 ? 'Product cover image' : `Product image ${i + 1}`} className="w-full h-full object-cover" />
                     {i === 0 && (
                       <span className="absolute top-1 left-1 bg-primary text-primary-foreground text-[10px] font-semibold px-1.5 py-0.5 rounded flex items-center gap-0.5">
                         <Star className="size-2.5 fill-current" /> Cover

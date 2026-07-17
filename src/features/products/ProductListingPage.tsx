@@ -46,7 +46,7 @@ function CategoryCard({ category, index }: { category: Category; index: number }
         {category.image ? (
           <img
             src={category.image}
-            alt=""
+            alt={category.name}
             loading="lazy"
             className="max-h-[100px] max-w-full object-contain transition-transform duration-300 group-hover:scale-105"
           />

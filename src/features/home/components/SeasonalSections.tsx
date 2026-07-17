@@ -17,7 +17,7 @@ function TileStrip({ tiles, tileHeight = 74 }: { tiles: CategoryTile[]; tileHeig
             className="flex w-full items-center justify-center overflow-hidden rounded-xl bg-white p-2.5 transition-transform hover:-translate-y-0.5"
             style={{ height: tileHeight }}
           >
-            <img src={tile.image} alt="" loading="lazy" className="max-h-full max-w-full object-contain" />
+            <img src={tile.image} alt={tile.label} loading="lazy" className="max-h-full max-w-full object-contain" />
           </span>
           <span className="w-full truncate text-center font-urbanist text-[11px] font-bold text-[#2a2723]">{tile.label}</span>
         </Link>

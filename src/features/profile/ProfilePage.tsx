@@ -165,9 +165,9 @@ export default function ProfilePage() {
               />
               
               {previewUrl ? (
-                <img src={previewUrl} alt="Preview" className="size-full object-cover" />
+                <img src={previewUrl} alt="New profile photo preview" className="size-full object-cover" />
               ) : user?.avatar ? (
-                <img src={`${import.meta.env.VITE_API_BASE_URL?.replace(/\/api(\/v\d+)?$/, '') || ''}${user.avatar}`} alt="Avatar" className="size-full object-cover" />
+                <img src={`${import.meta.env.VITE_API_BASE_URL?.replace(/\/api(\/v\d+)?$/, '') || ''}${user.avatar}`} alt={user?.name ? `${user.name}'s profile photo` : 'Profile photo'} className="size-full object-cover" />
               ) : (
                 <span>{user?.name?.charAt(0)?.toUpperCase() || '?'}</span>
               )}

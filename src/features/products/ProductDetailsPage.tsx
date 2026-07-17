@@ -38,7 +38,7 @@ function Gallery({ product }: { product: Product }) {
               i === active ? 'border-primary' : 'border-transparent',
             )}
           >
-            <img src={image} alt="" className="size-full rounded-lg object-cover" />
+            <img src={image} alt={`${product.title} — view ${i + 1}`} className="size-full rounded-lg object-cover" />
           </button>
         ))}
       </div>

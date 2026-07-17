@@ -165,7 +165,7 @@ export default function AdminCategoriesPage() {
             <div className="relative">
               <img
                 src={form.image}
-                alt="Category"
+                alt={form.name ? `${form.name} category image` : 'Category image preview'}
                 className="size-16 rounded-lg object-contain bg-muted p-1"
               />
               <button

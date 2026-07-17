@@ -222,7 +222,7 @@ export default function CheckoutPage() {
             <ul className="mb-4 space-y-3">
               {items.map((item) => (
                 <li key={item.key} className="flex items-center gap-3">
-                  <img src={item.image} alt="" className="size-12 shrink-0 rounded-lg object-cover" />
+                  <img src={item.image} alt={item.title} className="size-12 shrink-0 rounded-lg object-cover" />
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-xs font-medium text-foreground">{item.title}</p>
                     <p className="text-xs text-muted-foreground">Qty {item.quantity}</p>
