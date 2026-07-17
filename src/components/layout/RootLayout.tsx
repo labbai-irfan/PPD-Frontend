@@ -4,6 +4,7 @@ import { ROUTES } from '@/lib/constants'
 import { DesktopHeader } from '@/components/layout/DesktopHeader'
 import { BottomNav } from '@/components/layout/BottomNav'
 import { Footer } from '@/components/layout/Footer'
+import { MenuDrawer } from '@/components/layout/MenuDrawer'
 import { SearchPill } from '@/components/shared/SearchPill'
 
 /** Routes that show the floating search pill above the bottom nav (from the design). */
@@ -50,6 +51,7 @@ export default function RootLayout() {
           {showNav && <BottomNav />}
         </div>
       )}
+      <MenuDrawer />
       <ScrollRestoration />
     </div>
   )

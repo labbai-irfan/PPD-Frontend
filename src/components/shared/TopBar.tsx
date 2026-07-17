@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { ROUTES } from '@/lib/constants'
+import { useUiStore } from '@/store/ui.store'
 import { CircleIconButton } from '@/components/ui/CircleIconButton'
 import { CartChip } from '@/components/shared/CartChip'
 
@@ -16,6 +16,7 @@ interface TopBarProps {
 /** The designed screen top row: circle button left, cart chip right. Mobile only. */
 export function TopBar({ leading = 'back', title, cartTone = 'light', className }: TopBarProps) {
   const navigate = useNavigate()
+  const openMenu = useUiStore((s) => s.setMobileMenuOpen)
 
   return (
     <div className={cn('flex items-center justify-between md:hidden', className)}>
@@ -23,7 +24,7 @@ export function TopBar({ leading = 'back', title, cartTone = 'light', className 
         {leading === 'back' ? (
           <CircleIconButton icon="arrow_back_ios_new" label="Go back" onClick={() => navigate(-1)} />
         ) : (
-          <CircleIconButton icon="/icons/hamburger.svg" iconSize={24} label="Menu" onClick={() => navigate(ROUTES.profile)} />
+          <CircleIconButton icon="/icons/hamburger.svg" iconSize={24} label="Menu" onClick={() => openMenu(true)} />
         )}
         {title && <h1 className="text-[22px] font-bold text-foreground">{title}</h1>}
       </div>
