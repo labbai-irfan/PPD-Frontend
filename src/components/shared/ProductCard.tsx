@@ -9,7 +9,6 @@ import { Icon } from '@/components/ui/Icon'
 import { RatingBadge } from '@/components/ui/Rating'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { ProductBadge } from '@/components/shared/ProductBadge'
-import { WishlistButton } from '@/components/shared/WishlistButton'
 
 interface ProductCardProps {
   product: Product
@@ -32,34 +31,33 @@ export function ProductCard({ product, className }: ProductCardProps) {
     <Link
       to={ROUTES.product(product.slug)}
       className={cn(
-        'group flex w-full min-h-[277px] flex-col rounded-[15px] border border-border bg-card p-2 shadow-card transition-shadow duration-300 hover:shadow-card-hover',
+        'group flex w-full min-h-[277px] flex-col overflow-hidden rounded-[15px] border border-border bg-card shadow-card transition-shadow duration-300 hover:shadow-card-hover',
         className,
       )}
     >
-      <div className="relative aspect-square overflow-hidden bg-white p-1.5 dark:bg-card">
+      {/* Top section - white, image only */}
+      <div className="relative aspect-square overflow-hidden bg-white p-3 dark:bg-card">
         <img
           src={product.images[0]}
           alt={product.title}
           loading="lazy"
           className="size-full object-contain transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute right-2 top-2">
-          <WishlistButton productId={product.id} size={22} />
-        </div>
       </div>
 
-      <div className="mt-2 flex items-center justify-between gap-1 px-0.5">
-        <div className="flex flex-wrap items-center gap-1">
-          <ProductBadge product={product} />
-          {product.isFreeDelivery && (
-            <span className="inline-flex items-center justify-center rounded-full bg-info-soft px-1.5 py-[2.5px] text-[8.5px] font-bold text-info whitespace-nowrap shrink-0 sm:px-2.5 sm:py-[3px] sm:text-[10px]">
-              {product.freeDeliveryThreshold ? `Free Delivery > ₹${product.freeDeliveryThreshold}` : 'Free Delivery'}
-            </span>
-          )}
+      {/* Bottom section - light background, all details */}
+      <div className="flex flex-1 flex-col border-t border-black/5 bg-primary-soft/60 px-2.5 pb-2.5 pt-2 dark:border-white/5">
+        <div className="flex items-center justify-between gap-1">
+          <div className="flex flex-wrap items-center gap-1">
+            <ProductBadge product={product} />
+            {product.isFreeDelivery && (
+              <span className="inline-flex items-center justify-center rounded-full bg-info-soft px-1.5 py-[2.5px] text-[8.5px] font-bold text-info whitespace-nowrap shrink-0 sm:px-2.5 sm:py-[3px] sm:text-[10px]">
+                {product.freeDeliveryThreshold ? `Free Delivery > ₹${product.freeDeliveryThreshold}` : 'Free Delivery'}
+              </span>
+            )}
+          </div>
         </div>
-      </div>
 
-      <div className="flex flex-1 flex-col px-0.5 pb-1">
         <h3 className="mt-1 line-clamp-3 sm:line-clamp-none text-xs font-medium leading-snug text-card-foreground">
           {product.title}
         </h3>
@@ -104,9 +102,11 @@ export function ProductCard({ product, className }: ProductCardProps) {
 
 export function ProductCardSkeleton({ className }: { className?: string }) {
   return (
-    <div className={cn('min-h-[277px] rounded-[15px] border border-border bg-card p-2 shadow-card', className)}>
-      <Skeleton className="aspect-square rounded-none" />
-      <div className="space-y-1.5 px-0.5 py-2">
+    <div className={cn('min-h-[277px] overflow-hidden rounded-[15px] border border-border bg-card shadow-card', className)}>
+      <div className="bg-white p-3 dark:bg-card">
+        <Skeleton className="aspect-square rounded-none" />
+      </div>
+      <div className="space-y-1.5 border-t border-black/5 bg-primary-soft/60 px-2.5 py-2 dark:border-white/5">
         <Skeleton className="h-4 w-16 rounded-full" />
         <Skeleton className="h-3.5 w-full" />
         <Skeleton className="h-3.5 w-3/4" />
