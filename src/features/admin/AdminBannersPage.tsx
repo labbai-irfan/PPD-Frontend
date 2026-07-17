@@ -156,6 +156,60 @@ export default function AdminBannersPage() {
     }
   }
 
+  /** Visual banner card: banner-shaped image preview with status/order badges + actions. */
+  const renderBannerCard = (banner: Banner, wide = false) => (
+    <Card key={banner.id} className="group overflow-hidden flex flex-col">
+      <div className={`relative w-full overflow-hidden bg-muted ${wide ? 'aspect-[3/1]' : 'aspect-[396/189]'}`}>
+        {banner.image ? (
+          <img
+            src={banner.image}
+            alt={banner.title}
+            className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">No image</div>
+        )}
+        <span
+          className={`absolute left-2.5 top-2.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide shadow ${
+            banner.isActive ? 'bg-emerald-500 text-white' : 'bg-gray-700/80 text-white'
+          }`}
+        >
+          {banner.isActive ? 'Live' : 'Hidden'}
+        </span>
+        <span className="absolute right-2.5 top-2.5 rounded-full bg-black/50 px-2.5 py-1 text-[10px] font-semibold text-white backdrop-blur">
+          #{banner.sortOrder}
+        </span>
+      </div>
+      <div className="flex flex-1 flex-col p-3.5 md:p-4">
+        <h3 className="font-semibold text-foreground truncate">{banner.title}</h3>
+        {banner.subtitle && <p className="text-xs text-muted-foreground truncate mt-0.5">{banner.subtitle}</p>}
+        {banner.href && (
+          <span className="mt-2 inline-block w-fit max-w-full truncate rounded-md bg-muted px-2 py-1 text-[11px] text-muted-foreground">
+            {banner.href}
+          </span>
+        )}
+        <div className="mt-3 flex items-center gap-2 border-t border-border pt-3">
+          <Button onClick={() => handleToggleActive(banner)} variant="outline" size="sm" className="flex-1 gap-1.5">
+            {banner.isActive ? <EyeOff className="size-3.5" /> : <Eye className="size-3.5" />}
+            {banner.isActive ? 'Hide' : 'Show'}
+          </Button>
+          <Button onClick={() => handleEdit(banner)} size="sm" className="flex-1">
+            Edit
+          </Button>
+          <Button
+            onClick={() => handleDelete(banner.id)}
+            variant="outline"
+            size="sm"
+            className="shrink-0 text-destructive hover:text-destructive"
+            aria-label={`Delete ${banner.title}`}
+          >
+            <Trash2 className="size-3.5" />
+          </Button>
+        </div>
+      </div>
+    </Card>
+  )
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
@@ -382,59 +436,30 @@ export default function AdminBannersPage() {
         </Card>
       )}
 
-      {/* Static Banners */}
-      {banners.some((b) => !b.type || b.type === 'static') && (
+      {/* Home hero carousel slides (static banners, placement: hero) */}
+      {banners.some((b) => (!b.type || b.type === 'static') && b.placement !== 'bundle') && (
         <Card className="p-4 md:p-6 space-y-4 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20">
-          <h2 className="text-lg font-semibold text-foreground">📌 Static Banners</h2>
-          <div className="space-y-2">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">🎠 Home Hero Carousel</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">Slides rotating at the top of the home page</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
             {banners
-              .filter((b) => !b.type || b.type === 'static')
-              .map((banner) => (
-                <Card key={banner.id} className="p-3 md:p-4 flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
-                  {banner.image && (
-                    <div className="w-full md:w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-muted">
-                      <img src={banner.image} alt={banner.title} className="w-full h-full object-cover" />
-                    </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-foreground truncate">{banner.title}</h3>
-                    {banner.subtitle && <p className="text-xs text-muted-foreground truncate">{banner.subtitle}</p>}
-                    <div className="mt-1 flex flex-wrap gap-2">
-                      {banner.placement === 'bundle' && (
-                        <span className="text-xs bg-primary/15 text-primary font-semibold px-2 py-1 rounded">Bundle band</span>
-                      )}
-                      {banner.href && <span className="text-xs bg-muted px-2 py-1 rounded">{banner.href}</span>}
-                      <span className="text-xs bg-muted px-2 py-1 rounded">Order: {banner.sortOrder}</span>
-                    </div>
-                  </div>
-                  <div className="flex gap-2 flex-wrap md:flex-nowrap">
-                    <Button
-                      onClick={() => handleToggleActive(banner)}
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 md:flex-none"
-                    >
-                      {banner.isActive ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
-                    </Button>
-                    <Button
-                      onClick={() => handleEdit(banner)}
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 md:flex-none"
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      onClick={() => handleDelete(banner.id)}
-                      variant="outline"
-                      size="sm"
-                      className="flex-1 md:flex-none text-destructive hover:text-destructive"
-                    >
-                      <Trash2 className="size-4" />
-                    </Button>
-                  </div>
-                </Card>
-              ))}
+              .filter((b) => (!b.type || b.type === 'static') && b.placement !== 'bundle')
+              .map((banner) => renderBannerCard(banner))}
+          </div>
+        </Card>
+      )}
+
+      {/* Build-Your-Bundle band (placement: bundle) */}
+      {banners.some((b) => b.placement === 'bundle') && (
+        <Card className="p-4 md:p-6 space-y-4 bg-gradient-to-br from-orange-50/60 to-transparent dark:from-orange-950/20">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">🎁 Build-Your-Bundle Band</h2>
+            <p className="text-xs text-muted-foreground mt-0.5">The wide promo band above "Shop by Packages" — shown exactly this wide on the home page</p>
+          </div>
+          <div className="max-w-3xl">
+            {banners.filter((b) => b.placement === 'bundle').map((banner) => renderBannerCard(banner, true))}
           </div>
         </Card>
       )}
