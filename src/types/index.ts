@@ -111,6 +111,8 @@ export interface Banner {
   image: string
   /** tailwind gradient classes for the banner backdrop */
   tone: string
+  /** where the banner renders: 'hero' = home top carousel; 'bundle' = Build-Your-Bundle band */
+  placement?: 'hero' | 'bundle'
 }
 
 /* ------------------------------------------------------------------ */

@@ -116,6 +116,7 @@ export const router = createBrowserRouter([
           // { path: '/admin/coupons', lazy: lazyPage(() => import('@/features/admin/AdminCouponsPage')) },
           { path: '/admin/categories', lazy: lazyPage(() => import('@/features/admin/AdminCategoriesPage')) },
           { path: '/admin/banners', lazy: lazyPage(() => import('@/features/admin/AdminBannersPage')) },
+          { path: '/admin/home-content', lazy: lazyPage(() => import('@/features/admin/AdminHomeContentPage')) },
           { path: '/admin/admins', lazy: lazyPage(() => import('@/features/admin/AdminsPage')) },
           { path: '/admin/settings', lazy: lazyPage(() => import('@/features/admin/SettingsPage')) },
           // { path: '/admin/security', lazy: lazyPage(() => import('@/features/admin/AdminSecurityPage')) },

@@ -2,19 +2,23 @@ import { Link } from 'react-router-dom'
 import { formatCurrency } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
 import type { PackageCard } from '@/mocks/home'
+import { useBanners } from '@/hooks/use-catalog'
 import { Icon } from '@/components/ui/Icon'
 import { SectionHeader } from '@/components/shared/SectionHeader'
 
-/** "Build Your Bundle & Save More!" orange banner. */
+/** "Build Your Bundle & Save More!" orange banner — admin-managed (placement: 'bundle') with static fallback. */
 export function BundleBanner() {
+  const { data } = useBanners()
+  const bundle = data?.find((b) => b.placement === 'bundle')
+
   return (
     <Link
-      to={ROUTES.category('stationery')}
+      to={bundle?.href || ROUTES.category('stationery')}
       className="block aspect-[3/1] w-full overflow-hidden rounded-[18px] transition-transform hover:-translate-y-0.5"
     >
       <img
-        src="/components/carousel2.png"
-        alt="Build Your Bundle"
+        src={bundle?.image || '/components/carousel2.png'}
+        alt={bundle?.title || 'Build Your Bundle'}
         loading="lazy"
         className="h-full w-full max-w-full object-cover"
       />
@@ -26,7 +30,7 @@ export function BundleBanner() {
 export function PackagesSection({ packages }: { packages?: PackageCard[] }) {
   if (!packages?.length) return null
   return (
-    <section className="bg-[#FBE6CF] rounded-[20px] px-4 py-6 md:px-6 md:py-8 dark:bg-[#2a251f]">
+    <section className="bg-[#FBE6CF] px-4 py-6 md:px-6 md:py-8 dark:bg-[#2a251f]">
       <SectionHeader
         title="Shop by Packages"
         subtitle="Everything you need, in one smart kit"

@@ -18,7 +18,9 @@ interface BannerCarouselProps {
  */
 export function BannerCarousel({ banners, loading, intervalMs = 4500, className }: BannerCarouselProps) {
   const [index, setIndex] = useState(0)
-  const count = banners?.length ?? 0
+  /* only hero-placement banners belong in the top carousel (bundle ones render in BundleBanner) */
+  const heroBanners = banners?.filter((b) => !b.placement || b.placement === 'hero')
+  const count = heroBanners?.length ?? 0
 
   useEffect(() => {
     if (count <= 1) return
@@ -33,7 +35,7 @@ export function BannerCarousel({ banners, loading, intervalMs = 4500, className 
       </div>
     )
   }
-  if (!banners || count === 0) return null
+  if (!heroBanners || count === 0) return null
 
   return (
     <div className={className}>
@@ -42,7 +44,7 @@ export function BannerCarousel({ banners, loading, intervalMs = 4500, className 
           className="flex transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]"
           style={{ transform: `translateX(-${index * 100}%)` }}
         >
-          {banners.map((banner) => (
+          {heroBanners.map((banner) => (
             <Link
               key={banner.id}
               to={banner.href}

@@ -12,6 +12,7 @@ import {
   LogOut,
   ChevronLeft,
   ChevronRight,
+  LayoutTemplate,
   Upload,
   Menu,
   X,
@@ -31,6 +32,7 @@ const menuItems = [
   // Feature downgraded for client — re-enable by uncommenting:
   // { icon: Ticket, label: 'Coupons', path: '/admin/coupons' },
   { icon: Image, label: 'Banners', path: '/admin/banners' },
+  { icon: LayoutTemplate, label: 'Home Sections', path: '/admin/home-content' },
   { icon: UserCog, label: 'Admins', path: '/admin/admins' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
   // { icon: Lock, label: 'Security', path: '/admin/security' },

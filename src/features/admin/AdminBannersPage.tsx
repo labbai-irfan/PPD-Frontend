@@ -6,9 +6,20 @@ import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { apiClient } from '@/services/api/client'
 
-interface Banner {
-  _id: string
+interface BannerItem {
   title: string
+  subtitle?: string
+  cta?: string
+  href?: string
+  image?: string
+}
+
+interface Banner {
+  id: string
+  type: 'static' | 'carousel'
+  placement?: 'hero' | 'bundle'
+  title: string
+  items?: BannerItem[]
   subtitle?: string
   cta?: string
   href?: string
@@ -19,13 +30,30 @@ interface Banner {
   createdAt: string
 }
 
-const emptyForm = {
+interface BannerForm {
+  type: 'static' | 'carousel'
+  placement: 'hero' | 'bundle'
+  title: string
+  subtitle: string
+  cta: string
+  href: string
+  image: string
+  tone: string
+  items: BannerItem[]
+  sortOrder: number
+  isActive: boolean
+}
+
+const emptyForm: BannerForm = {
+  type: 'static',
+  placement: 'hero',
   title: '',
   subtitle: '',
   cta: 'Shop Now',
   href: '/',
   image: '',
   tone: 'bg-gradient-to-r from-orange-400 to-orange-600',
+  items: [],
   sortOrder: 0,
   isActive: true,
 }
@@ -33,7 +61,7 @@ const emptyForm = {
 export default function AdminBannersPage() {
   const [banners, setBanners] = useState<Banner[]>([])
   const [showForm, setShowForm] = useState(false)
-  const [form, setForm] = useState(emptyForm)
+  const [form, setForm] = useState<BannerForm>(emptyForm)
   const [uploading, setUploading] = useState(false)
   const [editingId, setEditingId] = useState<string | null>(null)
 
@@ -89,16 +117,19 @@ export default function AdminBannersPage() {
 
   const handleEdit = (banner: Banner) => {
     setForm({
+      type: banner.type,
+      placement: banner.placement || 'hero',
       title: banner.title,
       subtitle: banner.subtitle || '',
       cta: banner.cta || 'Shop Now',
       href: banner.href || '/',
       image: banner.image || '',
       tone: banner.tone || 'bg-gradient-to-r from-orange-400 to-orange-600',
+      items: banner.items || [],
       sortOrder: banner.sortOrder,
       isActive: banner.isActive,
     })
-    setEditingId(banner._id)
+    setEditingId(banner.id)
     setShowForm(true)
   }
 
@@ -106,7 +137,7 @@ export default function AdminBannersPage() {
     if (!confirm('Delete this banner?')) return
     try {
       await apiClient.delete(`/admin/banners/${id}`)
-      setBanners((prev) => prev.filter((b) => b._id !== id))
+      setBanners((prev) => prev.filter((b) => b.id !== id))
       toast.success('Banner deleted')
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Delete failed')
@@ -115,9 +146,9 @@ export default function AdminBannersPage() {
 
   const handleToggleActive = async (banner: Banner) => {
     try {
-      await apiClient.patch(`/admin/banners/${banner._id}`, { isActive: !banner.isActive })
+      await apiClient.patch(`/admin/banners/${banner.id}`, { isActive: !banner.isActive })
       setBanners((prev) =>
-        prev.map((b) => (b._id === banner._id ? { ...b, isActive: !b.isActive } : b)),
+        prev.map((b) => (b.id === banner.id ? { ...b, isActive: !b.isActive } : b)),
       )
       toast.success(banner.isActive ? 'Banner hidden' : 'Banner shown')
     } catch (e) {
@@ -144,66 +175,178 @@ export default function AdminBannersPage() {
 
       {showForm && (
         <Card className="p-3 md:p-4 space-y-3">
+          <div>
+            <label className="block text-sm font-semibold text-foreground mb-2">Banner Type</label>
+            <select
+              value={form.type}
+              onChange={(e) => setForm({ ...form, type: e.target.value as 'static' | 'carousel' })}
+              className="w-full px-3 py-2 border rounded-lg bg-background text-foreground"
+            >
+              <option value="static">Static Banner</option>
+              <option value="carousel">Carousel (Multiple Slides)</option>
+            </select>
+          </div>
+
+          {form.type === 'static' && (
+            <div>
+              <label className="block text-sm font-semibold text-foreground mb-2">Placement</label>
+              <select
+                value={form.placement}
+                onChange={(e) => setForm({ ...form, placement: e.target.value as 'hero' | 'bundle' })}
+                className="w-full px-3 py-2 border rounded-lg bg-background text-foreground"
+              >
+                <option value="hero">Home hero carousel (top of home page)</option>
+                <option value="bundle">Build-Your-Bundle band (above Shop by Packages)</option>
+              </select>
+            </div>
+          )}
+
           <Input
             label="Title"
             placeholder="Summer Sale"
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
           />
-          <Input
-            label="Subtitle"
-            placeholder="Get 50% off on select items"
-            value={form.subtitle}
-            onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Input
-              label="CTA Button Text"
-              placeholder="Shop Now"
-              value={form.cta}
-              onChange={(e) => setForm({ ...form, cta: e.target.value })}
-            />
-            <Input
-              label="Link"
-              placeholder="/products/summer"
-              value={form.href}
-              onChange={(e) => setForm({ ...form, href: e.target.value })}
-            />
-          </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-foreground mb-2">Banner Image</label>
-            <div className="flex gap-2">
-              <input
-                type="file"
-                accept="image/*"
-                onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
-                disabled={uploading}
-                className="flex-1 px-3 py-2 border rounded-lg bg-background text-foreground cursor-pointer"
+          {form.type === 'static' ? (
+            <>
+              <Input
+                label="Subtitle"
+                placeholder="Get 50% off on select items"
+                value={form.subtitle}
+                onChange={(e) => setForm({ ...form, subtitle: e.target.value })}
               />
-              {uploading && <span className="text-xs text-muted-foreground">Uploading...</span>}
-            </div>
-            {form.image && (
-              <div className="mt-2 relative w-full h-32 bg-muted rounded-lg overflow-hidden">
-                <img src={form.image} alt="preview" className="w-full h-full object-cover" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <Input
+                  label="CTA Button Text"
+                  placeholder="Shop Now"
+                  value={form.cta}
+                  onChange={(e) => setForm({ ...form, cta: e.target.value })}
+                />
+                <Input
+                  label="Link"
+                  placeholder="/products/summer"
+                  value={form.href}
+                  onChange={(e) => setForm({ ...form, href: e.target.value })}
+                />
               </div>
-            )}
-          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <Input
-              label="Gradient/Tone"
-              placeholder="bg-gradient-to-r from-orange-400 to-orange-600"
-              value={form.tone}
-              onChange={(e) => setForm({ ...form, tone: e.target.value })}
-            />
-            <Input
-              label="Sort Order"
-              type="number"
-              value={form.sortOrder}
-              onChange={(e) => setForm({ ...form, sortOrder: Number(e.target.value) })}
-            />
-          </div>
+              <div>
+                <label className="block text-sm font-semibold text-foreground mb-2">Banner Image</label>
+                <div className="flex gap-2">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={(e) => e.target.files?.[0] && handleImageUpload(e.target.files[0])}
+                    disabled={uploading}
+                    className="flex-1 px-3 py-2 border rounded-lg bg-background text-foreground cursor-pointer"
+                  />
+                  {uploading && <span className="text-xs text-muted-foreground">Uploading...</span>}
+                </div>
+                {form.image && (
+                  <div className="mt-2 relative w-full h-32 bg-muted rounded-lg overflow-hidden">
+                    <img src={form.image} alt={form.title ? `${form.title} banner preview` : 'Banner image preview'} className="w-full h-full object-cover" />
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <Input
+                  label="Gradient/Tone"
+                  placeholder="bg-gradient-to-r from-orange-400 to-orange-600"
+                  value={form.tone}
+                  onChange={(e) => setForm({ ...form, tone: e.target.value })}
+                />
+                <Input
+                  label="Sort Order"
+                  type="number"
+                  value={form.sortOrder}
+                  onChange={(e) => setForm({ ...form, sortOrder: Number(e.target.value) })}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="space-y-3 border-t pt-3">
+              <div className="flex items-center justify-between">
+                <h3 className="font-semibold text-foreground">Carousel Items</h3>
+                <Button
+                  onClick={() => {
+                    const newItem: BannerItem = { title: '', subtitle: '', cta: 'Shop Now', href: '/', image: '' }
+                    setForm({ ...form, items: [...(form.items || []), newItem] })
+                  }}
+                  size="sm"
+                  className="gap-1"
+                >
+                  <Plus className="size-4" />
+                  Add Item
+                </Button>
+              </div>
+
+              {form.items?.map((item, idx) => (
+                <Card key={`item-${idx}`} className="p-3 border space-y-2">
+                  <div className="flex items-center justify-between">
+                    <h4 className="font-medium text-foreground">Item {idx + 1}</h4>
+                    <button
+                      onClick={() => {
+                        setForm({
+                          ...form,
+                          items: form.items?.filter((_, i) => i !== idx) || [],
+                        })
+                      }}
+                      className="text-destructive hover:text-destructive/80"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </div>
+
+                  <Input
+                    label="Title"
+                    placeholder="Item title"
+                    value={item.title}
+                    onChange={(e) => {
+                      const updated = [...(form.items || [])]
+                      updated[idx] = { ...item, title: e.target.value }
+                      setForm({ ...form, items: updated })
+                    }}
+                  />
+
+                  <Input
+                    label="Subtitle"
+                    placeholder="Item subtitle"
+                    value={item.subtitle || ''}
+                    onChange={(e) => {
+                      const updated = [...(form.items || [])]
+                      updated[idx] = { ...item, subtitle: e.target.value }
+                      setForm({ ...form, items: updated })
+                    }}
+                  />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <Input
+                      label="CTA"
+                      placeholder="Shop Now"
+                      value={item.cta || ''}
+                      onChange={(e) => {
+                        const updated = [...(form.items || [])]
+                        updated[idx] = { ...item, cta: e.target.value }
+                        setForm({ ...form, items: updated })
+                      }}
+                    />
+                    <Input
+                      label="Link"
+                      placeholder="/products"
+                      value={item.href || ''}
+                      onChange={(e) => {
+                        const updated = [...(form.items || [])]
+                        updated[idx] = { ...item, href: e.target.value }
+                        setForm({ ...form, items: updated })
+                      }}
+                    />
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
 
           <div className="flex items-center gap-2">
             <input
@@ -239,55 +382,120 @@ export default function AdminBannersPage() {
         </Card>
       )}
 
-      <div className="space-y-2">
-        {banners.map((banner) => (
-          <Card key={banner._id} className="p-3 md:p-4 flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
-            {banner.image && (
-              <div className="w-full md:w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-muted">
-                <img src={banner.image} alt={banner.title} className="w-full h-full object-cover" />
-              </div>
-            )}
-            <div className="flex-1 min-w-0">
-              <h3 className="font-semibold text-foreground truncate">{banner.title}</h3>
-              {banner.subtitle && <p className="text-xs text-muted-foreground truncate">{banner.subtitle}</p>}
-              <div className="mt-1 flex flex-wrap gap-2">
-                {banner.href && <span className="text-xs bg-muted px-2 py-1 rounded">{banner.href}</span>}
-                <span className="text-xs bg-muted px-2 py-1 rounded">Order: {banner.sortOrder}</span>
-              </div>
-            </div>
-            <div className="flex gap-2 flex-wrap md:flex-nowrap">
-              <Button
-                onClick={() => handleToggleActive(banner)}
-                variant="outline"
-                size="sm"
-                className="flex-1 md:flex-none"
-              >
-                {banner.isActive ? (
-                  <Eye className="size-4" />
-                ) : (
-                  <EyeOff className="size-4" />
-                )}
-              </Button>
-              <Button
-                onClick={() => handleEdit(banner)}
-                variant="outline"
-                size="sm"
-                className="flex-1 md:flex-none"
-              >
-                Edit
-              </Button>
-              <Button
-                onClick={() => handleDelete(banner._id)}
-                variant="outline"
-                size="sm"
-                className="flex-1 md:flex-none text-destructive hover:text-destructive"
-              >
-                <Trash2 className="size-4" />
-              </Button>
-            </div>
-          </Card>
-        ))}
-      </div>
+      {/* Static Banners */}
+      {banners.some((b) => !b.type || b.type === 'static') && (
+        <Card className="p-4 md:p-6 space-y-4 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20">
+          <h2 className="text-lg font-semibold text-foreground">📌 Static Banners</h2>
+          <div className="space-y-2">
+            {banners
+              .filter((b) => !b.type || b.type === 'static')
+              .map((banner) => (
+                <Card key={banner.id} className="p-3 md:p-4 flex flex-col md:flex-row md:items-center gap-3 md:gap-4">
+                  {banner.image && (
+                    <div className="w-full md:w-24 h-24 rounded-lg overflow-hidden flex-shrink-0 bg-muted">
+                      <img src={banner.image} alt={banner.title} className="w-full h-full object-cover" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground truncate">{banner.title}</h3>
+                    {banner.subtitle && <p className="text-xs text-muted-foreground truncate">{banner.subtitle}</p>}
+                    <div className="mt-1 flex flex-wrap gap-2">
+                      {banner.placement === 'bundle' && (
+                        <span className="text-xs bg-primary/15 text-primary font-semibold px-2 py-1 rounded">Bundle band</span>
+                      )}
+                      {banner.href && <span className="text-xs bg-muted px-2 py-1 rounded">{banner.href}</span>}
+                      <span className="text-xs bg-muted px-2 py-1 rounded">Order: {banner.sortOrder}</span>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 flex-wrap md:flex-nowrap">
+                    <Button
+                      onClick={() => handleToggleActive(banner)}
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 md:flex-none"
+                    >
+                      {banner.isActive ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+                    </Button>
+                    <Button
+                      onClick={() => handleEdit(banner)}
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 md:flex-none"
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      onClick={() => handleDelete(banner.id)}
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 md:flex-none text-destructive hover:text-destructive"
+                    >
+                      <Trash2 className="size-4" />
+                    </Button>
+                  </div>
+                </Card>
+              ))}
+          </div>
+        </Card>
+      )}
+
+      {/* Carousel Banners */}
+      {banners.some((b) => b.type === 'carousel') && (
+        <Card className="p-4 md:p-6 space-y-4 bg-gradient-to-br from-amber-50/50 to-transparent dark:from-amber-950/20">
+          <h2 className="text-lg font-semibold text-foreground">🎠 Carousels</h2>
+          <div className="space-y-3">
+            {banners
+              .filter((b) => b.type === 'carousel')
+              .map((banner) => (
+                <Card key={banner.id} className="p-3 md:p-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <div>
+                      <h3 className="font-semibold text-foreground">{banner.title}</h3>
+                      <p className="text-xs text-muted-foreground">{banner.items?.length || 0} slides</p>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => handleToggleActive(banner)}
+                        variant="outline"
+                        size="sm"
+                      >
+                        {banner.isActive ? <Eye className="size-4" /> : <EyeOff className="size-4" />}
+                      </Button>
+                      <Button onClick={() => handleEdit(banner)} variant="outline" size="sm">
+                        Edit
+                      </Button>
+                      <Button
+                        onClick={() => handleDelete(banner.id)}
+                        variant="outline"
+                        size="sm"
+                        className="text-destructive hover:text-destructive"
+                      >
+                        <Trash2 className="size-4" />
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+                    {banner.items?.map((item, idx) => (
+                      <div key={`${banner.id}-item-${idx}`} className="rounded-lg overflow-hidden bg-muted">
+                        {item.image ? (
+                          <img src={item.image} alt={item.title} className="w-full h-20 object-cover" />
+                        ) : (
+                          <div className="w-full h-20 bg-muted-foreground/10 flex items-center justify-center">
+                            <span className="text-xs text-muted-foreground">No image</span>
+                          </div>
+                        )}
+                        <div className="p-2">
+                          <p className="text-xs font-medium truncate text-foreground">{item.title}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              ))}
+          </div>
+        </Card>
+      )}
 
       {banners.length === 0 && !showForm && (
         <Card className="p-8 text-center">
