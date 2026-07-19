@@ -9,7 +9,6 @@ import { Icon } from '@/components/ui/Icon'
 import { RatingBadge } from '@/components/ui/Rating'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { ProductBadge } from '@/components/shared/ProductBadge'
-import { WishlistButton } from '@/components/shared/WishlistButton'
 
 interface ProductCardProps {
   product: Product
@@ -43,9 +42,6 @@ export function ProductCard({ product, className }: ProductCardProps) {
           loading="lazy"
           className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
-        <div className="absolute right-2 top-2">
-          <WishlistButton productId={product.id} size={22} />
-        </div>
       </div>
 
       <div className="mt-2 flex items-center justify-between gap-1 px-0.5">

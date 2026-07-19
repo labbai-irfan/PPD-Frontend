@@ -3,6 +3,7 @@ import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
 import { CircleIconButton } from '@/components/ui/CircleIconButton'
 import { CartChip } from '@/components/shared/CartChip'
+import { useUiStore } from '@/store/ui.store'
 
 interface TopBarProps {
   /** 'back' shows the back circle, 'menu' the menu circle (design home/orders/profile) */
@@ -23,7 +24,7 @@ export function TopBar({ leading = 'back', title, cartTone = 'light', className 
         {leading === 'back' ? (
           <CircleIconButton icon="arrow_back_ios_new" label="Go back" onClick={() => navigate(-1)} />
         ) : (
-          <CircleIconButton icon="/icons/hamburger.svg" iconSize={24} label="Menu" onClick={() => navigate(ROUTES.profile)} />
+          <CircleIconButton icon="/icons/hamburger.svg" iconSize={24} label="Menu" onClick={() => useUiStore.getState().setMobileMenuOpen(true)} />
         )}
         {title && <h1 className="text-[22px] font-bold text-foreground">{title}</h1>}
       </div>

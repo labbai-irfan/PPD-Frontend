@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { APP_TAGLINE, BRAND_LINE, ROUTES } from '@/lib/constants'
 import { useBanners, useHomeContent, useProducts } from '@/hooks/use-catalog'
 import { useAuthStore } from '@/store/auth.store'
+import { useUiStore } from '@/store/ui.store'
 import { Dots } from '@/components/ui/Dots'
 import { CircleIconButton } from '@/components/ui/CircleIconButton'
 import { BannerCarousel } from '@/components/shared/BannerCarousel'
@@ -33,7 +34,7 @@ function HomeHeader() {
   return (
     <div className="flex items-start justify-between md:hidden">
       <div className="min-w-0 flex-1 pr-2">
-        <CircleIconButton icon="/icons/hamburger.svg" iconSize={24} label="Menu" onClick={() => navigate(ROUTES.profile)} />
+        <CircleIconButton icon="/icons/hamburger.svg" iconSize={24} label="Menu" onClick={() => useUiStore.getState().setMobileMenuOpen(true)} />
         <div className="mt-3">
           <p className="text-[15px] text-subtle-foreground">{greeting()}</p>
           <h1 className="break-words text-[26px] font-bold leading-[1.1] text-foreground">{firstName}</h1>
