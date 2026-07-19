@@ -28,13 +28,13 @@ const menuItems = [
   { icon: Upload, label: 'Bulk Import', path: '/admin/bulk-import' },
   { icon: ShoppingCart, label: 'Orders', path: '/admin/orders' },
   { icon: Users, label: 'Users', path: '/admin/users' },
-  { icon: Star, label: 'Reviews', path: '/admin/reviews' },
+  // { icon: Star, label: 'Reviews', path: '/admin/reviews' },
   { icon: FolderTree, label: 'Categories', path: '/admin/categories' },
-  { icon: Ticket, label: 'Coupons', path: '/admin/coupons' },
+  // { icon: Ticket, label: 'Coupons', path: '/admin/coupons' },
   { icon: Image, label: 'Banners', path: '/admin/banners' },
   { icon: UserCog, label: 'Admins', path: '/admin/admins' },
-  { icon: Settings, label: 'Settings', path: '/admin/settings' },
-  { icon: Lock, label: 'Security', path: '/admin/security' },
+  // { icon: Settings, label: 'Settings', path: '/admin/settings' },
+  // { icon: Lock, label: 'Security', path: '/admin/security' },
 ]
 
 export default function AdminLayout() {
