@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { ROUTES } from '@/lib/constants'
+
 import { CircleIconButton } from '@/components/ui/CircleIconButton'
 import { CartChip } from '@/components/shared/CartChip'
 import { useUiStore } from '@/store/ui.store'

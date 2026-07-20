@@ -14,10 +14,8 @@ import {
   Menu,
   X,
   Image,
-  Star,
   Ticket,
   Settings,
-  Lock,
 } from 'lucide-react'
 import { Logo } from '@/components/shared/Logo'
 import { useAuthStore } from '@/store/auth.store'

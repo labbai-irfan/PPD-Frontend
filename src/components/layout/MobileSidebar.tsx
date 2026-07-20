@@ -106,7 +106,7 @@ export function MobileSidebar() {
         {/* Navigation Links */}
         <div className="flex-1 overflow-y-auto px-4 py-5 scrollbar-hide">
           <nav className="flex flex-col space-y-1">
-            {menu.map((item, i) => {
+            {menu.map((item) => {
               const isLogout = item.label === 'Log out';
               return (
                 <div key={item.label} className="w-full">

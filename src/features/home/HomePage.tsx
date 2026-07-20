@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+
 import { APP_TAGLINE, BRAND_LINE, ROUTES } from '@/lib/constants'
 import { useBanners, useHomeContent, useProducts } from '@/hooks/use-catalog'
 import { useAuthStore } from '@/store/auth.store'
