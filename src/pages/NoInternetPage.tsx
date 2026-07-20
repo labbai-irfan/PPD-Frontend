@@ -31,8 +31,8 @@ export default function NoInternetPage() {
         setIsOnline(true)
         window.location.reload()
       }
-    } catch (e) {
-      console.error('Still offline', e)
+    } catch {
+      // User is still offline, retry will happen when they click again
     } finally {
       setAttempting(false)
     }

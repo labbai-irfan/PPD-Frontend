@@ -27,7 +27,6 @@ function greeting(): string {
 
 /** Mobile greeting header from the design (desktop uses the app header instead). */
 function HomeHeader() {
-  const navigate = useNavigate()
   const user = useAuthStore((s) => s.user)
   const firstName = user?.name.split(' ')[0] ?? 'Guest'
 

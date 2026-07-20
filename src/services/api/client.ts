@@ -63,7 +63,8 @@ apiClient.interceptors.response.use(
         const refreshToken: string | undefined = raw ? JSON.parse(raw)?.state?.refreshToken : undefined
 
         if (!refreshToken) {
-          throw new Error('No refresh token available')
+          // Don't expose token availability to console
+          throw new Error('Session expired')
         }
 
         const { data } = await axios.post(
@@ -90,12 +91,24 @@ apiClient.interceptors.response.use(
         localStorage.removeItem(STORAGE_KEYS.auth)
         window.location.href = '/auth/login'
 
-        return Promise.reject(refreshError)
+        // Don't expose error details in console
+        return Promise.reject(new Error('Session expired'))
       }
     }
 
-    const message: string =
-      (error?.response?.data as any)?.message ?? error?.message ?? 'Something went wrong. Please try again.'
+    // Extract error message safely without exposing technical details
+    let message = 'Something went wrong. Please try again.'
+    const responseData = error?.response?.data as any
+
+    // Only trust certain error messages from server
+    if (responseData?.message && typeof responseData.message === 'string') {
+      // Sanitize: only expose user-safe messages
+      const safeMessages = ['Invalid email or password', 'Account not found', 'Access denied'];
+      if (safeMessages.some(safe => responseData.message.includes(safe))) {
+        message = responseData.message
+      }
+    }
+
     return Promise.reject(new Error(message))
   },
 )
