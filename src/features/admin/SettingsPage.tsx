@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Save, Bell, Lock, Globe, Search, Share2 } from 'lucide-react'
+import { Save, Globe, Search, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -69,9 +69,6 @@ export default function SettingsPage() {
       setIsSaving(false)
     }
   }
-
-  const toggle = (key: keyof AdminSettings) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setSettings({ ...settings, [key]: e.target.checked })
 
   return (
     <div className="space-y-6">

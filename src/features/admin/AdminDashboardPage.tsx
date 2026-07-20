@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Package, ShoppingCart, Users, TrendingUp, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import {
-  AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, BarChart, Bar, Legend
 } from 'recharts'
 import { Button } from '@/components/ui/Button'
@@ -253,7 +253,7 @@ export default function AdminDashboardPage() {
                   dataKey="revenue"
                   nameKey="category"
                 >
-                  {data.categoryRevenue.map((entry, index) => (
+                  {data.categoryRevenue.map((_, index) => (
                     <Cell key={`cell-${index}`} fill={['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'][index % 5]} />
                   ))}
                 </Pie>
