@@ -1,4 +1,5 @@
 import { useState } from 'react'
+
 import { APP_TAGLINE, BRAND_LINE, ROUTES } from '@/lib/constants'
 import { useBanners, useHomeContent, useProducts } from '@/hooks/use-catalog'
 import { useAuthStore } from '@/store/auth.store'
@@ -27,13 +28,12 @@ function greeting(): string {
 /** Mobile greeting header from the design (desktop uses the app header instead). */
 function HomeHeader() {
   const user = useAuthStore((s) => s.user)
-  const openMenu = useUiStore((s) => s.setMobileMenuOpen)
   const firstName = user?.name.split(' ')[0] ?? 'Guest'
 
   return (
     <div className="flex items-start justify-between md:hidden">
       <div className="min-w-0 flex-1 pr-2">
-        <CircleIconButton icon="/icons/hamburger.svg" iconSize={24} label="Menu" onClick={() => openMenu(true)} />
+        <CircleIconButton icon="/icons/hamburger.svg" iconSize={24} label="Menu" onClick={() => useUiStore.getState().setMobileMenuOpen(true)} />
         <div className="mt-3">
           <p className="text-[15px] text-subtle-foreground">{greeting()}</p>
           <h1 className="break-words text-[26px] font-bold leading-[1.1] text-foreground">{firstName}</h1>

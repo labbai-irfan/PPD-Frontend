@@ -56,9 +56,8 @@ export default function AdminBulkImportPage() {
   // Get instructions
   const getInstructions = async () => {
     try {
-      const { data } = await apiClient.get('/admin/bulk-import/instructions')
-      console.log('Import Instructions:', data)
-      toast.success('Check console for detailed instructions')
+      await apiClient.get('/admin/bulk-import/instructions')
+      toast.success('Instructions loaded — check the docs for detailed guide')
     } catch (error) {
       toast.error('Failed to load instructions')
     }

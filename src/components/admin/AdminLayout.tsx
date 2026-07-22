@@ -5,18 +5,17 @@ import {
   Package,
   ShoppingCart,
   Users,
-  Star,
   FolderTree,
   UserCog,
-  Settings,
   LogOut,
-  ChevronLeft,
   ChevronRight,
   LayoutTemplate,
+  ChevronLeft,
   Upload,
   Menu,
   X,
   Image,
+  Settings,
 } from 'lucide-react'
 import { Logo } from '@/components/shared/Logo'
 import { useAuthStore } from '@/store/auth.store'
@@ -27,7 +26,7 @@ const menuItems = [
   { icon: Upload, label: 'Bulk Import', path: '/admin/bulk-import' },
   { icon: ShoppingCart, label: 'Orders', path: '/admin/orders' },
   { icon: Users, label: 'Users', path: '/admin/users' },
-  { icon: Star, label: 'Reviews', path: '/admin/reviews' },
+  // { icon: Star, label: 'Reviews', path: '/admin/reviews' },
   { icon: FolderTree, label: 'Categories', path: '/admin/categories' },
   // Feature downgraded for client — re-enable by uncommenting:
   // { icon: Ticket, label: 'Coupons', path: '/admin/coupons' },

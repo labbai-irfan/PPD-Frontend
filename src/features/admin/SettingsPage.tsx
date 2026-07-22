@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Save, Bell, Lock, Globe } from 'lucide-react'
+import { Save, Globe, Search, Share2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -19,6 +19,11 @@ interface AdminSettings {
   maintenanceMode: boolean
   freeShippingThreshold: number
   shippingFee: number
+  seoTitle: string
+  seoDescription: string
+  seoKeywords: string
+  facebookUrl: string
+  instagramUrl: string
 }
 
 export default function SettingsPage() {
@@ -50,6 +55,11 @@ export default function SettingsPage() {
         maintenanceMode: settings.maintenanceMode,
         freeShippingThreshold: Number(settings.freeShippingThreshold),
         shippingFee: Number(settings.shippingFee),
+        seoTitle: settings.seoTitle,
+        seoDescription: settings.seoDescription,
+        seoKeywords: settings.seoKeywords,
+        facebookUrl: settings.facebookUrl,
+        instagramUrl: settings.instagramUrl,
       })
       setSettings(data)
       toast.success('Settings saved')
@@ -59,9 +69,6 @@ export default function SettingsPage() {
       setIsSaving(false)
     }
   }
-
-  const toggle = (key: keyof AdminSettings) => (e: React.ChangeEvent<HTMLInputElement>) =>
-    setSettings({ ...settings, [key]: e.target.checked })
 
   return (
     <div className="space-y-6">
@@ -95,40 +102,35 @@ export default function SettingsPage() {
 
       <Card className="p-3 md:p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-          <Bell className="size-5" /> Notifications
+          <Search className="size-5" /> SEO Settings
         </h2>
-        <div className="space-y-3">
-          {([
-            ['emailNotifications', 'Email Notifications'],
-            ['orderNotifications', 'Order Notifications'],
-            ['reviewNotifications', 'Review Notifications'],
-          ] as const).map(([key, label]) => (
-            <label key={key} className="flex items-center gap-3 cursor-pointer p-2 -m-2 rounded hover:bg-muted">
-              <input type="checkbox" checked={settings[key]} onChange={toggle(key)} className="w-4 h-4 rounded" />
-              <span className="text-sm text-foreground">{label}</span>
-            </label>
-          ))}
+        <div className="grid grid-cols-1 gap-3 md:gap-4">
+          <Input label="SEO Title" placeholder="Meta title for search engines" value={settings.seoTitle} onChange={(e) => setSettings({ ...settings, seoTitle: e.target.value })} />
+          <div>
+            <label className="block text-sm font-semibold text-foreground mb-2">SEO Description</label>
+            <textarea
+              value={settings.seoDescription}
+              onChange={(e) => setSettings({ ...settings, seoDescription: e.target.value })}
+              placeholder="Meta description for search engines (recommended 150-160 characters)"
+              className="w-full px-3 py-2 border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary text-sm resize-none"
+              rows={3}
+            />
+          </div>
+          <Input label="SEO Keywords" placeholder="Comma-separated keywords" value={settings.seoKeywords} onChange={(e) => setSettings({ ...settings, seoKeywords: e.target.value })} />
         </div>
       </Card>
 
       <Card className="p-3 md:p-6">
         <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-          <Lock className="size-5" /> Store & System
+          <Share2 className="size-5" /> Social Media Links
         </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4 mb-4">
-          <Input label="Max Products Per Page" type="number" value={String(settings.maxProductsPerPage)} onChange={(e) => setSettings({ ...settings, maxProductsPerPage: Number(e.target.value) })} />
-          <Input label="Session Timeout (minutes)" type="number" value={String(settings.sessionTimeoutMinutes)} onChange={(e) => setSettings({ ...settings, sessionTimeoutMinutes: Number(e.target.value) })} />
-          <Input label="Free Shipping Above (₹)" type="number" value={String(settings.freeShippingThreshold)} onChange={(e) => setSettings({ ...settings, freeShippingThreshold: Number(e.target.value) })} />
-          <Input label="Shipping Fee (₹)" type="number" value={String(settings.shippingFee)} onChange={(e) => setSettings({ ...settings, shippingFee: Number(e.target.value) })} />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+          <Input label="Facebook URL" type="url" placeholder="https://facebook.com/yourpage" value={settings.facebookUrl} onChange={(e) => setSettings({ ...settings, facebookUrl: e.target.value })} />
+          <Input label="Instagram URL" type="url" placeholder="https://instagram.com/yourpage" value={settings.instagramUrl} onChange={(e) => setSettings({ ...settings, instagramUrl: e.target.value })} />
         </div>
-        <label className="flex items-center gap-3 cursor-pointer border-t pt-4 p-2 -m-2 rounded hover:bg-muted">
-          <input type="checkbox" checked={settings.maintenanceMode} onChange={toggle('maintenanceMode')} className="w-4 h-4 rounded shrink-0" />
-          <div>
-            <span className="text-sm font-semibold text-foreground">Maintenance Mode</span>
-            <p className="text-xs text-muted-foreground">Put the store under maintenance</p>
-          </div>
-        </label>
       </Card>
+
+
 
       <Button onClick={() => void handleSave()} disabled={isSaving} className="gap-2 w-full">
         <Save className="size-4" />

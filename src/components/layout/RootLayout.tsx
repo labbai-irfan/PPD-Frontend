@@ -6,6 +6,7 @@ import { BottomNav } from '@/components/layout/BottomNav'
 import { Footer } from '@/components/layout/Footer'
 import { MenuDrawer } from '@/components/layout/MenuDrawer'
 import { SearchPill } from '@/components/shared/SearchPill'
+import { MobileSidebar } from '@/components/layout/MobileSidebar'
 
 /** Routes that show the floating search pill above the bottom nav (from the design). */
 const SEARCH_PILL_ROUTES: string[] = [ROUTES.home, ROUTES.products, ROUTES.allProducts]
@@ -24,6 +25,7 @@ export default function RootLayout() {
 
   return (
     <div className="min-h-dvh bg-background flex flex-col">
+      <MobileSidebar />
       <DesktopHeader />
       <main className="mx-auto w-full max-w-md sm:max-w-xl px-4 pt-3.5 pb-8 md:max-w-6xl md:px-8 md:pt-6 md:pb-16 flex-1">
         <Outlet />

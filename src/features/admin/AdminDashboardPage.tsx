@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Package, ShoppingCart, Users, TrendingUp, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
+import {
+  AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  PieChart, Pie, Cell, BarChart, Bar, Legend
+} from 'recharts'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { apiClient } from '@/services/api/client'
@@ -14,6 +18,10 @@ interface Dashboard {
   pendingReviews: number
   recentOrders: { id: string; orderNumber: string; customerName: string; status: string; createdAt: string; pricing: { total: number } }[]
   alerts: { type: 'warning' | 'error' | 'info'; message: string }[]
+  salesChart: { date: string; revenue: number }[]
+  newUsersChart: { date: string; users: number }[]
+  topProducts: { title: string; sales: number }[]
+  categoryRevenue: { category: string; revenue: number }[]
 }
 
 export default function AdminDashboardPage() {
@@ -111,6 +119,190 @@ export default function AdminDashboardPage() {
             <div className="p-2.5 bg-info/10 rounded-xl text-info">
               <Users className="size-5" />
             </div>
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Sales Chart */}
+        <Card className="p-5 lg:col-span-2">
+          <h2 className="font-semibold text-foreground text-sm md:text-base mb-4">Sales Trend (Last 30 Days)</h2>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={data.salesChart}>
+                <defs>
+                  <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.8}/>
+                    <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={(val) => new Date(val).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis 
+                  tickFormatter={(val) => `₹${(val / 1000).toFixed(0)}k`}
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                  itemStyle={{ color: 'hsl(var(--foreground))' }}
+                  labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
+                  formatter={(val: any) => [`₹${(Number(val) || 0).toLocaleString('en-IN')}`, 'Revenue']}
+                  labelFormatter={(val: any) => new Date(val).toLocaleDateString('en-IN', { dateStyle: 'medium' })}
+                />
+                <Legend verticalAlign="top" height={36} />
+                <Area 
+                  type="monotone" 
+                  dataKey="revenue" 
+                  name="Revenue"
+                  stroke="hsl(var(--primary))" 
+                  fillOpacity={1} 
+                  fill="url(#colorRevenue)" 
+                  strokeWidth={3}
+                  activeDot={{ r: 6 }}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* New Customer Signups */}
+        <Card className="p-5">
+          <h2 className="font-semibold text-foreground text-sm md:text-base mb-4">New Users (Last 30 Days)</h2>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data.newUsersChart}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="hsl(var(--border))" />
+                <XAxis 
+                  dataKey="date" 
+                  tickFormatter={(val) => new Date(val).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis 
+                  stroke="hsl(var(--muted-foreground))"
+                  fontSize={12}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                  itemStyle={{ color: 'hsl(var(--foreground))' }}
+                  labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
+                  formatter={(val: any) => [Number(val) || 0, 'New Users']}
+                  labelFormatter={(val: any) => new Date(val).toLocaleDateString('en-IN', { dateStyle: 'medium' })}
+                />
+                <Legend verticalAlign="top" height={36} />
+                <Bar 
+                  dataKey="users" 
+                  name="New Users"
+                  fill="#8b5cf6" 
+                  radius={[4, 4, 0, 0]} 
+                  barSize={20}
+                />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Top Selling Products */}
+        <Card className="p-5">
+          <h2 className="font-semibold text-foreground text-sm md:text-base mb-4">Top Selling Products</h2>
+          <div className="h-[300px] w-full">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={data.topProducts} layout="vertical" margin={{ left: 0, right: 30 }}>
+                <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="hsl(var(--border))" />
+                <XAxis type="number" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} />
+                <YAxis type="category" dataKey="title" width={100} stroke="hsl(var(--muted-foreground))" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(val) => val.length > 15 ? val.substring(0, 15) + '...' : val} />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                  itemStyle={{ color: 'hsl(var(--foreground))' }}
+                  formatter={(val: any) => [Number(val) || 0, 'Sales']}
+                />
+                <Legend verticalAlign="top" height={36} />
+                <Bar dataKey="sales" name="Sales" fill="#10b981" radius={[0, 4, 4, 0]} barSize={20} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Revenue by Category */}
+        <Card className="p-5">
+          <h2 className="font-semibold text-foreground text-sm md:text-base mb-4">Revenue by Category</h2>
+          <div className="h-[300px] w-full flex justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={data.categoryRevenue}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={60}
+                  outerRadius={100}
+                  paddingAngle={5}
+                  dataKey="revenue"
+                  nameKey="category"
+                >
+                  {data.categoryRevenue.map((_, index) => (
+                    <Cell key={`cell-${index}`} fill={['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981'][index % 5]} />
+                  ))}
+                </Pie>
+                <Legend layout="horizontal" verticalAlign="bottom" align="center" />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                  itemStyle={{ color: 'hsl(var(--foreground))' }}
+                  formatter={(val: any) => [`₹${(Number(val) || 0).toLocaleString('en-IN')}`, 'Revenue']}
+                />
+              </PieChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Order Status Chart */}
+        <Card className="p-5">
+          <h2 className="font-semibold text-foreground text-sm md:text-base mb-4">Order Status Distribution</h2>
+          <div className="h-[300px] w-full flex justify-center">
+            <ResponsiveContainer width="100%" height="100%">
+              <PieChart>
+                <Pie
+                  data={[
+                    { name: 'Placed', value: data.orders.placed, color: '#3b82f6' },
+                    { name: 'Delivered', value: data.orders.delivered, color: '#22c55e' },
+                    { name: 'Cancelled', value: data.orders.cancelled, color: '#ef4444' }
+                  ].filter(d => d.value > 0)}
+                  cx="50%"
+                  cy="50%"
+                  innerRadius={0}
+                  outerRadius={100}
+                  paddingAngle={5}
+                  dataKey="value"
+                >
+                  {([
+                    { name: 'Placed', value: data.orders.placed, color: '#3b82f6' },
+                    { name: 'Delivered', value: data.orders.delivered, color: '#22c55e' },
+                    { name: 'Cancelled', value: data.orders.cancelled, color: '#ef4444' }
+                  ].filter(d => d.value > 0)).map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.color} />
+                  ))}
+                </Pie>
+                <Legend layout="horizontal" verticalAlign="bottom" align="center" />
+                <Tooltip 
+                  contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }}
+                  itemStyle={{ color: 'hsl(var(--foreground))' }}
+                  formatter={(val: any) => [Number(val) || 0, 'Orders']}
+                />
+              </PieChart>
+            </ResponsiveContainer>
           </div>
         </Card>
       </div>
