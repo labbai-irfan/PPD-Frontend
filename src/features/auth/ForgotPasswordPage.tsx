@@ -1,23 +1,26 @@
+import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Mail } from 'lucide-react'
+import { AlertCircle, Mail } from 'lucide-react'
 import { toast } from 'sonner'
 import { apiClient } from '@/services/api/client'
 import { ROUTES } from '@/lib/constants'
+import { emailSchema } from '@/lib/validation'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 
 const schema = z.object({
-  email: z.string().min(1, 'Email is required').email('Enter a valid email address'),
+  email: emailSchema,
 })
 
 type FormValues = z.infer<typeof schema>
 
 export default function ForgotPasswordPage() {
   const navigate = useNavigate()
+  const [formError, setFormError] = useState<string | null>(null)
 
   const {
     register,
@@ -26,12 +29,15 @@ export default function ForgotPasswordPage() {
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
   async function onSubmit(values: FormValues) {
+    setFormError(null)
     try {
       await apiClient.post('/auth/forgot-password', { email: values.email })
-      toast.success('Check your email for the reset code.')
+      toast.success('If an account exists, a reset code is on its way.')
       navigate(`${ROUTES.resetPassword}?email=${encodeURIComponent(values.email)}`)
-    } catch (error) {
-      toast.error('Failed to send reset code. Please try again.')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to send reset code. Please try again.'
+      setFormError(message)
+      toast.error(message)
     }
   }
 
@@ -43,6 +49,15 @@ export default function ForgotPasswordPage() {
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4" noValidate>
+        {formError && (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-xl border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
+          >
+            <AlertCircle className="mt-0.5 size-4 shrink-0" />
+            <span>{formError}</span>
+          </div>
+        )}
         <Input
           label="Email"
           type="email"

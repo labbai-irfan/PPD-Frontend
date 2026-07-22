@@ -16,6 +16,32 @@ export const apiClient = axios.create({
 let isRefreshing = false
 let failedQueue: Array<{ resolve: (value: string) => void; reject: (reason?: unknown) => void }> = []
 
+/**
+ * Requests that legitimately return 401 as a *credential* failure, not an
+ * expired session. These must never trigger the silent refresh-and-redirect
+ * flow, or the real "Invalid email or password" error gets swallowed.
+ */
+const AUTH_ENDPOINTS = [
+  '/auth/login',
+  '/auth/register',
+  '/auth/refresh',
+  '/admin/auth/login',
+  '/auth/forgot-password',
+  '/auth/reset-password',
+]
+
+const isAuthEndpoint = (url?: string) => !!url && AUTH_ENDPOINTS.some((p) => url.includes(p))
+
+/** An Error that also carries the HTTP status, so callers can branch on it. */
+export class ApiError extends Error {
+  status?: number
+  constructor(message: string, status?: number) {
+    super(message)
+    this.name = 'ApiError'
+    this.status = status
+  }
+}
+
 const processQueue = (error: unknown, token?: string) => {
   failedQueue.forEach((item) => {
     if (token) {
@@ -43,7 +69,17 @@ apiClient.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as any
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
+    // A 401 from a login/register/refresh call is a credential failure — let it
+    // fall through to the message handler below so the UI can show it. Only an
+    // *authenticated* request (one that carried a token) should try to refresh.
+    const hadToken = Boolean(originalRequest?.headers?.Authorization)
+
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !isAuthEndpoint(originalRequest?.url) &&
+      hadToken
+    ) {
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject })
@@ -96,19 +132,30 @@ apiClient.interceptors.response.use(
       }
     }
 
-    // Extract error message safely without exposing technical details
-    let message = 'Something went wrong. Please try again.'
+    // Build a user-facing message. NestJS puts a user-safe string (from thrown
+    // HttpExceptions) or a string[] (from the validation pipe) on `message`.
+    // Both are safe to surface; only network/5xx errors get a generic fallback.
+    const status = error.response?.status
     const responseData = error?.response?.data as any
+    let message: string
 
-    // Only trust certain error messages from server
-    if (responseData?.message && typeof responseData.message === 'string') {
-      // Sanitize: only expose user-safe messages
-      const safeMessages = ['Invalid email or password', 'Account not found', 'Access denied'];
-      if (safeMessages.some(safe => responseData.message.includes(safe))) {
-        message = responseData.message
-      }
+    if (error.code === 'ECONNABORTED') {
+      message = 'The request timed out. Please check your connection and try again.'
+    } else if (!error.response) {
+      message = 'Cannot reach the server. Please check your connection and try again.'
+    } else if (status && status >= 500) {
+      message = 'Something went wrong on our end. Please try again in a moment.'
+    } else if (Array.isArray(responseData?.message)) {
+      // class-validator returns every failed rule; show the first, clearest one
+      message = String(responseData.message[0])
+    } else if (typeof responseData?.message === 'string' && responseData.message) {
+      message = responseData.message
+    } else if (typeof responseData?.error === 'string' && responseData.error) {
+      message = responseData.error
+    } else {
+      message = 'Something went wrong. Please try again.'
     }
 
-    return Promise.reject(new Error(message))
+    return Promise.reject(new ApiError(message, status))
   },
 )

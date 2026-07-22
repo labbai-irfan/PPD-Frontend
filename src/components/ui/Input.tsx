@@ -14,6 +14,7 @@ export interface InputProps extends ComponentProps<'input'> {
 export function Input({ label, error, hint, leftIcon, rightSlot, className, id, digitsOnly, onChange, inputMode, ...props }: InputProps) {
   const autoId = useId()
   const inputId = id ?? autoId
+  const describedById = error || hint ? `${inputId}-desc` : undefined
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
     if (digitsOnly) {
@@ -48,6 +49,7 @@ export function Input({ label, error, hint, leftIcon, rightSlot, className, id, 
             className,
           )}
           aria-invalid={error ? true : undefined}
+          aria-describedby={describedById}
           inputMode={inputMode ?? (digitsOnly ? 'numeric' : undefined)}
           onChange={handleChange}
           {...props}
@@ -55,9 +57,9 @@ export function Input({ label, error, hint, leftIcon, rightSlot, className, id, 
         {rightSlot && <span className="absolute inset-y-0 right-2 flex items-center">{rightSlot}</span>}
       </div>
       {error ? (
-        <p className="mt-1.5 text-xs font-medium text-destructive">{error}</p>
+        <p id={describedById} className="mt-1.5 text-xs font-medium text-destructive">{error}</p>
       ) : hint ? (
-        <p className="mt-1.5 text-xs text-muted-foreground">{hint}</p>
+        <p id={describedById} className="mt-1.5 text-xs text-muted-foreground">{hint}</p>
       ) : null}
     </div>
   )

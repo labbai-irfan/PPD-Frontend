@@ -8,7 +8,7 @@ export function Footer() {
   return (
     <footer className="hidden md:block bg-card border-t border-border mt-12 md:mt-16">
       <div className="mx-auto max-w-6xl px-4 md:px-8 py-8 md:py-12">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-4 gap-y-8 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-4 gap-y-8 mb-8">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-4">
@@ -70,23 +70,6 @@ export function Footer() {
                 <Link to={ROUTES.help} className="inline-block py-1.5 text-sm text-muted-foreground hover:text-foreground">
                   Help Center
                 </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Admin */}
-          <div className="col-span-2 md:col-span-1">
-            <h3 className="font-semibold text-foreground mb-4 text-sm">Admin</h3>
-            <ul className="space-y-0.5">
-              <li>
-                <Link to={ROUTES.adminLogin} className="inline-block py-1.5 text-sm text-muted-foreground hover:text-foreground">
-                  Admin Login
-                </Link>
-              </li>
-              <li>
-                <a href="mailto:admin@ppdstore.com" className="inline-block py-1.5 text-sm text-muted-foreground hover:text-foreground">
-                  Contact Admin
-                </a>
               </li>
             </ul>
           </div>

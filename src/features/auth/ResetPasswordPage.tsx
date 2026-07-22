@@ -3,18 +3,19 @@ import { useSearchParams, useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Eye, EyeOff, Lock, KeyRound } from 'lucide-react'
+import { AlertCircle, Eye, EyeOff, Lock, KeyRound } from 'lucide-react'
 import { toast } from 'sonner'
 import { ROUTES } from '@/lib/constants'
+import { otpSchema, passwordSchema } from '@/lib/validation'
 import { apiClient } from '@/services/api/client'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 
 const schema = z.object({
-  otp: z.string().length(6, 'OTP must be exactly 6 digits'),
-  password: z.string().min(8, 'Password must be at least 8 characters'),
-  confirmPassword: z.string(),
+  otp: otpSchema,
+  password: passwordSchema,
+  confirmPassword: z.string().min(1, 'Please confirm your password'),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
   path: ["confirmPassword"],
@@ -27,6 +28,7 @@ export default function ResetPasswordPage() {
   const [searchParams] = useSearchParams()
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirm, setShowConfirm] = useState(false)
+  const [formError, setFormError] = useState<string | null>(null)
 
   const email = searchParams.get('email')
 
@@ -47,12 +49,15 @@ export default function ResetPasswordPage() {
 
   async function onSubmit(values: FormValues) {
     if (!email) return
+    setFormError(null)
     try {
       await apiClient.post('/auth/reset-password', { email, otp: values.otp, password: values.password })
-      toast.success('Password reset successfully!')
+      toast.success('Password reset successfully! Please sign in.')
       navigate(ROUTES.login, { replace: true })
-    } catch (error) {
-      toast.error('Failed to reset password. Please check your OTP and try again.')
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to reset password. Please check your code and try again.'
+      setFormError(message)
+      toast.error(message)
     }
   }
 
@@ -62,9 +67,21 @@ export default function ResetPasswordPage() {
       <p className="mt-1 text-sm text-muted-foreground">Enter your new password below.</p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-4" noValidate>
+        {formError && (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-xl border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive"
+          >
+            <AlertCircle className="mt-0.5 size-4 shrink-0" />
+            <span>{formError}</span>
+          </div>
+        )}
         <Input
           label="6-Digit Reset Code"
           type="text"
+          digitsOnly
+          maxLength={6}
+          autoComplete="one-time-code"
           placeholder="123456"
           leftIcon={<KeyRound className="size-4" />}
           error={errors.otp?.message}
