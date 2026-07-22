@@ -1,12 +1,9 @@
-import { reviews } from '@/mocks/reviews'
-import { sleep } from '@/lib/utils'
 import { apiClient } from '@/services/api/client'
 import type { Banner, Category, Coupon, Paginated, Product, ProductQuery, Review } from '@/types'
 
 /**
  * Catalog repository — the single data-access seam for the whole app.
- * Products/categories/banners/home are LIVE against the backend API.
- * Coupons and product reviews stay mocked until their backend phases land.
+ * All endpoints below are LIVE against the backend API.
  */
 
 export const catalogRepository = {
@@ -64,10 +61,9 @@ export const catalogRepository = {
     }
   },
 
-  /** Mock until reviews backend lands (Phase 5). */
   async getReviews(productId: string): Promise<Review[]> {
-    await sleep(200)
-    return reviews.filter((r) => r.productId === productId)
+    const { data } = await apiClient.get<Paginated<Review>>(`/reviews/product/${productId}`)
+    return data.items
   },
 
   async getCoupons(): Promise<Coupon[]> {
