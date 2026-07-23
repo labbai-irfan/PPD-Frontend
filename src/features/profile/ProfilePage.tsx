@@ -33,6 +33,7 @@ export default function ProfilePage() {
   const [isUpdating, setIsUpdating] = useState(false)
   const [editName, setEditName] = useState('')
   const [editPhone, setEditPhone] = useState('')
+  const [editGrade, setEditGrade] = useState('')
   const [avatarFile, setAvatarFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
   const [isDragging, setIsDragging] = useState(false)
@@ -55,6 +56,7 @@ export default function ProfilePage() {
     if (user) {
       setEditName(user.name || '')
       setEditPhone(user.phone || '')
+      setEditGrade(user.grade || '')
     }
   }, [user])
 
@@ -77,10 +79,11 @@ export default function ProfilePage() {
       }
 
       // Update name/phone
-      if (editName !== user.name || editPhone !== user.phone) {
+      if (editName !== user.name || editPhone !== user.phone || editGrade !== user.grade) {
         const { data: updatedUser } = await apiClient.patch('/users/me', {
           name: editName,
           phone: editPhone || undefined,
+          ...(user.accountType === 'parent' && editGrade ? { grade: editGrade } : {}),
         })
         updateUser(updatedUser)
       }
@@ -188,8 +191,8 @@ export default function ProfilePage() {
           <div className="flex flex-col">
             <div className="flex items-start justify-between">
               <div className="w-full mr-4">
-                <span className="inline-block rounded-full bg-[#E5F1FF] px-3 py-[3px] text-[10.5px] font-semibold text-[#1B75FF]">
-                  Student Profile
+                <span className="inline-block rounded-full bg-[#E5F1FF] px-3 py-[3px] text-[10.5px] font-bold tracking-wide text-[#1B75FF] uppercase">
+                  {user.accountType === 'student' ? 'Student Profile' : 'Parent Profile'}
                 </span>
                 {isEditing ? (
                   <input 
@@ -216,6 +219,7 @@ export default function ProfilePage() {
                       handleFileChange(null)
                       setEditName(user.name || '')
                       setEditPhone(user.phone || '')
+                      setEditGrade(user.grade || '')
                     }}
                     className="mt-0.5 flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full bg-muted text-muted-foreground hover:bg-muted/80 disabled:opacity-50"
                   >
@@ -252,7 +256,7 @@ export default function ProfilePage() {
               </span>
               <span className="truncate">{user.email}</span>
             </p>
-            <div className="flex min-w-0 items-center gap-2.5 text-[13.5px] text-[#2a2723]">
+            <div className="flex flex-wrap min-w-0 items-center gap-2.5 text-[13.5px] text-[#2a2723]">
               <span className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-[#FFF0D4]">
                 <Icon name="call" size={16} fill className="text-[#FBAA2E]" />
               </span>
@@ -267,13 +271,33 @@ export default function ProfilePage() {
               ) : (
                 <span className="truncate">{user.phone ?? '+91 98765 43210'}</span>
               )}
+              {isEditing ? (
+                 <input
+                   type="text"
+                   value={editGrade}
+                   onChange={(e) => setEditGrade(e.target.value)}
+                   placeholder="Grade (e.g., 10)"
+                   className="flex-1 bg-muted/40 px-2 py-1 text-[13.5px] border-none rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                 />
+               ) : (
+                 (user.accountType === 'parent' && user.grade) && (
+                   <p className="flex items-center gap-2.5 text-[13.5px] text-[#2a2723]">
+                     <span className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-[#FFF0D4]">
+                       <Icon name="school" size={16} fill className="text-[#FBAA2E]" />
+                     </span>
+                     {user.grade}
+                   </p>
+                 )
+               )}
             </div>
-            <p className="flex items-center gap-2.5 text-[13.5px] text-[#2a2723]">
-              <span className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-[#FFF0D4]">
-                <Icon name="school" size={16} fill className="text-[#FBAA2E]" />
-              </span>
-              Grade 5
-            </p>
+            {user.accountType === 'student' && user.grade && (
+              <p className="flex items-center gap-2.5 text-[13.5px] text-[#2a2723]">
+                <span className="flex size-[26px] shrink-0 items-center justify-center rounded-full bg-[#FFF0D4]">
+                  <Icon name="school" size={16} fill className="text-[#FBAA2E]" />
+                </span>
+                {user.grade}
+              </p>
+            )}
           </div>
         </div>
       </div>

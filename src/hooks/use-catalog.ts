@@ -12,6 +12,8 @@ export const catalogKeys = {
   homeContent: ['home-content'] as const,
   reviews: (productId: string) => ['reviews', productId] as const,
   coupons: ['coupons'] as const,
+  packages: ['packages'] as const,
+  package: (slug: string) => ['package', slug] as const,
 }
 
 export function useProducts(query: ProductQuery = {}) {
@@ -68,4 +70,16 @@ export function useReviews(productId: string) {
 
 export function useCoupons() {
   return useQuery({ queryKey: catalogKeys.coupons, queryFn: catalogRepository.getCoupons })
+}
+
+export function usePackages() {
+  return useQuery({ queryKey: catalogKeys.packages, queryFn: catalogRepository.getPackages })
+}
+
+export function usePackage(slug: string) {
+  return useQuery({
+    queryKey: catalogKeys.package(slug),
+    queryFn: () => catalogRepository.getPackage(slug),
+    enabled: Boolean(slug),
+  })
 }

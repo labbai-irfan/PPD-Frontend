@@ -6,6 +6,7 @@ import { useAuthStore } from '@/store/auth.store'
 import { useUiStore } from '@/store/ui.store'
 import { Icon } from '@/components/ui/Icon'
 import { Logo } from '@/components/shared/Logo'
+import { Avatar } from '@/components/ui/Avatar'
 
 interface DrawerLink {
   icon: string
@@ -17,29 +18,21 @@ interface DrawerLink {
 const shopLinks: DrawerLink[] = [
   { icon: 'category', label: 'Categories', href: ROUTES.products },
   { icon: 'inventory_2', label: 'All Products', href: ROUTES.allProducts },
-  { icon: 'local_offer', label: 'Deals & Offers', href: '/products/all?tag=deal' },
   { icon: 'fiber_new', label: 'New Arrivals', href: '/products/all?tag=new' },
-  { icon: 'trending_up', label: 'Bestsellers', href: '/products/all?tag=bestseller' },
-  { icon: 'school', label: 'Bulk & School Orders', href: ROUTES.bulkOrder, highlight: true },
-  { icon: 'card_giftcard', label: 'Gift Cards', href: ROUTES.giftCards },
+  { icon: 'favorite', label: 'Wishlist', href: ROUTES.wishlist },
 ]
 
 const accountLinks: DrawerLink[] = [
   { icon: 'receipt_long', label: 'My Orders', href: ROUTES.orders },
   { icon: 'favorite', label: 'Wishlist', href: ROUTES.wishlist },
   { icon: 'location_on', label: 'My Addresses', href: ROUTES.addresses },
-  { icon: 'stars', label: 'Rewards', href: ROUTES.rewards },
-  { icon: 'group_add', label: 'Refer & Earn', href: ROUTES.referral },
-  { icon: 'rate_review', label: 'My Reviews', href: ROUTES.myReviews },
-  { icon: 'assignment_return', label: 'Returns', href: ROUTES.returns },
-  { icon: 'notifications', label: 'Notifications', href: ROUTES.notifications },
-  { icon: 'settings', label: 'Account Settings', href: ROUTES.accountSettings },
 ]
 
 const helpLinks: DrawerLink[] = [
   { icon: 'help', label: 'Help Center', href: ROUTES.help },
   { icon: 'support_agent', label: 'Contact Us', href: ROUTES.contactUs },
   { icon: 'quiz', label: 'FAQs & Support', href: ROUTES.support },
+  { icon: 'gavel', label: 'Terms & Conditions', href: ROUTES.terms },
   { icon: 'info', label: `About ${APP_NAME}`, href: ROUTES.about },
 ]
 
@@ -123,16 +116,28 @@ export function MenuDrawer() {
 
           <Logo size={40} />
           {user ? (
-            <div className="mt-3">
-              <p className="text-[17px] font-extrabold leading-tight">{user.name}</p>
-              <p className="mt-0.5 truncate text-[12px] text-white/85">{user.email}</p>
-              <Link
-                to={ROUTES.profile}
-                className="mt-3 inline-flex items-center gap-1 rounded-full bg-white/20 px-3.5 py-1.5 text-[11.5px] font-bold backdrop-blur transition-colors hover:bg-white/30"
-              >
-                View profile
-                <Icon name="arrow_forward" size={13} />
-              </Link>
+            <div className="mt-3 flex items-center gap-3">
+              <Avatar
+                name={user.name}
+                src={
+                  user.avatar
+                    ? `${import.meta.env.VITE_API_BASE_URL?.replace(/\/api(\/v\d+)?$/, '') || ''}${user.avatar}`
+                    : undefined
+                }
+                size={52}
+                className="border-2 border-white/40"
+              />
+              <div className="min-w-0">
+                <p className="truncate text-[17px] font-extrabold leading-tight">{user.name}</p>
+                <p className="mt-0.5 truncate text-[12px] text-white/85">{user.email}</p>
+                <Link
+                  to={ROUTES.profile}
+                  className="mt-1.5 inline-flex items-center gap-1 rounded-full bg-white/20 px-3.5 py-1.5 text-[11.5px] font-bold backdrop-blur transition-colors hover:bg-white/30"
+                >
+                  View profile
+                  <Icon name="arrow_forward" size={13} />
+                </Link>
+              </div>
             </div>
           ) : (
             <div className="mt-3">

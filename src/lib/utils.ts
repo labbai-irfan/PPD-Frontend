@@ -7,6 +7,23 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
+/**
+ * Converts a relative server path like `/uploads/2025/07/uuid.png`
+ * into an absolute URL pointing at the backend.
+ * If the value is already absolute (http/https/blob/data) it is returned as-is.
+ */
+const API_ORIGIN = (() => {
+  const base = import.meta.env.VITE_API_BASE_URL as string | undefined
+  if (!base) return ''
+  try { return new URL(base).origin } catch { return '' }
+})()
+
+export function mediaUrl(path?: string | null): string {
+  if (!path) return ''
+  if (/^(https?:|blob:|data:)/.test(path)) return path
+  return path.startsWith('/') ? `${API_ORIGIN}${path}` : path
+}
+
 const wholeFormatter = new Intl.NumberFormat(LOCALE, {
   style: 'currency',
   currency: CURRENCY,

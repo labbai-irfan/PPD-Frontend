@@ -36,13 +36,15 @@ export function ProductCard({ product, className }: ProductCardProps) {
       )}
     >
       {/* Top section - white, image only */}
-      <div className="relative aspect-square overflow-hidden bg-white p-3 dark:bg-card">
-        <img
-          src={product.images[0]}
-          alt={product.title}
-          loading="lazy"
-          className="size-full object-contain transition-transform duration-500 group-hover:scale-105"
-        />
+      <div className="relative aspect-square overflow-hidden bg-white p-2.5 dark:bg-card">
+        <div className="size-full overflow-hidden rounded-[12px]">
+          <img
+            src={product.images[0]}
+            alt={product.title}
+            loading="lazy"
+            className="size-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        </div>
       </div>
 
       {/* Bottom section - light background, all details */}

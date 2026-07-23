@@ -19,7 +19,9 @@ export const router = createBrowserRouter([
       { path: '/', lazy: lazyPage(() => import('@/features/home/HomePage')) },
       { path: '/products', lazy: lazyPage(() => import('@/features/products/ProductListingPage')) },
       { path: '/products/all', lazy: lazyPage(() => import('@/features/products/AllProductsPage')) },
-      { path: '/product/:idOrSlug', lazy: lazyPage(() => import('@/features/products/ProductDetailsPage')) },
+      { path: '/products/PPD/:idOrSlug', lazy: lazyPage(() => import('@/features/products/ProductDetailsPage')) },
+      { path: '/packages', lazy: lazyPage(() => import('@/features/packages/PackagesListPage')) },
+      { path: '/package/:slug', lazy: lazyPage(() => import('@/features/packages/PackageDetailPage')) },
       /* Legacy path — the categories tab is the products listing in the design */
       { path: '/categories', element: <Navigate to={ROUTES.products} replace /> },
       { path: '/search', lazy: lazyPage(() => import('@/features/search/SearchPage')) },
@@ -115,8 +117,9 @@ export const router = createBrowserRouter([
           // Feature downgraded for client — re-enable by uncommenting:
           // { path: '/admin/coupons', lazy: lazyPage(() => import('@/features/admin/AdminCouponsPage')) },
           { path: '/admin/categories', lazy: lazyPage(() => import('@/features/admin/AdminCategoriesPage')) },
+          { path: '/admin/inventory', lazy: lazyPage(() => import('@/features/admin/AdminInventoryPage')) },
           { path: '/admin/banners', lazy: lazyPage(() => import('@/features/admin/AdminBannersPage')) },
-          { path: '/admin/home-content', lazy: lazyPage(() => import('@/features/admin/AdminHomeContentPage')) },
+          { path: '/admin/packages', lazy: lazyPage(() => import('@/features/admin/AdminPackagesPage')) },
           { path: '/admin/admins', lazy: lazyPage(() => import('@/features/admin/AdminsPage')) },
           { path: '/admin/settings', lazy: lazyPage(() => import('@/features/admin/SettingsPage')) },
           // { path: '/admin/security', lazy: lazyPage(() => import('@/features/admin/AdminSecurityPage')) },

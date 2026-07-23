@@ -103,7 +103,7 @@ export function RecommendationsCarousel({
       <h3 className="text-lg font-semibold mb-4">{title}</h3>
 
       {isLoading ? (
-        <div className="flex gap-4 overflow-x-auto pb-4">
+        <div className="flex gap-2.5 overflow-x-auto flex-nowrap no-scrollbar snap-x">
           {Array(limit)
             .fill(0)
             .map((_, i) => (
@@ -111,7 +111,7 @@ export function RecommendationsCarousel({
             ))}
         </div>
       ) : (
-        <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory">
+        <div className="flex justify-between gap-1.5 md:justify-start md:gap-4 px-4 overflow-x-auto flex-nowrap no-scrollbar snap-x snap-mandatory scroll-px-4 pb-2 pt-1 -mx-4 md:mx-0 md:px-0">
           {products.map((product) => (
             <div
               key={product.id}

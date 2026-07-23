@@ -16,6 +16,7 @@ interface AdminProduct {
   isActive: boolean
   salesCount: number
   images: string[]
+  status?: 'draft' | 'published'
 }
 
 interface AdminProductList {
@@ -137,13 +138,20 @@ export default function AdminProductsPage() {
                 </td>
                 <td className="py-3 text-muted-foreground">{product.salesCount}</td>
                 <td className="py-3">
-                  <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                    product.isActive
-                      ? 'bg-success/10 text-success'
-                      : 'bg-muted text-muted-foreground'
-                  }`}>
-                    {product.isActive ? 'Active' : 'Inactive'}
-                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {product.status === 'draft' && (
+                      <span className="px-3 py-1 rounded-full text-xs font-semibold bg-warning/10 text-warning">
+                        Draft
+                      </span>
+                    )}
+                    <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                      product.isActive
+                        ? 'bg-success/10 text-success'
+                        : 'bg-muted text-muted-foreground'
+                    }`}>
+                      {product.isActive ? 'Active' : 'Inactive'}
+                    </span>
+                  </div>
                 </td>
                 <td className="py-3 flex gap-1.5">
                   <Link to={`/admin/products/${product.id}/edit`}>
@@ -205,7 +213,12 @@ export default function AdminProductsPage() {
                     {product.stock} items
                   </span>
                 </div>
-                <div className="flex items-center gap-2 mt-2">
+                <div className="flex items-center gap-1.5 mt-2">
+                  {product.status === 'draft' && (
+                    <span className="px-2 py-0.5 rounded-full text-[11px] font-semibold bg-warning/10 text-warning">
+                      Draft
+                    </span>
+                  )}
                   <span className={`px-2 py-0.5 rounded-full text-[11px] font-semibold ${
                     product.isActive
                       ? 'bg-success/10 text-success'

@@ -16,6 +16,7 @@ import {
   X,
   Image,
   Settings,
+  Warehouse,
 } from 'lucide-react'
 import { Logo } from '@/components/shared/Logo'
 import { useAuthStore } from '@/store/auth.store'
@@ -28,10 +29,11 @@ const menuItems = [
   { icon: Users, label: 'Users', path: '/admin/users' },
   // { icon: Star, label: 'Reviews', path: '/admin/reviews' },
   { icon: FolderTree, label: 'Categories', path: '/admin/categories' },
+  { icon: Warehouse, label: 'Inventory', path: '/admin/inventory' },
   // Feature downgraded for client — re-enable by uncommenting:
   // { icon: Ticket, label: 'Coupons', path: '/admin/coupons' },
   { icon: Image, label: 'Banners', path: '/admin/banners' },
-  { icon: LayoutTemplate, label: 'Home Sections', path: '/admin/home-content' },
+  { icon: LayoutTemplate, label: 'Packages', path: '/admin/packages' },
   { icon: UserCog, label: 'Admins', path: '/admin/admins' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
   // { icon: Lock, label: 'Security', path: '/admin/security' },

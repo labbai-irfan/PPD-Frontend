@@ -20,7 +20,7 @@ interface AuthState {
   refreshToken: string | null
   isAuthenticated: boolean
   login: (email: string, password: string) => Promise<AuthUser>
-  register: (name: string, email: string, password: string) => Promise<AuthUser>
+  register: (name: string, email: string, password: string, accountType: 'student' | 'parent', grade?: string) => Promise<AuthUser>
   /** Admin portal login — hits /admin/auth/login (customers rejected server-side). */
   adminLogin: (email: string, password: string) => Promise<AuthUser>
   logout: () => void
@@ -46,8 +46,8 @@ export const useAuthStore = create<AuthState>()(
         return data.user
       },
 
-      register: async (name, email, password) => {
-        const { data } = await apiClient.post<AuthResponse>('/auth/register', { name, email, password })
+      register: async (name, email, password, accountType, grade) => {
+        const { data } = await apiClient.post<AuthResponse>('/auth/register', { name, email, password, accountType, grade })
         set({
           user: data.user,
           token: data.accessToken,

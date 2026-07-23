@@ -76,10 +76,11 @@ export default function AllProductsPage() {
   const category = params.get('category') ?? undefined
   const tag = (params.get('tag') as ProductTag | null) ?? undefined
   const q = params.get('q') ?? undefined
+  const ppdOriginal = params.get('ppdOriginal') === 'true'
   const sort = (params.get('sort') as SortOption | null) ?? 'relevance'
   const page = Number(params.get('page') ?? '1')
 
-  const query: ProductQuery = { category, tag, q, sort, page, pageSize: PAGE_SIZE }
+  const query: ProductQuery = { category, tag, q, sort, page, pageSize: PAGE_SIZE, ppdOriginal: ppdOriginal || undefined }
   const { data, isPending } = useProducts(query)
   const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / PAGE_SIZE))
 
@@ -100,13 +101,26 @@ export default function AllProductsPage() {
   }
   if (tag) chips.push({ key: 'tag', label: tagLabels[tag], remove: () => update((p) => p.delete('tag')) })
   if (q) chips.push({ key: 'q', label: `“${q}”`, remove: () => update((p) => p.delete('q')) })
+  if (ppdOriginal) {
+    chips.push({ key: 'ppdOriginal', label: 'PPD Original', remove: () => update((p) => p.delete('ppdOriginal')) })
+  }
+
+  /* Only top-level categories get their own chip; subcategories surface once their parent is active. */
+  const topLevelCategories = categories?.filter((c) => !c.parentId) ?? []
+  const selectedCategory = categories?.find((c) => c.slug === category)
+  const subcategoryParent = selectedCategory?.parentId
+    ? categories?.find((c) => c.id === selectedCategory.parentId)
+    : selectedCategory
+  const subcategories = subcategoryParent
+    ? (categories?.filter((c) => c.parentId === subcategoryParent.id) ?? [])
+    : []
 
   /* Category + sort chip groups, shared by the mobile filter sheet and the lg+ sidebar. */
   const filterGroups = (
     <>
       <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">Category</p>
       <div className="flex flex-wrap gap-2">
-        {categories?.map((c) => {
+        {topLevelCategories.map((c) => {
           const active = (category ?? 'all') === c.slug
           return (
             <button
@@ -122,6 +136,42 @@ export default function AllProductsPage() {
             </button>
           )
         })}
+      </div>
+      {subcategories.length > 0 && (
+        <>
+          <p className="mb-2 mt-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Subcategory</p>
+          <div className="flex flex-wrap gap-2">
+            {subcategories.map((sub) => {
+              const active = category === sub.slug
+              return (
+                <button
+                  key={sub.id}
+                  type="button"
+                  onClick={() => update((p) => p.set('category', sub.slug))}
+                  className={cn(
+                    'min-h-[44px] rounded-full px-4 py-2.5 text-[12.5px] font-medium shadow-soft cursor-pointer',
+                    active ? 'bg-primary font-semibold text-primary-foreground' : 'bg-muted text-foreground',
+                  )}
+                >
+                  {sub.name}
+                </button>
+              )
+            })}
+          </div>
+        </>
+      )}
+      <p className="mb-2 mt-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Brand</p>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          onClick={() => update((p) => (ppdOriginal ? p.delete('ppdOriginal') : p.set('ppdOriginal', 'true')))}
+          className={cn(
+            'min-h-[44px] rounded-full px-4 py-2.5 text-[12.5px] font-medium shadow-soft cursor-pointer',
+            ppdOriginal ? 'bg-primary font-semibold text-primary-foreground' : 'bg-muted text-foreground',
+          )}
+        >
+          PPD Original
+        </button>
       </div>
       <p className="mb-2 mt-5 text-xs font-bold uppercase tracking-wider text-muted-foreground">Sort by</p>
       <div className="flex flex-wrap gap-2">
@@ -146,7 +196,7 @@ export default function AllProductsPage() {
   )
 
   return (
-    <div>
+    <div className="mx-auto w-full max-w-7xl px-4">
       <TopBar />
 
       <div className="lg:grid lg:grid-cols-[16rem_1fr] lg:gap-8">

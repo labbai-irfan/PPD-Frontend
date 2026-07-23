@@ -38,9 +38,25 @@ export function TrendingSection() {
   const { data, isPending } = useProducts({ tag: 'trending', pageSize: 8 })
   const trackRef = useRef<HTMLDivElement>(null)
   const [page, setPage] = useState(0)
+  const [pageCount, setPageCount] = useState(1)
 
   const items = data?.items ?? []
-  const pageCount = Math.max(1, Math.ceil(items.length / 2))
+
+  function handleScroll(e: React.UIEvent<HTMLDivElement>) {
+    const el = e.currentTarget
+    const scrollable = el.scrollWidth - el.clientWidth
+    if (scrollable <= 0) return
+    const pages = Math.round(el.scrollWidth / el.clientWidth)
+    setPageCount(Math.max(1, pages))
+    const ratio = el.scrollLeft / scrollable
+    setPage(Math.round(ratio * (pages - 1)))
+  }
+
+  function handleLoad(e: React.UIEvent<HTMLDivElement> | { currentTarget: HTMLDivElement }) {
+    const el = e.currentTarget
+    const scrollable = el.scrollWidth - el.clientWidth
+    setPageCount(scrollable > 4 ? Math.max(1, Math.round(el.scrollWidth / el.clientWidth)) : 1)
+  }
 
   return (
     <section
@@ -61,11 +77,10 @@ export function TrendingSection() {
         </Link>
       </div>
       <div
-        ref={trackRef}
-        onScroll={(e) => {
-          const el = e.currentTarget
-          const ratio = el.scrollLeft / Math.max(1, el.scrollWidth - el.clientWidth)
-          setPage(Math.round(ratio * (pageCount - 1)))
+        onScroll={handleScroll}
+        ref={(el) => {
+          (trackRef as React.MutableRefObject<HTMLDivElement | null>).current = el
+          if (el) handleLoad({ currentTarget: el })
         }}
         className="no-scrollbar flex snap-x snap-mandatory gap-3 overflow-x-auto scroll-px-4"
       >

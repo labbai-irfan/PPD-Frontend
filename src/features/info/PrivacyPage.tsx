@@ -44,7 +44,7 @@ export default function PrivacyPage() {
         <h2 className="text-lg font-semibold">6. Your Rights</h2>
         <p className="text-sm text-muted-foreground">
           You have the right to access, correct, or delete your personal information.
-          Contact us at privacy@ppdstore.com to exercise these rights.
+          Contact us at popularbookworld71@gmail.com to exercise these rights.
         </p>
 
         <h2 className="text-lg font-semibold">7. Contact Us</h2>

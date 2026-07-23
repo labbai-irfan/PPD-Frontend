@@ -21,7 +21,7 @@ export function SearchPill({ className }: { className?: string }) {
     >
       <Icon name="search" size={21} className="text-faint-foreground" />
       <span className="flex-1 truncate text-[13.5px] text-faint-foreground">Search by product name</span>
-      <Icon name="mic" size={21} className="text-accent" />
+
     </button>
   )
 }

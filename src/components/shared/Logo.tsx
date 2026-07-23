@@ -9,7 +9,7 @@ interface LogoProps {
 export function Logo({ className }: LogoProps) {
   return (
     <img
-      src="/PPD%20Logo.png"
+      src="/ppd.png"
       alt="PPD"
       className={cn('w-[56px] h-auto object-contain', className)}
     />

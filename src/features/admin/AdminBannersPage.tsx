@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { apiClient } from '@/services/api/client'
+import { mediaUrl } from '@/lib/utils'
 
 interface BannerItem {
   title: string
@@ -162,7 +163,7 @@ export default function AdminBannersPage() {
       <div className={`relative w-full overflow-hidden bg-muted ${wide ? 'aspect-[3/1]' : 'aspect-[396/189]'}`}>
         {banner.image ? (
           <img
-            src={banner.image}
+            src={mediaUrl(banner.image)}
             alt={banner.title}
             className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
           />
@@ -299,7 +300,7 @@ export default function AdminBannersPage() {
                 </div>
                 {form.image && (
                   <div className="mt-2 relative w-full h-32 bg-muted rounded-lg overflow-hidden">
-                    <img src={form.image} alt={form.title ? `${form.title} banner preview` : 'Banner image preview'} className="w-full h-full object-cover" />
+                    <img src={mediaUrl(form.image)} alt={form.title ? `${form.title} banner preview` : 'Banner image preview'} className="w-full h-full object-cover" />
                   </div>
                 )}
               </div>
@@ -440,7 +441,7 @@ export default function AdminBannersPage() {
       {banners.some((b) => (!b.type || b.type === 'static') && b.placement !== 'bundle') && (
         <Card className="p-4 md:p-6 space-y-4 bg-gradient-to-br from-blue-50/50 to-transparent dark:from-blue-950/20">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">🎠 Home Hero Carousel</h2>
+            <h2 className="text-lg font-semibold text-foreground">Home Hero Carousel</h2>
             <p className="text-xs text-muted-foreground mt-0.5">Slides rotating at the top of the home page</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3.5">
@@ -455,7 +456,7 @@ export default function AdminBannersPage() {
       {banners.some((b) => b.placement === 'bundle') && (
         <Card className="p-4 md:p-6 space-y-4 bg-gradient-to-br from-orange-50/60 to-transparent dark:from-orange-950/20">
           <div>
-            <h2 className="text-lg font-semibold text-foreground">🎁 Build-Your-Bundle Band</h2>
+            <h2 className="text-lg font-semibold text-foreground">Build-Your-Bundle Band</h2>
             <p className="text-xs text-muted-foreground mt-0.5">The wide promo band above "Shop by Packages" — shown exactly this wide on the home page</p>
           </div>
           <div className="max-w-3xl">
@@ -504,7 +505,7 @@ export default function AdminBannersPage() {
                     {banner.items?.map((item, idx) => (
                       <div key={`${banner.id}-item-${idx}`} className="rounded-lg overflow-hidden bg-muted">
                         {item.image ? (
-                          <img src={item.image} alt={item.title} className="w-full h-20 object-cover" />
+                          <img src={mediaUrl(item.image)} alt={item.title} className="w-full h-20 object-cover" />
                         ) : (
                           <div className="w-full h-20 bg-muted-foreground/10 flex items-center justify-center">
                             <span className="text-xs text-muted-foreground">No image</span>

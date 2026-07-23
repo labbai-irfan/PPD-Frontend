@@ -1,10 +1,7 @@
-import { useState } from 'react'
-
 import { APP_TAGLINE, BRAND_LINE, ROUTES } from '@/lib/constants'
-import { useBanners, useHomeContent, useProducts } from '@/hooks/use-catalog'
+import { useBanners, useProducts } from '@/hooks/use-catalog'
 import { useAuthStore } from '@/store/auth.store'
 import { useUiStore } from '@/store/ui.store'
-import { Dots } from '@/components/ui/Dots'
 import { CircleIconButton } from '@/components/ui/CircleIconButton'
 import { BannerCarousel } from '@/components/shared/BannerCarousel'
 import { CartChip } from '@/components/shared/CartChip'
@@ -14,7 +11,6 @@ import { SectionHeader } from '@/components/shared/SectionHeader'
 import { QuickCategories } from '@/features/home/components/QuickCategories'
 import { TrendingSection } from '@/features/home/components/TrendingSection'
 import { HouseOfStoreSection } from '@/features/home/components/HouseOfStoreSection'
-import { YogaSection } from '@/features/home/components/SeasonalSections'
 import { BundleBanner, PackagesSection } from '@/features/home/components/PackagesSection'
 
 function greeting(): string {
@@ -51,36 +47,31 @@ function HomeHeader() {
   )
 }
 
-/** Paginated "Recommended for You" grid with dot navigation. */
+/** "Recommended for You" grid. */
 function RecommendedSection() {
-  const [page, setPage] = useState(1)
-  const { data, isPending } = useProducts({ page, pageSize: 6 })
-  const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / 6))
+  const { data, isPending } = useProducts({ page: 1, pageSize: 6 })
 
   return (
     <section>
       <SectionHeader title="Recommended for You" viewAllHref={ROUTES.allProducts} />
       <ProductGrid products={data?.items} loading={isPending} skeletonCount={6} />
-      <Dots count={Math.min(totalPages, 5)} active={page - 1} onSelect={(i) => setPage(i + 1)} className="mt-3.5" />
     </section>
   )
 }
 
 export default function HomePage() {
   const banners = useBanners()
-  const home = useHomeContent()
 
   return (
-    <div className="space-y-4 md:space-y-8">
+    <div className="mx-auto w-full max-w-7xl px-4 space-y-4 md:space-y-8">
       <HomeHeader />
       <BannerCarousel banners={banners.data} loading={banners.isPending} className="mt-2 md:mt-0" />
       <QuickCategories />
       <TrendingSection />
-      <HouseOfStoreSection cards={home.data?.houseCards} />
+      <HouseOfStoreSection />
       <RecommendedSection />
-      <YogaSection tiles={home.data?.yogaTiles} promos={home.data?.yogaPromos} />
       <BundleBanner />
-      <PackagesSection packages={home.data?.packages} />
+      <PackagesSection />
     </div>
   )
 }

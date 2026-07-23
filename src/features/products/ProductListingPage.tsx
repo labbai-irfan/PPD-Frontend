@@ -64,7 +64,7 @@ function CategoryCard({ category, index }: { category: Category; index: number }
 
 function CategoryCardsGrid() {
   const { data, isPending } = useCategories()
-  const categories = data?.filter((c) => c.slug !== 'all') ?? []
+  const categories = data?.filter((c) => c.slug !== 'all' && !c.parentId) ?? []
 
   return (
     <div className="grid grid-cols-2 gap-2.5 sm:gap-3.5 md:grid-cols-3 xl:grid-cols-4">

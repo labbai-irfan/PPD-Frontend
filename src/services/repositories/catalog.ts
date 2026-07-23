@@ -1,5 +1,5 @@
 import { apiClient } from '@/services/api/client'
-import type { Banner, Category, Coupon, Paginated, Product, ProductQuery, Review } from '@/types'
+import type { Banner, Category, Coupon, Package, Paginated, Product, ProductQuery, Review } from '@/types'
 
 /**
  * Catalog repository — the single data-access seam for the whole app.
@@ -17,6 +17,7 @@ export const catalogRepository = {
     if (query.minRating != null) params.minRating = query.minRating
     if (query.brands?.length) params.brands = query.brands.join(',')
     if (query.tag) params.tag = query.tag
+    if (query.ppdOriginal) params.ppdOriginal = 'true'
     params.page = query.page ?? 1
     params.pageSize = query.pageSize ?? 12
 
@@ -54,11 +55,20 @@ export const catalogRepository = {
   async getHomeContent() {
     const { data } = await apiClient.get('/home')
     return data as {
-      houseCards: { title: string; image: string; href: string }[]
       yogaTiles: { label: string; image: string; href: string }[]
       yogaPromos: { name: string; desc: string; price: number; image: string; productId: string }[]
-      packages: { name: string; blurb: string; price: number; image: string; href: string }[]
     }
+  },
+
+  /** Active packages (bundles), sorted for display. */
+  async getPackages(): Promise<Package[]> {
+    const { data } = await apiClient.get<Package[]>('/packages')
+    return data
+  },
+
+  async getPackage(slug: string): Promise<Package> {
+    const { data } = await apiClient.get<Package>(`/packages/${slug}`)
+    return data
   },
 
   async getReviews(productId: string): Promise<Review[]> {

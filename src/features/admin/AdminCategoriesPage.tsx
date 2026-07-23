@@ -14,9 +14,10 @@ interface Category {
   description?: string
   image?: string
   productCount: number
+  parentId?: string | null
 }
 
-const emptyForm = { name: '', icon: '📦', description: '', image: '' }
+const emptyForm = { name: '', icon: '📦', description: '', image: '', parentId: '' }
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -70,6 +71,7 @@ export default function AdminCategoriesPage() {
       icon: cat.icon,
       description: cat.description ?? '',
       image: cat.image ?? '',
+      parentId: cat.parentId ?? '',
     })
   }
 
@@ -88,6 +90,7 @@ export default function AdminCategoriesPage() {
       icon: form.icon || '📦',
       description: form.description.trim(),
       image: form.image,
+      parentId: form.parentId,
     }
     setSaving(true)
     try {
@@ -106,6 +109,11 @@ export default function AdminCategoriesPage() {
       setSaving(false)
     }
   }
+
+  // Only a top-level category (no parent of its own) can be picked as a parent — max one level deep.
+  const parentOptions = categories.filter((c) => c.slug !== 'all' && !c.parentId && c.id !== editingId)
+  const topLevelCategories = categories.filter((c) => !c.parentId)
+  const childrenOf = (parentId: string) => categories.filter((c) => c.parentId === parentId)
 
   const handleDelete = async (id: string) => {
     try {
@@ -126,10 +134,17 @@ export default function AdminCategoriesPage() {
         <p className="text-sm text-muted-foreground mt-1">{categories.length} categories</p>
       </div>
 
-      <Card className="p-4 space-y-3">
-        <p className="text-sm font-semibold text-foreground">
-          {editingId ? 'Edit category' : 'Add a category'}
-        </p>
+      <Card className="p-4 space-y-3 border border-primary/30">
+        <div className="flex items-center gap-2">
+          <p className="text-sm font-semibold text-foreground">
+            {editingId ? 'Edit category' : 'Add a category'}
+          </p>
+          {editingId && categories.find((c) => c.id === editingId)?.parentId && (
+            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold uppercase tracking-wide bg-primary/20 text-primary">
+              📁 Subcategory
+            </span>
+          )}
+        </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Input
             placeholder="Category name..."
@@ -149,6 +164,22 @@ export default function AdminCategoriesPage() {
           value={form.description}
           onChange={(e) => setField('description')(e.target.value)}
         />
+
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Parent category</label>
+          <select
+            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            value={form.parentId}
+            onChange={(e) => setField('parentId')(e.target.value)}
+          >
+            <option value="">None — top-level category</option>
+            {parentOptions.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
         <div className="flex items-center gap-3">
           <input
@@ -206,7 +237,7 @@ export default function AdminCategoriesPage() {
       </Card>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {categories.map((cat) => (
+        {topLevelCategories.map((cat) => (
           <Card key={cat.id} className="p-4">
             <div className="flex items-start justify-between">
               <div className="min-w-0">
@@ -244,6 +275,55 @@ export default function AdminCategoriesPage() {
                 )}
               </div>
             </div>
+
+            {childrenOf(cat.id).length > 0 && (
+              <div className="mt-4 space-y-2 border-t border-border pt-4">
+                <div className="flex items-center gap-2">
+                  <div className="flex-1 h-px bg-gradient-to-r from-primary/30 to-transparent" />
+                  <p className="text-[10.5px] font-bold uppercase tracking-widest text-primary/70">
+                    Subcategories ({childrenOf(cat.id).length})
+                  </p>
+                  <div className="flex-1 h-px bg-gradient-to-l from-primary/30 to-transparent" />
+                </div>
+                {childrenOf(cat.id).map((sub) => (
+                  <div
+                    key={sub.id}
+                    className="ml-2 flex items-center justify-between rounded-lg border border-primary/20 bg-gradient-to-r from-primary/5 to-transparent px-3 py-2.5 hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
+                  >
+                    <div className="flex items-start gap-2.5 min-w-0 flex-1">
+                      <div className="flex items-center justify-center flex-shrink-0">
+                        <div className="w-1 h-6 bg-primary/50 rounded-full" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <p className="truncate text-sm font-semibold text-foreground">{sub.name}</p>
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-primary/20 text-primary flex-shrink-0">
+                            Sub
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">{sub.productCount} products</p>
+                      </div>
+                    </div>
+                    <div className="flex shrink-0 gap-1.5 ml-2">
+                      <button
+                        onClick={() => startEdit(sub)}
+                        className="p-2 hover:bg-primary/10 rounded-lg text-muted-foreground hover:text-primary transition-colors"
+                        aria-label={`Edit ${sub.name}`}
+                      >
+                        <Pencil className="size-4" />
+                      </button>
+                      <button
+                        onClick={() => void handleDelete(sub.id)}
+                        className="p-2 hover:bg-destructive/20 rounded-lg text-destructive hover:text-destructive transition-colors"
+                        aria-label={`Delete ${sub.name}`}
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </Card>
         ))}
       </div>

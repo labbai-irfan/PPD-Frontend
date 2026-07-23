@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { PhoneInput } from '@/components/ui/PhoneInput'
+import { CONTACT_INFO } from '@/lib/constants'
 
 const schema = z.object({
   name: z.string().min(2, 'Name is required'),
@@ -39,33 +40,60 @@ export default function ContactUsPage() {
         <p className="mt-2 text-muted-foreground">We'd love to hear from you. Send us a message!</p>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        <Card className="p-4 md:p-6">
-          <Phone className="size-8 text-primary" />
-          <h3 className="mt-4 font-semibold text-foreground">Phone</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            <a href="tel:1800555000" className="hover:underline">1800-555-000</a>
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">Mon-Sat, 10 AM - 6 PM</p>
-        </Card>
+      <div className="grid md:grid-cols-3 gap-6 mb-6">
+        <div>
+          <h3 className="font-semibold text-foreground mb-3 text-sm">{CONTACT_INFO.orders.title}</h3>
+          <Card className="p-4 space-y-2">
+            <div className="flex items-start gap-2">
+              <Mail className="size-4 text-primary flex-shrink-0 mt-0.5" />
+              <a href={`mailto:${CONTACT_INFO.orders.email}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline break-all">
+                {CONTACT_INFO.orders.email}
+              </a>
+            </div>
+            <div className="flex items-start gap-2">
+              <Phone className="size-4 text-primary flex-shrink-0 mt-0.5" />
+              <a href={`tel:${CONTACT_INFO.orders.phone.replace(/\s/g, '')}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline">
+                {CONTACT_INFO.orders.phone}
+              </a>
+            </div>
+          </Card>
+        </div>
 
-        <Card className="p-4 md:p-6">
-          <Mail className="size-8 text-primary" />
-          <h3 className="mt-4 font-semibold text-foreground">Email</h3>
-          <p className="mt-2 text-sm text-muted-foreground break-words">
-            <a href="mailto:support@ppdstore.com" className="hover:underline">support@ppdstore.com</a>
-          </p>
-          <p className="text-xs text-muted-foreground mt-1">We reply within 24 hours</p>
-        </Card>
+        <div>
+          <h3 className="font-semibold text-foreground mb-3 text-sm">{CONTACT_INFO.corporate.title}</h3>
+          <Card className="p-4 space-y-2">
+            <div className="flex items-start gap-2">
+              <Mail className="size-4 text-primary flex-shrink-0 mt-0.5" />
+              <a href={`mailto:${CONTACT_INFO.corporate.email}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline break-all">
+                {CONTACT_INFO.corporate.email}
+              </a>
+            </div>
+            <div className="flex items-start gap-2">
+              <Phone className="size-4 text-primary flex-shrink-0 mt-0.5" />
+              <a href={`tel:${CONTACT_INFO.corporate.phone.replace(/\s/g, '')}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline">
+                {CONTACT_INFO.corporate.phone}
+              </a>
+            </div>
+          </Card>
+        </div>
 
-        <Card className="p-4 md:p-6">
-          <MapPin className="size-8 text-primary" />
-          <h3 className="mt-4 font-semibold text-foreground">Address</h3>
-          <p className="mt-2 text-sm text-muted-foreground">
-            PPD House, 123 Publishing Lane<br />
-            Delhi - 110001, India
-          </p>
-        </Card>
+        <div>
+          <h3 className="font-semibold text-foreground mb-3 text-sm">{CONTACT_INFO.general.title}</h3>
+          <Card className="p-4 space-y-2">
+            <div className="flex items-start gap-2">
+              <Mail className="size-4 text-primary flex-shrink-0 mt-0.5" />
+              <a href={`mailto:${CONTACT_INFO.general.email}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline break-all">
+                {CONTACT_INFO.general.email}
+              </a>
+            </div>
+            <div className="flex items-start gap-2">
+              <Phone className="size-4 text-primary flex-shrink-0 mt-0.5" />
+              <a href={`tel:${CONTACT_INFO.general.phone.replace(/\s/g, '')}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline">
+                {CONTACT_INFO.general.phone}
+              </a>
+            </div>
+          </Card>
+        </div>
       </div>
 
       <Card className="p-4 md:p-8">

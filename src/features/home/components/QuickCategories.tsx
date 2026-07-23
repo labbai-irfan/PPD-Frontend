@@ -22,7 +22,7 @@ export function QuickCategories() {
         ? Array.from({ length: 5 }, (_, i) => (
             <Skeleton key={i} className="h-[88px] w-[68px] shrink-0 snap-start rounded-[18px] md:h-24 md:w-[76px]" />
           ))
-        : data?.map((category) => {
+        : data?.filter((category) => !category.parentId).map((category) => {
             const assetSrc = CATEGORY_ASSETS[category.slug]
 
             return (

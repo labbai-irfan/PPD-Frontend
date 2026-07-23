@@ -9,6 +9,25 @@ export const LOCALE = 'en-IN'
 export const FREE_SHIPPING_THRESHOLD = 499
 export const SHIPPING_FEE = 40
 
+/** Contact Information */
+export const CONTACT_INFO = {
+  orders: {
+    title: 'For questions about your online order',
+    email: 'mail@popularpublishinghouse.com',
+    phone: '+91 8422998815',
+  },
+  corporate: {
+    title: 'For Corporate Orders and Bulk Gift Vouchers',
+    email: 'corporatesales@popularpublishinghouse.com',
+    phone: '+91 8422998819',
+  },
+  general: {
+    title: 'For everything else',
+    email: 'contactus@popularpublishinghouse.com',
+    phone: '+91 8422998823',
+  },
+}
+
 export const STORAGE_KEYS = {
   theme: 'ppd:theme',
   auth: 'ppd:auth',
@@ -38,12 +57,14 @@ export const ROUTES = {
   /* Shopping */
   products: '/products',
   allProducts: '/products/all',
-  product: (idOrSlug: string) => `/product/${idOrSlug}`,
+  product: (idOrSlug: string) => `/products/PPD/${idOrSlug}`,
   category: (slug: string) => `/products/all?category=${slug}`,
   categories: '/products',
   search: '/search',
   cart: '/cart',
   wishlist: '/wishlist',
+  packages: '/packages',
+  package: (slug: string) => `/package/${slug}`,
 
   /* Checkout & Orders */
   checkout: '/checkout',
@@ -104,7 +125,9 @@ export const ROUTES = {
   adminCoupons: '/admin/coupons',
   addCoupon: '/admin/coupons/add',
   adminCategories: '/admin/categories',
+  adminInventory: '/admin/inventory',
   adminBanners: '/admin/banners',
+  adminPackages: '/admin/packages',
   adminAdmins: '/admin/admins',
   adminSettings: '/admin/settings',
   adminSecurity: '/admin/security',

@@ -1,7 +1,8 @@
 import { useState } from 'react'
-import { ChevronDown, Headset, Mail, MessageCircle, Phone } from 'lucide-react'
+import { ChevronDown, Headset, Mail, Phone } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Card } from '@/components/ui/Card'
+import { CONTACT_INFO } from '@/lib/constants'
 
 const faqs = [
   {
@@ -26,33 +27,85 @@ const faqs = [
   },
 ]
 
-const channels = [
-  { icon: MessageCircle, label: 'Live chat', detail: '9 AM – 9 PM, all days' },
-  { icon: Mail, label: 'Email us', detail: 'support@shopora.example' },
-  { icon: Phone, label: 'Call us', detail: '1800-000-000 (toll free)' },
-]
-
 export default function SupportPage() {
   const [open, setOpen] = useState<number | null>(0)
 
   return (
     <div className="mx-auto max-w-2xl">
       <div className="mb-8 text-center">
-        <div className="mx-auto mb-3 flex size-14 items-center justify-center rounded-2xl bg-primary-soft text-primary-soft-foreground">
+        <div className="mx-auto mb-3 flex size-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
           <Headset className="size-7" />
         </div>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">How can we help?</h1>
         <p className="mt-1 text-sm text-muted-foreground">Answers to common questions, or reach us directly.</p>
       </div>
 
-      <div className="mb-8 grid grid-cols-1 gap-3 md:grid-cols-3">
-        {channels.map((channel) => (
-          <Card key={channel.label} className="flex flex-col items-center gap-1.5 p-4 text-center">
-            <channel.icon className="size-5 text-primary" />
-            <p className="text-sm font-bold text-foreground">{channel.label}</p>
-            <p className="text-xs text-muted-foreground break-words">{channel.detail}</p>
-          </Card>
-        ))}
+      <div className="mb-8 space-y-3">
+        <h3 className="font-semibold text-foreground text-sm">{CONTACT_INFO.orders.title}</h3>
+        <Card className="flex flex-col sm:flex-row gap-4 p-4">
+          <div className="flex items-start gap-2 flex-1">
+            <Mail className="size-4 text-primary flex-shrink-0 mt-1" />
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Email</p>
+              <a href={`mailto:${CONTACT_INFO.orders.email}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline break-all">
+                {CONTACT_INFO.orders.email}
+              </a>
+            </div>
+          </div>
+          <div className="flex items-start gap-2 flex-1">
+            <Phone className="size-4 text-primary flex-shrink-0 mt-1" />
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Phone</p>
+              <a href={`tel:${CONTACT_INFO.orders.phone.replace(/\s/g, '')}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline">
+                {CONTACT_INFO.orders.phone}
+              </a>
+            </div>
+          </div>
+        </Card>
+
+        <h3 className="font-semibold text-foreground text-sm mt-4">{CONTACT_INFO.corporate.title}</h3>
+        <Card className="flex flex-col sm:flex-row gap-4 p-4">
+          <div className="flex items-start gap-2 flex-1">
+            <Mail className="size-4 text-primary flex-shrink-0 mt-1" />
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Email</p>
+              <a href={`mailto:${CONTACT_INFO.corporate.email}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline break-all">
+                {CONTACT_INFO.corporate.email}
+              </a>
+            </div>
+          </div>
+          <div className="flex items-start gap-2 flex-1">
+            <Phone className="size-4 text-primary flex-shrink-0 mt-1" />
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Phone</p>
+              <a href={`tel:${CONTACT_INFO.corporate.phone.replace(/\s/g, '')}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline">
+                {CONTACT_INFO.corporate.phone}
+              </a>
+            </div>
+          </div>
+        </Card>
+
+        <h3 className="font-semibold text-foreground text-sm mt-4">{CONTACT_INFO.general.title}</h3>
+        <Card className="flex flex-col sm:flex-row gap-4 p-4">
+          <div className="flex items-start gap-2 flex-1">
+            <Mail className="size-4 text-primary flex-shrink-0 mt-1" />
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Email</p>
+              <a href={`mailto:${CONTACT_INFO.general.email}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline break-all">
+                {CONTACT_INFO.general.email}
+              </a>
+            </div>
+          </div>
+          <div className="flex items-start gap-2 flex-1">
+            <Phone className="size-4 text-primary flex-shrink-0 mt-1" />
+            <div>
+              <p className="text-xs text-muted-foreground font-semibold">Phone</p>
+              <a href={`tel:${CONTACT_INFO.general.phone.replace(/\s/g, '')}`} className="text-sm text-muted-foreground hover:text-foreground hover:underline">
+                {CONTACT_INFO.general.phone}
+              </a>
+            </div>
+          </div>
+        </Card>
       </div>
 
       <h2 className="mb-3 text-sm font-bold uppercase tracking-wider text-muted-foreground">

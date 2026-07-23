@@ -7,7 +7,7 @@ import { useProduct, useRelatedProducts } from '@/hooks/use-catalog'
 import { useCartStore } from '@/store/cart.store'
 import { useRecentlyViewedStore } from '@/store/recently-viewed.store'
 import { useIsWishlisted, useWishlistStore } from '@/store/wishlist.store'
-import type { Product } from '@/types'
+import type { Product, ProductFaq, ProductSpec } from '@/types'
 import { Icon } from '@/components/ui/Icon'
 import { Dots } from '@/components/ui/Dots'
 import { Skeleton } from '@/components/ui/Skeleton'
@@ -16,6 +16,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { SavePill } from '@/components/shared/ProductBadge'
 import { ProductGrid } from '@/components/shared/ProductGrid'
 import { TopBar } from '@/components/shared/TopBar'
+import { useScrollHide } from '@/hooks/use-scroll-hide'
 
 /** Vertical thumbnail rail + main image, from the design gallery. */
 function Gallery({ product }: { product: Product }) {
@@ -75,10 +76,65 @@ function LikeChip({ product }: { product: Product }) {
   )
 }
 
+/** Admin-entered colour/material/size etc. — rendered as a simple two-column table. */
+function SpecsTable({ specs }: { specs: ProductSpec[] }) {
+  return (
+    <div className="mt-4">
+      <h2 className="mb-2 text-base font-bold text-foreground">Specifications</h2>
+      <div className="overflow-hidden rounded-xl border border-border-strong">
+        {specs.map((spec, i) => (
+          <div
+            key={spec.label + i}
+            className={cn('flex text-[12.5px]', i % 2 === 0 ? 'bg-white dark:bg-card/50' : 'bg-muted/40 dark:bg-card/20')}
+          >
+            <span className="w-2/5 shrink-0 px-4 py-2.5 font-semibold text-ink-muted dark:text-muted-foreground">
+              {spec.label}
+            </span>
+            <span className="flex-1 px-4 py-2.5 text-foreground">{spec.value}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function FaqAccordion({ faqs }: { faqs: ProductFaq[] }) {
+  const [openIndex, setOpenIndex] = useState<number | null>(null)
+
+  return (
+    <div className="mt-4">
+      <h2 className="mb-2 text-base font-bold text-foreground">Frequently Asked Questions</h2>
+      <div className="space-y-2">
+        {faqs.map((faq, i) => {
+          const open = openIndex === i
+          return (
+            <div key={faq.question + i} className="overflow-hidden rounded-xl border border-border-strong">
+              <button
+                type="button"
+                onClick={() => setOpenIndex(open ? null : i)}
+                className="flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left text-[12.5px] font-semibold text-foreground cursor-pointer"
+              >
+                {faq.question}
+                <Icon name={open ? 'expand_less' : 'expand_more'} size={18} className="shrink-0 text-muted-foreground" />
+              </button>
+              {open && (
+                <p className="border-t border-border-strong px-4 py-2.5 text-[12.5px] leading-relaxed text-ink-muted dark:text-muted-foreground">
+                  {faq.answer}
+                </p>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
 export default function ProductDetailsPage() {
   const { idOrSlug = '' } = useParams()
   const id = idOrSlug
   const navigate = useNavigate()
+  const isBarHidden = useScrollHide()
   const { data: product, isPending, isError } = useProduct(id)
   const related = useRelatedProducts(id)
 
@@ -169,6 +225,9 @@ export default function ProductDetailsPage() {
           </div>
 
           <h1 className="mt-3.5 text-[21px] font-bold leading-tight text-foreground md:text-2xl">{product.title}</h1>
+          {product.shortDescription && (
+            <p className="mt-1 text-[13px] leading-snug text-subtle-foreground">{product.shortDescription}</p>
+          )}
 
           <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[13px]">
             <span className="flex items-center gap-1">
@@ -216,6 +275,9 @@ export default function ProductDetailsPage() {
             {product.description}
           </div>
 
+          {product.specs && product.specs.length > 0 && <SpecsTable specs={product.specs} />}
+          {product.faqs && product.faqs.length > 0 && <FaqAccordion faqs={product.faqs} />}
+
           {/* Desktop actions */}
           <div className="mt-6 hidden gap-3 md:flex">
             <Button variant="secondary" size="lg" className="flex-1" onClick={handleAddToCart} disabled={outOfStock}>
@@ -245,14 +307,23 @@ export default function ProductDetailsPage() {
         <Dots count={4} active={0} className="mt-3.5" />
       </div>
 
-      {/* Mobile sticky action bar */}
-      <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md gap-3 bg-card px-4 pb-[calc(14px+env(safe-area-inset-bottom))] pt-3 shadow-bar sm:max-w-xl md:hidden">
+      {/* Mobile sticky action bar — pill-shaped, slides down on scroll */}
+      <div
+        className={cn(
+          'fixed inset-x-0 bottom-0 z-40 mx-auto max-w-md sm:max-w-xl md:hidden',
+          'px-4 pb-[calc(14px+env(safe-area-inset-bottom))] pt-3',
+          'transition-transform duration-300 ease-in-out',
+          isBarHidden ? 'translate-y-full' : 'translate-y-0',
+        )}
+      >
+        <div className="flex gap-3 rounded-[28px] bg-card px-4 py-3 shadow-bar">
         <Button variant="secondary" size="lg" className="flex-1" onClick={handleAddToCart} disabled={outOfStock}>
           {outOfStock ? 'Out of stock' : 'Add to Cart'}
         </Button>
         <Button size="lg" className="flex-1" onClick={handleBuyNow} disabled={outOfStock}>
           Buy Now
         </Button>
+        </div>
       </div>
     </div>
   )

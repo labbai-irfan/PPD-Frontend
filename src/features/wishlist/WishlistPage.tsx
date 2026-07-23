@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { TopBar } from '@/components/shared/TopBar'
+
 import { Heart } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
 import { useWishlistStore } from '@/store/wishlist.store'
@@ -27,17 +29,20 @@ export default function WishlistPage() {
   }
 
   return (
-    <div>
-      <h1 className="mb-1 text-2xl font-bold tracking-tight text-foreground">My Wishlist</h1>
-      <p className="mb-6 text-sm text-muted-foreground">
-        {ids.length} saved {ids.length === 1 ? 'item' : 'items'}
-      </p>
-      <ProductGrid
-        products={data}
-        loading={isPending}
-        skeletonCount={ids.length}
-        className="grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
-      />
-    </div>
+    <>
+      <TopBar leading="menu" title="My Wishlist" />
+      <div>
+        <h1 className="mb-1 text-2xl font-bold tracking-tight text-foreground">My Wishlist</h1>
+        <p className="mb-6 text-sm text-muted-foreground">
+          {ids.length} saved {ids.length === 1 ? 'item' : 'items'}
+        </p>
+        <ProductGrid
+          products={data}
+          loading={isPending}
+          skeletonCount={ids.length}
+          className="grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4"
+        />
+      </div>
+    </>
   )
 }

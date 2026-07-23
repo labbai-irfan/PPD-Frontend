@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Trash2, Shield } from 'lucide-react'
+import { Plus, Trash2, Shield, User } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -108,7 +108,7 @@ export default function AdminsPage() {
           <Card key={admin.id} className="p-3 md:p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-primary/10 rounded-lg">
-                <Shield className="size-5 text-primary" />
+                <User className="size-5 text-primary" />
               </div>
               <div>
                 <p className="font-semibold text-foreground">{admin.name}</p>

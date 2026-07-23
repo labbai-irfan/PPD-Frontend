@@ -19,10 +19,16 @@ const schema = z
     email: emailSchema,
     password: passwordSchema,
     confirmPassword: z.string().min(1, 'Please confirm your password'),
+    accountType: z.enum(['student', 'parent']),
+    grade: z.string().optional(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     path: ['confirmPassword'],
     message: 'Passwords do not match',
+  })
+  .refine((data) => data.accountType !== 'student' || (data.grade && data.grade.trim().length > 0), {
+    path: ['grade'],
+    message: 'Please enter your grade',
   })
 
 type FormValues = z.infer<typeof schema>
@@ -44,10 +50,12 @@ export default function RegisterPage() {
   const passwordValue = watch('password') ?? ''
   const from: string = location.state?.from ?? ROUTES.home
 
+  const accountTypeValue = watch('accountType')
+
   async function onSubmit(values: FormValues) {
     setFormError(null)
     try {
-      const user = await registerUser(values.name, values.email, values.password)
+      const user = await registerUser(values.name, values.email, values.password, values.accountType, values.grade)
       toast.success(`Welcome to ${APP_NAME}, ${user.name.split(' ')[0]}!`)
       navigate(from, { replace: true })
     } catch (err) {
@@ -89,6 +97,45 @@ export default function RegisterPage() {
           error={errors.email?.message}
           {...register('email')}
         />
+
+        <div className="space-y-1.5">
+          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+            Account Type
+          </label>
+          <div className="grid grid-cols-2 gap-2">
+            <label
+              className={cn(
+                "flex items-center justify-center gap-2 rounded-lg border-2 p-3 cursor-pointer transition-colors",
+                accountTypeValue === 'student' ? "border-primary bg-primary/5" : "border-muted bg-card hover:bg-muted/50"
+              )}
+            >
+              <input type="radio" value="student" className="sr-only" {...register('accountType')} />
+              <User className="size-4" />
+              <span className="text-sm font-semibold">Student</span>
+            </label>
+            <label
+              className={cn(
+                "flex items-center justify-center gap-2 rounded-lg border-2 p-3 cursor-pointer transition-colors",
+                accountTypeValue === 'parent' ? "border-primary bg-primary/5" : "border-muted bg-card hover:bg-muted/50"
+              )}
+            >
+              <input type="radio" value="parent" className="sr-only" {...register('accountType')} />
+              <User className="size-4" />
+              <span className="text-sm font-semibold">Parent</span>
+            </label>
+          </div>
+          {errors.accountType && <p className="text-[0.8rem] font-medium text-destructive">{errors.accountType.message}</p>}
+        </div>
+
+        {accountTypeValue === 'student' && (
+          <Input
+            label="Grade / Class"
+            placeholder="e.g. Grade 5"
+            error={errors.grade?.message}
+            {...register('grade')}
+          />
+        )}
+
         <div>
           <Input
             label="Password"

@@ -14,6 +14,8 @@ export interface Category {
   color: string
   image?: string
   productCount: number
+  /** Parent category id — null/undefined for a top-level category, set for a subcategory */
+  parentId?: string | null
 }
 
 export interface Brand {
@@ -37,6 +39,22 @@ export interface VariantValue {
   inStock: boolean
 }
 
+export interface ProductFaq {
+  question: string
+  answer: string
+}
+
+export interface ProductSpec {
+  label: string
+  value: string
+}
+
+export interface ProductBatch {
+  quantity: number
+  costPrice: number
+  createdAt: string
+}
+
 export interface Product {
   id: string
   slug: string
@@ -44,6 +62,7 @@ export interface Product {
   brand: string
   category: string
   description: string
+  shortDescription?: string
   highlights: string[]
   images: string[]
   price: number
@@ -61,6 +80,16 @@ export interface Product {
   isPpdOriginal?: boolean
   isFreeDelivery?: boolean
   freeDeliveryThreshold?: number
+  sku?: string
+  hsnCode?: string
+  faqs?: ProductFaq[]
+  specs?: ProductSpec[]
+  batches?: ProductBatch[]
+  weightPerUnit?: number
+  weightUnit?: 'kg' | 'g'
+  discountPercent?: number
+  gstPercent?: number
+  status?: 'draft' | 'published'
 }
 
 export type ProductTag = 'featured' | 'deal' | 'new' | 'bestseller' | 'trending'
@@ -76,6 +105,7 @@ export interface ProductQuery {
   minRating?: number
   brands?: string[]
   tag?: ProductTag
+  ppdOriginal?: boolean
   page?: number
   pageSize?: number
 }
@@ -102,6 +132,36 @@ export interface Review {
   images?: string[]
 }
 
+export interface PackageItem {
+  productId: string
+  slug: string
+  title: string
+  brand: string
+  image: string
+  price: number
+  mrp: number
+  stock: number
+  isActive: boolean
+  quantity: number
+}
+
+export interface Package {
+  id: string
+  slug: string
+  name: string
+  description: string
+  image: string
+  isActive: boolean
+  sortOrder: number
+  itemCount: number
+  /** Bundle price — admin override, or the sum of item prices when unset */
+  price: number
+  /** Sum of item MRPs, for a strikethrough comparison */
+  originalTotal: number
+  savings: number
+  items: PackageItem[]
+}
+
 export interface Banner {
   id: string
   title: string
@@ -126,6 +186,8 @@ export interface User {
   phone?: string
   avatar?: string
   createdAt: string
+  accountType: 'student' | 'parent'
+  grade?: string
 }
 
 export interface Address {

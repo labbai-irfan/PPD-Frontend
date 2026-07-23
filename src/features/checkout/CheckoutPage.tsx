@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Navigate, useNavigate, Link } from 'react-router-dom'
-import { Banknote, Check, CreditCard, MapPin, Plus, ShieldCheck, ArrowLeft } from 'lucide-react'
+import { Banknote, Check, CreditCard, MapPin, Plus, ShieldCheck, ArrowLeft, Lock } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn, formatCurrency } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
@@ -18,7 +18,7 @@ type CheckoutMethod = 'online' | 'cod'
 const paymentOptions: Array<{ method: CheckoutMethod; label: string; description: string; icon: typeof CreditCard }> = [
   { method: 'online', label: 'Online Payment', description: 'UPI, Cards, Netbanking & more via Razorpay', icon: CreditCard },
   { method: 'cod', label: 'Cash on Delivery', description: 'Pay in cash when your order arrives', icon: Banknote },
-]
+];
 
 function StepHeading({ step, title, done }: { step: number; title: string; done?: boolean }) {
   return (
@@ -65,50 +65,27 @@ export default function CheckoutPage() {
       toast.error('Please select a delivery address')
       return
     }
-    const paymentLabel = paymentOptions.find((p) => p.method === payment)?.label ?? payment
 
-    if (payment !== 'cod') {
-      // Prepaid — hand the draft to the payment flow; the cart stays intact
-      // until the payment pages complete the order and clear it themselves
-      startCheckout({
-        items,
-        address: selectedAddress,
-        method: 'upi', // default online method; user picks inside Razorpay/forms
-        couponCode: coupon?.code,
-        totals: {
-          subtotal: totals.subtotal,
-          couponDiscount: totals.couponDiscount,
-          savings: totals.savings,
-          shipping: totals.shipping,
-          total: totals.total,
-        },
-      })
-      navigate(ROUTES.checkoutPayment('upi'))
-      return
+    if (payment === 'cod') {
+      toast.error('Cash on Delivery is not available now.');
+      return;
     }
 
-    setPlacing(true)
-    try {
-      // Backend recomputes pricing, checks stock, and creates the order
-      const order = await placeOrder({
-        items,
-        address: selectedAddress,
-        payment: { method: payment, label: paymentLabel },
-        pricing: {
-          subtotal: totals.subtotal,
-          discount: totals.savings,
-          couponCode: coupon?.code,
-          shipping: totals.shipping,
-          total: totals.total,
-        },
-        couponCode: coupon?.code,
-      })
-      clear()
-      navigate(ROUTES.checkoutSuccess(order.id), { replace: true })
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'Failed to place order')
-      setPlacing(false)
-    }
+    // Online payment flow – always use the online method
+    startCheckout({
+      items,
+      address: selectedAddress,
+      method: 'upi', // default online method; user picks inside Razorpay/forms
+      couponCode: coupon?.code,
+      totals: {
+        subtotal: totals.subtotal,
+        couponDiscount: totals.couponDiscount,
+        savings: totals.savings,
+        shipping: totals.shipping,
+        total: totals.total,
+      },
+    })
+    navigate(ROUTES.checkoutPayment('upi'))
   }
 
   return (
@@ -187,28 +164,44 @@ export default function CheckoutPage() {
           <Card className="p-4 sm:p-5">
             <StepHeading step={2} title="Payment method" />
             <div className="mt-4 space-y-2.5">
-              {paymentOptions.map((option) => (
-                <label
-                  key={option.method}
-                  className={cn(
-                    'flex cursor-pointer items-center gap-3.5 rounded-xl border p-3.5 transition-colors',
-                    payment === option.method ? 'border-primary bg-primary-soft/40' : 'border-border hover:border-muted-foreground/40',
-                  )}
-                >
-                  <input
-                    type="radio"
-                    name="payment"
-                    checked={payment === option.method}
-                    onChange={() => setPayment(option.method)}
-                    className="size-4 accent-(--primary)"
-                  />
-                  <option.icon className="size-5 text-primary" />
-                  <span className="text-sm">
-                    <span className="block font-semibold text-foreground">{option.label}</span>
-                    <span className="text-muted-foreground">{option.description}</span>
-                  </span>
-                </label>
-              ))}
+                {paymentOptions.map((option) => (
+                  <label
+                    key={option.method}
+                    className={cn(
+                      'flex items-center gap-3.5 rounded-xl border p-3.5 transition-colors',
+                      // Highlight selected online option
+                      payment === option.method && option.method !== 'cod'
+                        ? 'border-primary bg-primary-soft/40'
+                        : 'border-border hover:border-muted-foreground/40',
+                      // Dim COD option to indicate unavailability
+                      option.method === 'cod' ? 'opacity-50 cursor-not-allowed' : '',
+                    )}
+                  >
+                    <input
+                      type="radio"
+                      name="payment"
+                      checked={payment === option.method}
+                      disabled={option.method === 'cod'}
+                      onChange={() => setPayment(option.method)}
+                      className="size-4 accent-(--primary)"
+                    />
+                    <option.icon className="size-5 text-primary" />
+                    <span className="text-sm flex flex-col">
+                      <span className="flex items-center">
+                        <span className="block font-semibold text-foreground">{option.label}</span>
+                        {option.method === 'cod' && (
+                          <>
+                            <Lock className="ml-2 size-4 text-red-500" />
+                            <span className="ml-1 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-600">
+                              Not Available
+                            </span>
+                          </>
+                        )}
+                      </span>
+                      <span className="text-muted-foreground">{option.description}</span>
+                    </span>
+                  </label>
+                ))}
             </div>
           </Card>
         </div>
@@ -256,18 +249,18 @@ export default function CheckoutPage() {
             </dl>
 
             <Button size="lg" className="mt-4 w-full" loading={placing} onClick={handlePlaceOrder}>
-              {placing
-                ? 'Processing…'
-                : payment === 'cod'
-                  ? `Place order · ${formatCurrency(totals.total)}`
-                  : `Continue to payment · ${formatCurrency(totals.total)}`}
+               {placing
+                 ? 'Processing…'
+                 : `Continue to payment · ${formatCurrency(totals.total)}`}
             </Button>
-            {payment !== 'cod' && (
-              <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
-                <ShieldCheck className="size-3.5 text-success" />
-                100% secure payments
-              </p>
-            )}
+             {payment !== 'cod' && (
+               <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
+                 <ShieldCheck className="size-3.5 text-success" />
+                 100% secure payments
+               </p>
+             )}
+             {/* COD not available */}
+             <p className="mt-2 text-sm text-muted-foreground">Cash on Delivery is not available now.</p>
             <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
               <MapPin className="size-3.5" />
               {selectedAddress ? `Delivering to ${selectedAddress.city}, ${selectedAddress.pincode}` : 'Select a delivery address'}
