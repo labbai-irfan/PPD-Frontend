@@ -5,6 +5,7 @@ import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
+import { Modal } from '@/components/ui/Modal'
 import { apiClient } from '@/services/api/client'
 
 interface AdminProduct {
@@ -29,6 +30,7 @@ export default function AdminProductsPage() {
   const [total, setTotal] = useState(0)
   const [search, setSearch] = useState('')
   const [loading, setLoading] = useState(true)
+  const [productToDelete, setProductToDelete] = useState<AdminProduct | null>(null)
 
   const load = useCallback(async (q: string) => {
     try {
@@ -167,7 +169,7 @@ export default function AdminProductsPage() {
                     <Eye className="size-4" />
                   </button>
                   <button
-                    onClick={() => handleDelete(product.id)}
+                    onClick={() => setProductToDelete(product)}
                     className="p-2 hover:bg-destructive/10 rounded-lg text-destructive transition-colors"
                     title="Delete"
                   >
@@ -242,7 +244,7 @@ export default function AdminProductsPage() {
                 {product.isActive ? 'Hide' : 'Show'}
               </button>
               <button
-                onClick={() => handleDelete(product.id)}
+                onClick={() => setProductToDelete(product)}
                 className="flex-1 p-2 text-xs font-medium text-destructive hover:bg-destructive/10 rounded-lg transition-colors"
               >
                 Delete
@@ -256,6 +258,39 @@ export default function AdminProductsPage() {
           </div>
         )}
       </div>
+
+      <Modal
+        open={!!productToDelete}
+        onClose={() => setProductToDelete(null)}
+        title="Confirm Deletion"
+      >
+        <div className="space-y-4 text-center sm:text-left">
+          <p className="text-sm text-muted-foreground">
+            Are you sure you want to delete <span className="font-semibold text-foreground">"{productToDelete?.title}"</span>? This action cannot be undone.
+          </p>
+          <div className="flex flex-col sm:flex-row justify-end gap-3 pt-2">
+            <Button
+              variant="outline"
+              onClick={() => setProductToDelete(null)}
+              className="w-full sm:w-auto"
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (productToDelete) {
+                  await handleDelete(productToDelete.id)
+                  setProductToDelete(null)
+                }
+              }}
+              className="w-full sm:w-auto"
+            >
+              Delete
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   )
 }

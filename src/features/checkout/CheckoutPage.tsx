@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Navigate, useNavigate, Link } from 'react-router-dom'
+import { Navigate, useNavigate } from 'react-router-dom'
 import { Banknote, Check, CreditCard, MapPin, Plus, ShieldCheck, ArrowLeft, Lock } from 'lucide-react'
 import { toast } from 'sonner'
 import { cn, formatCurrency } from '@/lib/utils'
@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { AddressForm } from '@/features/address/AddressForm'
+import { apiClient } from '@/services/api/client'
 
 type CheckoutMethod = 'online' | 'cod'
 
@@ -38,9 +39,9 @@ function StepHeading({ step, title, done }: { step: number; title: string; done?
 export default function CheckoutPage() {
   const navigate = useNavigate()
   const { items, coupon } = useCartStore()
-  const totals = getCartTotals(items, coupon)
+  const baseTotals = getCartTotals(items, coupon)
 
-  const { addresses, add, fetchAddresses, loaded } = useAddressStore()
+  const { addresses, add, update, fetchAddresses, loaded } = useAddressStore()
   const startCheckout = useCheckoutStore((s) => s.start)
 
   useEffect(() => {
@@ -51,12 +52,59 @@ export default function CheckoutPage() {
     () => addresses.find((a) => a.isDefault)?.id ?? addresses[0]?.id ?? null,
   )
   const [showAddressForm, setShowAddressForm] = useState(addresses.length === 0)
+  const [editingAddress, setEditingAddress] = useState<any | null>(null)
   const [payment, setPayment] = useState<CheckoutMethod>('online')
   const [placing] = useState(false)
 
   if (items.length === 0) return <Navigate to={ROUTES.cart} replace />
 
   const selectedAddress = addresses.find((a) => a.id === selectedAddressId) ?? null
+
+  const [customShippingFee, setCustomShippingFee] = useState<number | null>(null)
+
+  const subtotal = baseTotals.subtotal
+  const couponDiscount = baseTotals.couponDiscount
+  const savings = baseTotals.savings
+  const shipping = selectedAddress ? (customShippingFee !== null ? customShippingFee : baseTotals.shipping) : 0
+  const total = Math.max(0, subtotal - couponDiscount + shipping)
+
+  const totals = {
+    subtotal,
+    couponDiscount,
+    savings,
+    shipping,
+    total,
+  }
+
+  useEffect(() => {
+    if (!selectedAddress) {
+      setCustomShippingFee(null)
+      return
+    }
+
+    let active = true
+    const fetchShipping = async () => {
+      try {
+        const { data } = await apiClient.post<{ charge: number }>('/delivery-charges/calculate', {
+          country: selectedAddress.country,
+          state: selectedAddress.state,
+          city: selectedAddress.city,
+          pincode: selectedAddress.pincode,
+          subtotal: subtotal - couponDiscount,
+        })
+        if (active) {
+          setCustomShippingFee(data.charge)
+        }
+      } catch (error) {
+        console.error('Failed to calculate delivery charge', error)
+      }
+    }
+
+    void fetchShipping()
+    return () => {
+      active = false
+    }
+  }, [selectedAddress, subtotal, couponDiscount])
 
   async function handlePlaceOrder() {
     if (!selectedAddress) {
@@ -89,13 +137,14 @@ export default function CheckoutPage() {
   return (
     <div>
       <div className="mb-6 flex items-center gap-4">
-        <Link
-          to={ROUTES.cart}
-          className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-background transition-colors hover:bg-muted hover:text-foreground group"
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="flex size-10 shrink-0 items-center justify-center rounded-full border border-border bg-background transition-colors hover:bg-muted hover:text-foreground group cursor-pointer"
         >
           <ArrowLeft className="size-5 text-muted-foreground transition-transform group-hover:-translate-x-0.5" />
           <span className="sr-only">Back to cart</span>
-        </Link>
+        </button>
         <h1 className="text-2xl font-bold tracking-tight text-foreground">Checkout</h1>
       </div>
 
@@ -111,7 +160,7 @@ export default function CheckoutPage() {
                   <label
                     key={address.id}
                     className={cn(
-                      'flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition-colors',
+                      'flex cursor-pointer items-start gap-3 rounded-xl border p-3.5 transition-colors relative group',
                       selectedAddressId === address.id ? 'border-primary bg-primary-soft/40' : 'border-border hover:border-muted-foreground/40',
                     )}
                   >
@@ -122,7 +171,7 @@ export default function CheckoutPage() {
                       onChange={() => setSelectedAddressId(address.id)}
                       className="mt-1 size-4 accent-(--primary)"
                     />
-                    <span className="min-w-0 text-sm">
+                    <span className="min-w-0 flex-1 text-sm">
                       <span className="flex flex-wrap items-center gap-2">
                         <span className="font-bold text-foreground">{address.name}</span>
                         <Badge variant="secondary" className="capitalize">{address.type}</Badge>
@@ -130,10 +179,22 @@ export default function CheckoutPage() {
                       </span>
                       <span className="mt-1 block break-words text-muted-foreground">
                         {address.line1}
-                        {address.line2 ? `, ${address.line2}` : ''}, {address.city}, {address.state} — {address.pincode}
+                        {address.line2 ? `, ${address.line2}` : ''}, {address.city}, {address.state}, {address.country} — {address.pincode}
                       </span>
                       <span className="mt-0.5 block text-muted-foreground">Phone: +91 {address.phone}</span>
                     </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault()
+                        e.stopPropagation()
+                        setEditingAddress(address)
+                        setShowAddressForm(true)
+                      }}
+                      className="px-2.5 py-1.5 rounded-lg border border-border bg-card hover:bg-muted text-xs font-bold transition-colors cursor-pointer text-foreground shrink-0 self-center"
+                    >
+                      Edit
+                    </button>
                   </label>
                 ))}
               </div>
@@ -142,13 +203,23 @@ export default function CheckoutPage() {
             {showAddressForm ? (
               <div className="mt-4 border-t border-border pt-4">
                 <AddressForm
+                  initial={editingAddress || undefined}
                   onSave={async (values) => {
-                    const created = await add(values)
-                    setSelectedAddressId(created.id)
+                    if (editingAddress) {
+                      await update(editingAddress.id, values)
+                      setEditingAddress(null)
+                    } else {
+                      const created = await add(values)
+                      setSelectedAddressId(created.id)
+                    }
                     setShowAddressForm(false)
                     toast.success('Address saved')
                   }}
-                  onCancel={addresses.length > 0 ? () => setShowAddressForm(false) : undefined}
+                  onCancel={() => {
+                    setShowAddressForm(false)
+                    setEditingAddress(null)
+                  }}
+                  submitLabel={editingAddress ? 'Update address' : 'Save address'}
                 />
               </div>
             ) : (
@@ -234,12 +305,14 @@ export default function CheckoutPage() {
                   <dd className="font-medium text-success">− {formatCurrency(totals.couponDiscount)}</dd>
                 </div>
               )}
-              <div className="flex justify-between">
-                <dt className="text-muted-foreground">Delivery</dt>
-                <dd className={totals.shipping === 0 ? 'font-medium text-success' : 'font-medium text-foreground'}>
-                  {totals.shipping === 0 ? 'FREE' : formatCurrency(totals.shipping)}
-                </dd>
-              </div>
+              {selectedAddress !== null && (
+                <div className="flex justify-between">
+                  <dt className="text-muted-foreground">Delivery</dt>
+                  <dd className={totals.shipping === 0 ? 'font-medium text-success' : 'font-medium text-foreground'}>
+                    {totals.shipping === 0 ? 'FREE' : formatCurrency(totals.shipping)}
+                  </dd>
+                </div>
+              )}
               <div className="flex justify-between border-t border-border pt-2.5 text-base font-bold text-foreground">
                 <dt>Total payable</dt>
                 <dd>{formatCurrency(totals.total)}</dd>
@@ -261,7 +334,7 @@ export default function CheckoutPage() {
              <p className="mt-2 text-sm text-muted-foreground">Cash on Delivery is not available now.</p>
             <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-xs text-muted-foreground">
               <MapPin className="size-3.5" />
-              {selectedAddress ? `Delivering to ${selectedAddress.city}, ${selectedAddress.pincode}` : 'Select a delivery address'}
+              {selectedAddress ? `Delivering to ${selectedAddress.city}, ${selectedAddress.state}, ${selectedAddress.country} — ${selectedAddress.pincode}` : 'Select a delivery address'}
             </p>
           </Card>
         </div>

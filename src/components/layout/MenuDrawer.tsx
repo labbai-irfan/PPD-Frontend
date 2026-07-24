@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils'
 import { APP_NAME, BRAND_LINE, ROUTES } from '@/lib/constants'
 import { useAuthStore } from '@/store/auth.store'
 import { useUiStore } from '@/store/ui.store'
+import { useWishlistStore } from '@/store/wishlist.store'
 import { Icon } from '@/components/ui/Icon'
 import { Logo } from '@/components/shared/Logo'
 import { Avatar } from '@/components/ui/Avatar'
@@ -14,13 +15,6 @@ interface DrawerLink {
   href: string
   highlight?: boolean
 }
-
-const shopLinks: DrawerLink[] = [
-  { icon: 'category', label: 'Categories', href: ROUTES.products },
-  { icon: 'inventory_2', label: 'All Products', href: ROUTES.allProducts },
-  { icon: 'fiber_new', label: 'New Arrivals', href: '/products/all?tag=new' },
-  { icon: 'favorite', label: 'Wishlist', href: ROUTES.wishlist },
-]
 
 const accountLinks: DrawerLink[] = [
   { icon: 'receipt_long', label: 'My Orders', href: ROUTES.orders },
@@ -66,8 +60,16 @@ export function MenuDrawer() {
   const setOpen = useUiStore((s) => s.setMobileMenuOpen)
   const user = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
+  const wishlistCount = useWishlistStore((s) => s.ids.length)
   const navigate = useNavigate()
   const { pathname, search } = useLocation()
+
+  const shopLinks: DrawerLink[] = [
+    { icon: 'category', label: 'Categories', href: ROUTES.products },
+    { icon: 'inventory_2', label: 'All Products', href: ROUTES.allProducts },
+    { icon: 'fiber_new', label: 'New Arrivals', href: '/products/all?tag=new' },
+    { icon: 'favorite', label: `Wishlist${wishlistCount > 0 ? ` (${wishlistCount})` : ''}`, href: ROUTES.wishlist },
+  ]
 
   /* Close whenever navigation happens (link tapped, back button, etc.) */
   useEffect(() => {

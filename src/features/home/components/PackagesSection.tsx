@@ -40,7 +40,7 @@ function PackageMiniCard({ pkg }: { pkg: Package }) {
             {pkg.name}
           </h3>
           <p className="font-inter mt-1 line-clamp-2 text-[9.5px] font-medium leading-[1.3] text-[#736c63] sm:text-[11px] dark:text-muted-foreground">
-            {pkg.description || `${pkg.itemCount} items in this kit`}
+            {pkg.description || `${pkg.itemCount} items in this combo`}
           </p>
         </div>
 
@@ -88,8 +88,8 @@ export function PackagesSection() {
   return (
     <section className="bg-[#FBE6CF] rounded-[24px] px-4 py-6 md:px-6 md:py-8 dark:bg-[#2a251f]">
       <SectionHeader
-        title="Shop by Packages"
-        subtitle="Everything you need, in one smart kit"
+        title="Shop by Combos"
+        subtitle="Everything you need, in one smart combo"
         viewAllHref={ROUTES.packages}
       />
       <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-2.5 md:grid-cols-4 md:gap-4">

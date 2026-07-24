@@ -12,6 +12,8 @@ import { Avatar } from '@/components/ui/Avatar'
 import { Modal } from '@/components/ui/Modal'
 import { TopBar } from '@/components/shared/TopBar'
 
+import { useWishlistStore } from '@/store/wishlist.store'
+
 const themeOptions: Array<{ value: Theme; label: string; icon: string }> = [
   { value: 'light', label: 'Light', icon: 'light_mode' },
   { value: 'dark', label: 'Dark', icon: 'dark_mode' },
@@ -23,6 +25,7 @@ export default function ProfilePage() {
   const user = useAuthStore((s) => s.user)
   const logout = useAuthStore((s) => s.logout)
   const updateUser = useAuthStore((s) => s.updateUser)
+  const wishlistCount = useWishlistStore((s) => s.ids.length)
   const orders = useOrdersStore((s) => s.orders)
   const fetchOrders = useOrdersStore((s) => s.fetchOrders)
   const loaded = useOrdersStore((s) => s.loaded)
@@ -117,7 +120,7 @@ export default function ProfilePage() {
   ]
 
   const menu: Array<{ label: string; icon: string; fill: boolean; onClick: () => void }> = [
-    { label: 'My Wishlist', icon: 'favorite', fill: true, onClick: () => navigate(ROUTES.wishlist) },
+    { label: `My Wishlist${wishlistCount > 0 ? ` (${wishlistCount})` : ''}`, icon: 'favorite', fill: true, onClick: () => navigate(ROUTES.wishlist) },
     { label: 'Saved Address', icon: 'import_contacts', fill: false, onClick: () => navigate(ROUTES.addresses) },
     { label: 'Preferences', icon: 'tune', fill: false, onClick: () => setPreferencesOpen(true) },
     { label: 'Password', icon: 'lock', fill: true, onClick: () => navigate(ROUTES.accountSettings) },

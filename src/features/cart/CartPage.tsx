@@ -5,7 +5,7 @@ import { ROUTES } from '@/lib/constants'
 import { useCartStore } from '@/store/cart.store'
 import { useCartSummary } from '@/hooks/use-cart-summary'
 import { useRelatedProducts } from '@/hooks/use-catalog'
-import { useWishlistStore } from '@/store/wishlist.store'
+import { useWishlistStore, useIsWishlisted } from '@/store/wishlist.store'
 import type { CartItem } from '@/types'
 import { Icon } from '@/components/ui/Icon'
 import { Dots } from '@/components/ui/Dots'
@@ -19,7 +19,10 @@ import { TopBar } from '@/components/shared/TopBar'
 function CartItemCard({ item }: { item: CartItem }) {
   const { removeItem, setQuantity } = useCartStore()
   const toggleWishlist = useWishlistStore((s) => s.toggle)
+  const isWishlisted = useIsWishlisted(item.productId)
   const off = discountPercent(item.mrp, item.price)
+
+  const maxPacks = item.batchQuantity ? Math.floor(item.stock / item.batchQuantity) : 99
 
   return (
     <div className="flex gap-3 rounded-2xl bg-card p-3 shadow-card">
@@ -28,24 +31,40 @@ function CartItemCard({ item }: { item: CartItem }) {
       </Link>
       <div className="min-w-0 flex-1 flex flex-col justify-between py-0.5">
         <div className="flex items-start justify-between gap-2">
-          <Link
-            to={ROUTES.product(item.productId)}
-            className="line-clamp-2 pr-2 text-[13.5px] font-semibold leading-tight text-card-foreground hover:underline"
-          >
-            {item.title}
-          </Link>
+          <div className="min-w-0">
+            <Link
+              to={ROUTES.product(item.productId)}
+              className="line-clamp-1 pr-2 text-[13.5px] font-semibold leading-tight text-card-foreground hover:underline"
+            >
+              {item.title}
+            </Link>
+            {item.batchName && (
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                {item.batchName} ({item.batchQuantity} Units)
+              </p>
+            )}
+            {item.batchSku && (
+              <p className="text-[9px] text-muted-foreground font-mono">
+                SKU: {item.batchSku}
+              </p>
+            )}
+          </div>
           <div className="flex shrink-0 gap-1 text-icon-idle">
             <button
               type="button"
-              aria-label="Move to wishlist"
+              aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
               onClick={() => {
                 toggleWishlist(item.productId)
-                removeItem(item.key)
-                toast('Moved to wishlist')
+                toast(isWishlisted ? 'Removed from wishlist' : 'Added to wishlist')
               }}
               className="cursor-pointer p-2.5 -m-1.5 rounded-full transition-colors hover:text-deal"
             >
-              <Icon name="favorite" size={18} />
+              <Icon
+                name="favorite"
+                size={18}
+                fill={isWishlisted}
+                className={isWishlisted ? 'text-deal' : 'text-icon-idle'}
+              />
             </button>
             <button
               type="button"
@@ -74,7 +93,7 @@ function CartItemCard({ item }: { item: CartItem }) {
           <div className="shrink-0">
             <QuantityStepper
               value={item.quantity}
-              max={Math.min(item.stock, 30)}
+              max={Math.max(1, maxPacks)}
               onChange={(qty) => setQuantity(item.key, qty)}
             />
           </div>
@@ -136,15 +155,9 @@ export default function CartPage() {
                 <dd className="font-medium text-success">−{formatCurrency(totals.couponDiscount)}</dd>
               </div>
             )}
-            <div className="flex justify-between border-b border-border pb-3">
-              <dt>Delivery Charges</dt>
-              <dd className="font-medium text-ink dark:text-foreground">
-                {totals.shipping === 0 ? '₹0' : formatCurrency(totals.shipping)}
-              </dd>
-            </div>
-            <div className="flex justify-between pt-3 text-base font-bold text-foreground">
+            <div className="flex justify-between pt-3 border-t border-border text-base font-bold text-foreground">
               <dt>Total Amount</dt>
-              <dd>{formatCurrency(totals.total)}</dd>
+              <dd>{formatCurrency(totals.subtotal - totals.couponDiscount)}</dd>
             </div>
           </dl>
           <p className="mt-2.5 text-[10.5px] leading-snug text-faint-foreground">
@@ -172,7 +185,7 @@ export default function CartPage() {
       <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md items-center justify-between bg-card px-4 pb-[calc(14px+env(safe-area-inset-bottom))] pt-3 shadow-bar md:hidden">
         <div className="flex flex-col justify-center min-w-0 pr-2">
           <div className="flex items-center gap-1.5 flex-wrap">
-            <span className="truncate min-w-0 text-base font-bold leading-none text-foreground min-[360px]:text-lg">{formatCurrency(totals.total)}</span>
+            <span className="truncate min-w-0 text-base font-bold leading-none text-foreground min-[360px]:text-lg">{formatCurrency(totals.subtotal - totals.couponDiscount)}</span>
             {savingsPct > 0 && <SavePill className="shrink-0 text-[10px] px-2 py-0.5">Save {savingsPct}%</SavePill>}
           </div>
           <span className="mt-1 text-[11px] font-medium leading-none text-muted-foreground whitespace-nowrap">

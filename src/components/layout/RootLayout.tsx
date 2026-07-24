@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Outlet, ScrollRestoration, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
@@ -7,6 +8,8 @@ import { Footer } from '@/components/layout/Footer'
 import { MenuDrawer } from '@/components/layout/MenuDrawer'
 import { SearchPill } from '@/components/shared/SearchPill'
 import { useScrollHide } from '@/hooks/use-scroll-hide'
+import { useAuthStore } from '@/store/auth.store'
+import { useWishlistStore } from '@/store/wishlist.store'
 
 /** Routes that show the floating search pill above the bottom nav (from the design). */
 const SEARCH_PILL_ROUTES: string[] = [ROUTES.home, ROUTES.products, ROUTES.allProducts]
@@ -23,6 +26,15 @@ export default function RootLayout() {
   const showSearchPill = SEARCH_PILL_ROUTES.includes(pathname)
   const showNav = NAV_ROUTES.includes(pathname)
   const isSearchHidden = useScrollHide()
+
+  const syncWishlist = useWishlistStore((s) => s.sync)
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      void syncWishlist().catch(() => {})
+    }
+  }, [isAuthenticated, syncWishlist])
 
   return (
     <div className="min-h-dvh bg-background flex flex-col">

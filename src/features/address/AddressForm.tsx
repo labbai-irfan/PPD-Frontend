@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { cn } from '@/lib/utils'
@@ -6,15 +6,17 @@ import type { Address } from '@/types'
 import { Button } from '@/components/ui/Button'
 import { Input } from '@/components/ui/Input'
 import { PhoneInput } from '@/components/ui/PhoneInput'
+import { LocationPicker } from '@/components/location/LocationPicker'
 
 const schema = z.object({
   name: z.string().min(2, 'Enter the recipient name'),
   phone: z.string().regex(/^\d{10}$/, 'Enter a valid 10-digit mobile number'),
+  country: z.string().min(2, 'Select country'),
   pincode: z.string().regex(/^\d{6}$/, 'Enter a valid 6-digit pincode'),
   line1: z.string().min(3, 'Enter house / flat / street'),
   line2: z.string().optional(),
-  city: z.string().min(2, 'Enter city'),
-  state: z.string().min(2, 'Enter state'),
+  city: z.string().min(2, 'Select city'),
+  state: z.string().min(2, 'Select state'),
   type: z.enum(['home', 'work', 'other']),
   isDefault: z.boolean(),
 })
@@ -34,12 +36,14 @@ export function AddressForm({ initial, onSave, onCancel, submitLabel = 'Save add
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors, isSubmitting },
   } = useForm<AddressFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
       name: initial?.name ?? '',
       phone: initial?.phone ?? '',
+      country: initial?.country ?? 'India',
       pincode: initial?.pincode ?? '',
       line1: initial?.line1 ?? '',
       line2: initial?.line2 ?? '',
@@ -60,11 +64,33 @@ export function AddressForm({ initial, onSave, onCancel, submitLabel = 'Save add
       </div>
       <Input label="Address (house no, building, street)" placeholder="Flat 4B, Sunrise Apartments" error={errors.line1?.message} {...register('line1')} />
       <Input label="Locality / area (optional)" placeholder="Near City Mall" error={errors.line2?.message} {...register('line2')} />
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Input label="Pincode" digitsOnly placeholder="560001" maxLength={6} error={errors.pincode?.message} {...register('pincode')} />
-        <Input label="City" placeholder="Bengaluru" error={errors.city?.message} {...register('city')} />
-        <Input label="State" placeholder="Karnataka" error={errors.state?.message} {...register('state')} />
-      </div>
+
+      <Controller
+        name="country"
+        control={control}
+        render={() => (
+          <LocationPicker
+            value={{
+              country: watch('country'),
+              state: watch('state'),
+              city: watch('city'),
+              pincode: watch('pincode'),
+            }}
+            onChange={(location) => {
+              setValue('country', location.country, { shouldValidate: true })
+              setValue('state', location.state, { shouldValidate: true })
+              setValue('city', location.city, { shouldValidate: true })
+              setValue('pincode', location.pincode, { shouldValidate: true })
+            }}
+            errors={{
+              country: errors.country?.message,
+              state: errors.state?.message,
+              city: errors.city?.message,
+              pincode: errors.pincode?.message,
+            }}
+          />
+        )}
+      />
 
       <div>
         <p className="mb-1.5 text-sm font-medium text-foreground">Address type</p>

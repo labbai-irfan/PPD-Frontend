@@ -43,6 +43,8 @@ export function TrendingSection() {
 
   const items = data?.items ?? []
 
+  if (!isPending && items.length === 0) return null
+
   function handleScroll(e: React.UIEvent<HTMLDivElement>) {
     const el = e.currentTarget
     const scrollable = el.scrollWidth - el.clientWidth

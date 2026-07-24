@@ -54,6 +54,7 @@ export const useOrdersStore = create<OrdersState>()((set, get) => ({
     const { data } = await apiClient.post<ApiOrder>('/orders', {
       items: input.items.map((item) => ({
         productId: item.productId,
+        batchId: item.batchId || 'default',
         quantity: item.quantity,
         selections: item.selections ?? {},
       })),

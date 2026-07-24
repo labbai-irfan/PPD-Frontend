@@ -15,9 +15,9 @@ export default function PackagesListPage() {
       <TopBar leading="menu" />
 
       <div className="px-1 pt-1">
-        <h1 className="text-[20px] font-extrabold text-foreground sm:text-2xl">Shop by Packages</h1>
+        <h1 className="text-[20px] font-extrabold text-foreground sm:text-2xl">Shop by Combos</h1>
         <p className="mt-0.5 text-[12.5px] font-medium text-muted-foreground sm:text-sm">
-          Everything you need, in one smart kit
+          Everything you need, in one smart combo
         </p>
       </div>
 
@@ -36,7 +36,7 @@ export default function PackagesListPage() {
                       {pkg.name}
                     </h3>
                     <p className="mt-1 line-clamp-2 text-[9.5px] font-medium leading-[1.3] text-[#736c63] sm:text-[11px] dark:text-muted-foreground">
-                      {pkg.description || `${pkg.itemCount} items in this kit`}
+                      {pkg.description || `${pkg.itemCount} items in this combo`}
                     </p>
                   </div>
                   <div className="mt-2">
@@ -74,8 +74,8 @@ export default function PackagesListPage() {
       {!isPending && packages?.length === 0 && (
         <EmptyState
           icon={<Icon name="inventory_2" size={36} />}
-          title="No packages yet"
-          description="Check back soon for curated kits and bundles."
+          title="No combos yet"
+          description="Check back soon for curated combos and bundles."
         />
       )}
     </div>

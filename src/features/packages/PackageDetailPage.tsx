@@ -36,9 +36,9 @@ export default function PackageDetailPage() {
     return (
       <EmptyState
         icon={<Icon name="inventory_2" size={36} />}
-        title="Package not found"
-        description="This package may have been removed or the link is incorrect."
-        action={<Button onClick={() => navigate(ROUTES.packages)}>Browse packages</Button>}
+        title="Combo not found"
+        description="This combo may have been removed or the link is incorrect."
+        action={<Button onClick={() => navigate(ROUTES.packages)}>Browse combos</Button>}
       />
     )
   }
@@ -55,14 +55,14 @@ export default function PackageDetailPage() {
       for (const item of pkg!.items) {
         const product = byId.get(item.productId)
         if (product && product.stock >= item.quantity) {
-          addItem(product, {}, item.quantity)
+          addItem(product, undefined, item.quantity)
           addedAny = true
         }
       }
       if (!addedAny) toast.error('These items are currently unavailable')
       return addedAny
     } catch {
-      toast.error('Could not add this package — please try again')
+      toast.error('Could not add this combo — please try again')
       return false
     } finally {
       setAdding(false)
@@ -101,7 +101,7 @@ export default function PackageDetailPage() {
           </>
         )}
       </div>
-      <p className="mt-1 text-xs text-muted-foreground">{pkg.itemCount} items in this package</p>
+      <p className="mt-1 text-xs text-muted-foreground">{pkg.itemCount} items in this combo</p>
 
       <div className="mt-5 space-y-2.5">
         <h2 className="text-base font-bold text-foreground">What's inside</h2>
@@ -135,14 +135,14 @@ export default function PackageDetailPage() {
 
       {unavailable && (
         <p className="mt-3 text-xs font-medium text-destructive">
-          Some items in this package are out of stock — only available items will be added.
+          Some items in this combo are out of stock — only available items will be added.
         </p>
       )}
 
       {/* Desktop actions */}
       <div className="mt-6 hidden gap-3 md:flex">
         <Button variant="secondary" size="lg" className="flex-1" onClick={() => void handleAddToCart()} disabled={adding}>
-          Add Package to Cart
+          Add Combo to Cart
         </Button>
         <Button size="lg" className="flex-1" onClick={() => void handleBuyNow()} disabled={adding}>
           Buy Now
@@ -152,7 +152,7 @@ export default function PackageDetailPage() {
       {/* Mobile sticky action bar */}
       <div className="fixed inset-x-0 bottom-0 z-40 mx-auto flex max-w-md gap-3 bg-card px-4 pb-[calc(14px+env(safe-area-inset-bottom))] pt-3 shadow-bar sm:max-w-xl md:hidden">
         <Button variant="secondary" size="lg" className="flex-1" onClick={() => void handleAddToCart()} disabled={adding}>
-          Add Package
+          Add Combo
         </Button>
         <Button size="lg" className="flex-1" onClick={() => void handleBuyNow()} disabled={adding}>
           Buy Now

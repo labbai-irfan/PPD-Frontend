@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import { Controller, useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { toast } from 'sonner'
@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { PhoneInput } from '@/components/ui/PhoneInput'
+import { LocationPicker } from '@/components/location/LocationPicker'
 import { useAddressStore } from '@/store/address.store'
 
 const schema = z.object({
@@ -17,7 +18,8 @@ const schema = z.object({
   line2: z.string().optional(),
   city: z.string().min(2, 'City is required'),
   state: z.string().min(2, 'State is required'),
-  pincode: z.string().regex(/^\d{6}$/, 'PIN code must be 6 digits'),
+  country: z.string().min(2, 'Country is required'),
+  pincode: z.string().regex(/^\d{6}$/, 'Enter a valid 6-digit pincode'),
   type: z.enum(['home', 'work', 'other']).optional(),
 })
 
@@ -29,9 +31,17 @@ export default function AddAddressPage() {
   const isEditing = !!id
   const { addresses, loaded, fetchAddresses, add, update } = useAddressStore()
 
-  const { register, handleSubmit, reset, formState: { errors, isSubmitting } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    reset,
+    watch,
+    setValue,
+    control,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { type: 'home' },
+    defaultValues: { type: 'home', country: 'India' },
   })
 
   useEffect(() => {
@@ -49,6 +59,7 @@ export default function AddAddressPage() {
           line2: existing.line2 ?? '',
           city: existing.city,
           state: existing.state,
+          country: existing.country ?? 'India',
           pincode: existing.pincode,
           type: existing.type ?? 'home',
         })
@@ -104,28 +115,31 @@ export default function AddAddressPage() {
           {...register('line2')}
         />
 
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Input
-            label="City"
-            placeholder="Bangalore"
-            error={errors.city?.message}
-            {...register('city')}
-          />
-          <Input
-            label="State"
-            placeholder="Karnataka"
-            error={errors.state?.message}
-            {...register('state')}
-          />
-        </div>
-
-        <Input
-          label="PIN Code"
-          digitsOnly
-          maxLength={6}
-          placeholder="560001"
-          error={errors.pincode?.message}
-          {...register('pincode')}
+        <Controller
+          name="country"
+          control={control}
+          render={() => (
+            <LocationPicker
+              value={{
+                country: watch('country'),
+                state: watch('state'),
+                city: watch('city'),
+                pincode: watch('pincode'),
+              }}
+              onChange={(location) => {
+                setValue('country', location.country, { shouldValidate: true })
+                setValue('state', location.state, { shouldValidate: true })
+                setValue('city', location.city, { shouldValidate: true })
+                setValue('pincode', location.pincode, { shouldValidate: true })
+              }}
+              errors={{
+                country: errors.country?.message,
+                state: errors.state?.message,
+                city: errors.city?.message,
+                pincode: errors.pincode?.message,
+              }}
+            />
+          )}
         />
 
         <div className="flex flex-col gap-3 pt-4 sm:flex-row">

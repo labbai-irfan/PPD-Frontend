@@ -50,9 +50,23 @@ export interface ProductSpec {
 }
 
 export interface ProductBatch {
+  _id?: string
+  sku: string
+  name: string
   quantity: number
-  costPrice: number
-  createdAt: string
+  calculatedPrice: number
+  discountType: 'none' | 'percentage' | 'fixed'
+  discountValue: number
+  sellingPrice: number
+  pricingMode: 'auto' | 'custom'
+  displayOrder: number
+  status: 'active' | 'inactive' | 'hidden'
+  isDefault: boolean
+  image?: string
+  description?: string
+  badge: 'none' | 'popular' | 'best-seller' | 'recommended' | 'most-value' | 'limited-offer'
+  minOrderCount: number
+  maxOrderCount: number
 }
 
 export interface Product {
@@ -66,11 +80,13 @@ export interface Product {
   highlights: string[]
   images: string[]
   price: number
+  unitPrice?: number
   mrp: number
   rating: number
   ratingCount: number
   reviewCount: number
   stock: number
+  stockQuantity?: number
   variants: ProductVariantOption[]
   tags: ProductTag[]
   /** social proof label from the design, e.g. "1.5K+ bought" */
@@ -194,6 +210,7 @@ export interface Address {
   id: string
   name: string
   phone: string
+  country: string
   line1: string
   line2?: string
   city: string
@@ -248,6 +265,16 @@ export interface CartItem {
   stock: number
   /** selected variant values, e.g. { size: "M", color: "Black" } */
   selections: Record<string, string>
+  batchId?: string
+  batchSku?: string
+  batchName?: string
+  unitPrice?: number
+  batchQuantity?: number
+  batchPrice?: number
+  batchCount?: number
+  totalUnits?: number
+  totalAmount?: number
+  pricingMode?: string
 }
 
 export interface Coupon {

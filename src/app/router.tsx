@@ -5,6 +5,7 @@ import AdminLayout from '@/components/admin/AdminLayout'
 import RequireAuth from '@/app/RequireAuth'
 import AdminGuard from '@/app/AdminGuard'
 import { ROUTES } from '@/lib/constants'
+import ErrorPage from '@/features/misc/ErrorPage'
 
 /** Route-level code splitting: each page loads on demand. */
 const lazyPage = (importer: () => Promise<{ default: React.ComponentType }>) => async () => ({
@@ -15,6 +16,7 @@ export const router = createBrowserRouter([
   {
     element: <RootLayout />,
     HydrateFallback: () => null,
+    errorElement: <ErrorPage />,
     children: [
       { path: '/', lazy: lazyPage(() => import('@/features/home/HomePage')) },
       { path: '/products', lazy: lazyPage(() => import('@/features/products/ProductListingPage')) },
@@ -112,18 +114,17 @@ export const router = createBrowserRouter([
           { path: '/admin/products/add', lazy: lazyPage(() => import('@/features/admin/AddProductPage')) },
           { path: '/admin/products/:id/edit', lazy: lazyPage(() => import('@/features/admin/AddProductPage')) },
           { path: '/admin/orders', lazy: lazyPage(() => import('@/features/admin/AdminOrdersPage')) },
+          { path: '/admin/orders/:id', lazy: lazyPage(() => import('@/features/admin/AdminOrderDetailsPage')) },
           { path: '/admin/users', lazy: lazyPage(() => import('@/features/admin/AdminUsersPage')) },
           { path: '/admin/reviews', lazy: lazyPage(() => import('@/features/admin/AdminReviewsPage')) },
-          // Feature downgraded for client — re-enable by uncommenting:
-          // { path: '/admin/coupons', lazy: lazyPage(() => import('@/features/admin/AdminCouponsPage')) },
           { path: '/admin/categories', lazy: lazyPage(() => import('@/features/admin/AdminCategoriesPage')) },
           { path: '/admin/inventory', lazy: lazyPage(() => import('@/features/admin/AdminInventoryPage')) },
           { path: '/admin/banners', lazy: lazyPage(() => import('@/features/admin/AdminBannersPage')) },
           { path: '/admin/packages', lazy: lazyPage(() => import('@/features/admin/AdminPackagesPage')) },
           { path: '/admin/admins', lazy: lazyPage(() => import('@/features/admin/AdminsPage')) },
           { path: '/admin/settings', lazy: lazyPage(() => import('@/features/admin/SettingsPage')) },
-          // { path: '/admin/security', lazy: lazyPage(() => import('@/features/admin/AdminSecurityPage')) },
           { path: '/admin/bulk-import', lazy: lazyPage(() => import('@/features/admin/AdminBulkImportPage')) },
+          { path: '/admin/delivery-charges', lazy: lazyPage(() => import('@/features/admin/AdminDeliveryChargesPage')) },
         ],
       },
     ],

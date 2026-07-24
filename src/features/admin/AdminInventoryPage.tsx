@@ -8,18 +8,14 @@ import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
 import { apiClient } from '@/services/api/client'
 
+import type { ProductBatch } from '@/types'
+
 const PAGE_SIZE = 10
 const LOW_STOCK_THRESHOLD = 10
 
 type StatusTab = 'active' | 'inactive'
 type StockStatus = 'in-stock' | 'low' | 'out'
 type SortOption = 'newest' | 'name-asc' | 'stock-asc' | 'stock-desc'
-
-interface Batch {
-  quantity: number
-  costPrice: number
-  createdAt: string
-}
 
 interface InventoryProduct {
   id: string
@@ -29,7 +25,7 @@ interface InventoryProduct {
   isActive: boolean
   images: string[]
   updatedAt: string
-  batches?: Batch[]
+  batches?: ProductBatch[]
 }
 
 interface CategoryOption {
@@ -76,8 +72,9 @@ export default function AdminInventoryPage() {
   const [saving, setSaving] = useState(false)
 
   const [batchesFor, setBatchesFor] = useState<InventoryProduct | null>(null)
+  const [newPackageName, setNewPackageName] = useState('')
   const [newBatchQty, setNewBatchQty] = useState('')
-  const [newBatchCost, setNewBatchCost] = useState('')
+  const [newPackagePrice, setNewPackagePrice] = useState('')
   const [addingBatch, setAddingBatch] = useState(false)
 
   useEffect(() => {
@@ -174,31 +171,48 @@ export default function AdminInventoryPage() {
 
   function openBatches(p: InventoryProduct) {
     setBatchesFor(p)
+    setNewPackageName('')
     setNewBatchQty('')
-    setNewBatchCost('')
+    setNewPackagePrice('')
   }
 
   async function handleAddBatch() {
     if (!batchesFor) return
+    const name = newPackageName.trim()
     const quantity = Number(newBatchQty)
-    const costPrice = Number(newBatchCost)
-    if (!quantity || quantity <= 0) {
-      toast.error('Enter a batch quantity')
+    const price = Number(newPackagePrice)
+    
+    if (!name) {
+      toast.error('Enter a package name')
       return
     }
-    if (!newBatchCost || costPrice < 0) {
-      toast.error('Enter a batch cost price')
+    if (!quantity || quantity <= 0) {
+      toast.error('Enter a package quantity')
+      return
+    }
+    if (!newPackagePrice || price < 0) {
+      toast.error('Enter a package selling price')
       return
     }
     setAddingBatch(true)
     try {
-      const batches = [...(batchesFor.batches ?? []), { quantity, costPrice }]
+      const newBatch: any = {
+        name,
+        quantity,
+        sellingPrice: price,
+        calculatedPrice: price,
+        pricingMode: 'custom',
+        status: 'active',
+        sku: `${batchesFor.title.replace(/\s+/g, '-').toUpperCase()}-${quantity}-${Math.floor(Math.random() * 1000)}`,
+        isDefault: batchesFor.batches?.length === 0,
+      }
+      const batches = [...(batchesFor.batches ?? []), newBatch]
       await apiClient.patch(`/admin/products/${batchesFor.id}`, { batches })
-      toast.success(`Added ${quantity} unit(s) to ${batchesFor.title}`)
+      toast.success(`Added package ${name} to ${batchesFor.title}`)
       setBatchesFor(null)
       void load()
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : 'Failed to add batch')
+      toast.error(e instanceof Error ? e.message : 'Failed to add package')
     } finally {
       setAddingBatch(false)
     }
@@ -348,7 +362,7 @@ export default function AdminInventoryPage() {
               <th className="py-3 text-left font-semibold text-muted-foreground">Product Name</th>
               <th className="py-3 text-left font-semibold text-muted-foreground">Category</th>
               <th className="py-3 text-left font-semibold text-muted-foreground">Stock</th>
-              <th className="py-3 text-left font-semibold text-muted-foreground">Batches</th>
+              <th className="py-3 text-left font-semibold text-muted-foreground">Packages</th>
               <th className="py-3 text-left font-semibold text-muted-foreground">Stock Status</th>
               <th className="py-3 pr-4 text-left font-semibold text-muted-foreground">Last Updated</th>
             </tr>
@@ -377,19 +391,13 @@ export default function AdminInventoryPage() {
                   <td className="py-2.5 pr-3 font-medium text-foreground">{p.title}</td>
                   <td className="py-2.5 pr-3 text-muted-foreground">{categories.get(p.category) ?? p.category}</td>
                   <td className="py-2.5 pr-3">
-                    {p.batches?.length ? (
-                      <span className="inline-flex w-20 items-center rounded-lg border border-border bg-muted px-2 py-1.5 text-sm font-semibold text-foreground">
-                        {stock}
-                      </span>
-                    ) : (
-                      <input
-                        type="number"
-                        min={0}
-                        value={stock}
-                        onChange={(e) => editStock(p.id, e.target.value)}
-                        className="w-20 rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-                      />
-                    )}
+                    <input
+                      type="number"
+                      min={0}
+                      value={stock}
+                      onChange={(e) => editStock(p.id, e.target.value)}
+                      className="w-20 rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                    />
                   </td>
                   <td className="py-2.5 pr-3">
                     <button
@@ -398,7 +406,7 @@ export default function AdminInventoryPage() {
                       className="inline-flex items-center gap-1.5 rounded-full bg-muted px-2.5 py-1 text-xs font-semibold text-foreground hover:bg-accent"
                     >
                       <Boxes className="size-3.5" />
-                      {p.batches?.length ? `${p.batches.length} batch${p.batches.length > 1 ? 'es' : ''}` : 'Add batch'}
+                      {p.batches?.length ? `${p.batches.length} package${p.batches.length > 1 ? 's' : ''}` : 'Add package'}
                     </button>
                   </td>
                   <td className="py-2.5 pr-3">
@@ -460,44 +468,57 @@ export default function AdminInventoryPage() {
         </div>
       )}
 
-      <Modal open={!!batchesFor} onClose={() => setBatchesFor(null)} title={batchesFor ? `Batches — ${batchesFor.title}` : ''}>
+      <Modal open={!!batchesFor} onClose={() => setBatchesFor(null)} title={batchesFor ? `Packages — ${batchesFor.title}` : ''}>
         {batchesFor && (
           <div className="space-y-4">
             {batchesFor.batches?.length ? (
               <div className="space-y-2">
                 {batchesFor.batches.map((b, i) => (
-                  <div key={i} className="flex items-center justify-between rounded-lg bg-muted px-3 py-2 text-sm">
-                    <span className="font-medium text-foreground">{b.quantity} units</span>
-                    <span className="text-muted-foreground">{formatCurrency(b.costPrice)} cost each</span>
-                    <span className="text-xs text-muted-foreground">
-                      {b.createdAt ? new Date(b.createdAt).toLocaleDateString() : '—'}
-                    </span>
+                  <div key={i} className="flex items-center justify-between rounded-lg bg-muted/50 px-3 py-2.5 text-sm border border-border">
+                    <div>
+                      <span className="font-bold text-foreground">{b.name}</span>
+                      <span className="text-xs text-muted-foreground ml-2">({b.quantity} units)</span>
+                      {b.isDefault && (
+                        <span className="ml-2 rounded-full bg-primary/10 px-1.5 py-0.5 text-[9px] font-bold text-primary">Default</span>
+                      )}
+                      <span className={`ml-2 rounded-full px-1.5 py-0.5 text-[9px] font-bold ${b.status === 'active' ? 'bg-success/10 text-success' : 'bg-destructive/10 text-destructive'}`}>
+                        {b.status}
+                      </span>
+                    </div>
+                    <span className="font-semibold text-foreground">{formatCurrency(b.sellingPrice)}</span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground">No batches yet — this product uses direct stock edits.</p>
+              <p className="text-sm text-muted-foreground">No packages configured yet.</p>
             )}
 
             <div className="border-t border-border pt-4">
-              <p className="mb-2 text-sm font-semibold text-foreground">Add a restock batch</p>
-              <div className="grid grid-cols-2 gap-2">
+              <p className="mb-2 text-sm font-semibold text-foreground">Add a new package option</p>
+              <div className="grid grid-cols-1 gap-2">
                 <Input
-                  type="number"
-                  placeholder="Quantity"
-                  value={newBatchQty}
-                  onChange={(e) => setNewBatchQty(e.target.value)}
+                  placeholder="Package Name (e.g. Small Pack)"
+                  value={newPackageName}
+                  onChange={(e) => setNewPackageName(e.target.value)}
                 />
-                <Input
-                  type="number"
-                  placeholder="Cost price"
-                  value={newBatchCost}
-                  onChange={(e) => setNewBatchCost(e.target.value)}
-                />
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Pack Size (Units)"
+                    value={newBatchQty}
+                    onChange={(e) => setNewBatchQty(e.target.value)}
+                  />
+                  <Input
+                    type="number"
+                    placeholder="Selling Price (₹)"
+                    value={newPackagePrice}
+                    onChange={(e) => setNewPackagePrice(e.target.value)}
+                  />
+                </div>
               </div>
               <Button className="mt-3 w-full gap-2" onClick={() => void handleAddBatch()} disabled={addingBatch}>
                 <Plus className="size-4" />
-                {addingBatch ? 'Adding...' : 'Add Batch'}
+                {addingBatch ? 'Adding...' : 'Add Package'}
               </Button>
             </div>
           </div>

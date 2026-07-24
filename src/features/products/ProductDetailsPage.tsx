@@ -21,32 +21,74 @@ import { useScrollHide } from '@/hooks/use-scroll-hide'
 /** Vertical thumbnail rail + main image, from the design gallery. */
 function Gallery({ product }: { product: Product }) {
   const [active, setActive] = useState(0)
+  const [isOpen, setIsOpen] = useState(false)
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [isOpen])
 
   return (
-    // One shared row height: the thumb rail and the main image both fill it,
-    // so the main image can never grow taller than the thumbnail column.
-    // 294px = 4 thumbs (4×66px) + 3 gaps (3×10px).
-    <div className="flex h-[294px] gap-2.5 md:h-[420px]">
-      <div className="flex w-[70px] shrink-0 flex-col gap-2.5 overflow-y-auto no-scrollbar">
-        {product.images.map((image, i) => (
+    <>
+      <div className="flex h-[294px] gap-2.5 md:h-[420px]">
+        <div className="flex w-[70px] shrink-0 flex-col gap-2.5 overflow-y-auto no-scrollbar">
+          {product.images.map((image, i) => (
+            <button
+              key={image}
+              type="button"
+              aria-label={`View image ${i + 1}`}
+              onClick={() => setActive(i)}
+              className={cn(
+                'h-[66px] shrink-0 overflow-hidden rounded-xl border-2 bg-card p-1 transition-colors cursor-pointer',
+                i === active ? 'border-primary' : 'border-transparent',
+              )}
+            >
+              <img src={image} alt={`${product.title} — view ${i + 1}`} className="size-full rounded-lg object-cover" />
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={() => setIsOpen(true)}
+          className="h-full flex-1 overflow-hidden rounded-2xl bg-card shadow-card cursor-pointer focus:outline-none transition-transform hover:scale-[1.01]"
+        >
+          <img src={product.images[active]} alt={product.title} className="size-full object-cover" />
+        </button>
+      </div>
+
+      {isOpen && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm transition-opacity duration-300 animate-fade-in"
+          onClick={() => setIsOpen(false)}
+        >
           <button
-            key={image}
             type="button"
-            aria-label={`View image ${i + 1}`}
-            onClick={() => setActive(i)}
-            className={cn(
-              'h-[66px] shrink-0 overflow-hidden rounded-xl border-2 bg-card p-1 transition-colors cursor-pointer',
-              i === active ? 'border-primary' : 'border-transparent',
-            )}
+            onClick={() => setIsOpen(false)}
+            className="absolute right-4 top-4 z-50 flex size-12 items-center justify-center rounded-full bg-white/10 text-white backdrop-blur transition-colors hover:bg-white/20 cursor-pointer"
+            aria-label="Close image viewer"
           >
-            <img src={image} alt={`${product.title} — view ${i + 1}`} className="size-full rounded-lg object-cover" />
+            <Icon name="close" size={24} />
           </button>
-        ))}
-      </div>
-      <div className="h-full flex-1 overflow-hidden rounded-2xl bg-card shadow-card">
-        <img src={product.images[active]} alt={product.title} className="size-full object-cover" />
-      </div>
-    </div>
+          
+          <div
+            className="relative max-h-[85vh] max-w-[90vw]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={product.images[active]}
+              alt={product.title}
+              className="max-h-[85vh] max-w-[90vw] rounded-lg object-contain shadow-2xl animate-in zoom-in-95 duration-200"
+            />
+          </div>
+        </div>
+      )}
+    </>
   )
 }
 
@@ -141,9 +183,25 @@ export default function ProductDetailsPage() {
   const addItem = useCartStore((s) => s.addItem)
   const addRecentlyViewed = useRecentlyViewedStore((s) => s.add)
 
+  const [selectedBatchId, setSelectedBatchId] = useState<string>('')
+  const [batchCount, setBatchCount] = useState<number>(1)
+
+  const selectedBatch = product?.batches?.find((b) => (b._id === selectedBatchId || b.id === selectedBatchId)) || null
+
   useEffect(() => {
     if (product) addRecentlyViewed(product.id)
   }, [product, addRecentlyViewed])
+
+  useEffect(() => {
+    if (product?.batches && product.batches.length > 0) {
+      const defaultBatch = product.batches.find((b) => b.isDefault && b.status === 'active') || product.batches.find((b) => b.status === 'active')
+      const defaultId = defaultBatch?._id || defaultBatch?.id
+      if (defaultBatch && defaultId) {
+        setSelectedBatchId(defaultId)
+        setBatchCount(1)
+      }
+    }
+  }, [product])
 
   if (isPending) {
     return (
@@ -176,16 +234,56 @@ export default function ProductDetailsPage() {
     )
   }
 
-  const save = product.mrp - product.price
-  const outOfStock = product.stock === 0
+  const displayedPrice = selectedBatch ? selectedBatch.sellingPrice * batchCount : (product?.price ?? 0)
+  const displayedMrp = selectedBatch ? selectedBatch.calculatedPrice * batchCount : (product?.mrp ?? 0)
+  const save = displayedMrp - displayedPrice
+  const outOfStock = selectedBatch 
+    ? ((product?.stockQuantity ?? product?.stock ?? 0) < (selectedBatch.quantity * batchCount))
+    : (product?.stock ?? 0) === 0
 
   function handleAddToCart() {
-    addItem(product!)
+    if (!product) return
+    if (product.batches && product.batches.length > 0) {
+      if (!selectedBatch) {
+        toast.error('Please select a package option')
+        return
+      }
+      addItem(product, selectedBatch, batchCount)
+    } else {
+      const dummyBatch: any = {
+        _id: 'default',
+        sku: product.sku || product.id,
+        name: 'Standard Unit',
+        quantity: 1,
+        calculatedPrice: product.price,
+        sellingPrice: product.price,
+        pricingMode: 'auto',
+      }
+      addItem(product, dummyBatch, 1)
+    }
     toast.success('Added to cart')
   }
 
   function handleBuyNow() {
-    addItem(product!)
+    if (!product) return
+    if (product.batches && product.batches.length > 0) {
+      if (!selectedBatch) {
+        toast.error('Please select a package option')
+        return
+      }
+      addItem(product, selectedBatch, batchCount)
+    } else {
+      const dummyBatch: any = {
+        _id: 'default',
+        sku: product.sku || product.id,
+        name: 'Standard Unit',
+        quantity: 1,
+        calculatedPrice: product.price,
+        sellingPrice: product.price,
+        pricingMode: 'auto',
+      }
+      addItem(product, dummyBatch, 1)
+    }
     navigate(ROUTES.cart)
   }
 
@@ -251,11 +349,11 @@ export default function ProductDetailsPage() {
           </div>
 
           <div className="mt-3.5 flex flex-wrap items-center gap-x-2.5 gap-y-1">
-            <span className="text-[22px] font-bold text-foreground sm:text-[27px]">{formatCurrency(product.price)}</span>
-            <s className="text-base text-faint-foreground">{formatCurrency(product.mrp)}</s>
+            <span className="text-[22px] font-bold text-foreground sm:text-[27px]">{formatCurrency(displayedPrice)}</span>
+            <s className="text-base text-faint-foreground">{formatCurrency(displayedMrp)}</s>
             {save > 0 && (
               <SavePill className="px-3 py-1.5 text-xs">
-                {discountPercent(product.mrp, product.price)}% OFF
+                {discountPercent(displayedMrp, displayedPrice)}% OFF
               </SavePill>
             )}
           </div>
@@ -272,6 +370,128 @@ export default function ProductDetailsPage() {
               </p>
             </div>
           </div>
+
+          {/* Batches Selection */}
+          {product.batches && product.batches.length > 0 && (
+            <div className="mt-4 space-y-3">
+              <h2 className="text-base font-bold text-foreground">Select Package Option</h2>
+              <div className="space-y-2">
+                {product.batches.map((batch) => {
+                  const isDefault = batch.isDefault
+                  const isInactive = batch.status === 'inactive'
+                  const isHidden = batch.status === 'hidden'
+                  
+                  if (isHidden) return null
+
+                  const totalAvailable = product.stockQuantity ?? product.stock
+                  const canBuy = totalAvailable >= batch.quantity && !isInactive
+                  const batchId = batch._id || batch.id || ''
+                  const isSelected = selectedBatchId === batchId
+
+                  // Low stock warnings
+                  let stockWarning = ""
+                  if (!canBuy) {
+                    stockWarning = "Out of Stock"
+                  } else if (totalAvailable - batch.quantity < 10) {
+                    stockWarning = `Only ${totalAvailable} units left`
+                  }
+
+                  return (
+                    <button
+                      key={batchId}
+                      type="button"
+                      disabled={!canBuy}
+                      onClick={() => {
+                        setSelectedBatchId(batchId)
+                        setBatchCount(1)
+                      }}
+                      className={cn(
+                        "w-full flex items-center justify-between gap-3 rounded-xl border p-3 text-left transition-colors cursor-pointer",
+                        !canBuy
+                          ? "opacity-50 cursor-not-allowed bg-muted/40 border-border"
+                          : isSelected
+                            ? "border-primary bg-primary-soft/40 shadow-sm"
+                            : "border-border hover:border-muted-foreground/40 bg-card"
+                      )}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="font-bold text-foreground text-sm">{batch.name}</span>
+                          {batch.badge && batch.badge !== 'none' && (
+                            <span className="rounded-full bg-deal/10 px-2 py-0.5 text-[10px] font-bold text-deal capitalize">
+                              {batch.badge.replace('-', ' ')}
+                            </span>
+                          )}
+                          {isDefault && (
+                            <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-bold text-primary">
+                              Default
+                            </span>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-0.5">
+                          Pack size: <span className="font-semibold text-foreground">{batch.quantity} Units</span>
+                          {batch.description && ` · ${batch.description}`}
+                        </p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        <div className="font-bold text-foreground text-sm">
+                          {formatCurrency(batch.sellingPrice)}
+                        </div>
+                        {batch.discountType !== 'none' && batch.discountValue > 0 && (
+                          <div className="text-[10.5px] font-semibold text-success">
+                            {batch.discountType === 'percentage'
+                              ? `${batch.discountValue}% OFF`
+                              : `Save ${formatCurrency(batch.discountValue)}`}
+                          </div>
+                        )}
+                        {stockWarning && (
+                          <div className={cn("text-[10px] font-bold mt-0.5", !canBuy ? "text-destructive" : "text-warning")}>
+                            {stockWarning}
+                          </div>
+                        )}
+                      </div>
+                    </button>
+                  )
+                })}
+              </div>
+
+              {selectedBatch && (
+                <div className="rounded-xl border border-border-strong bg-muted/20 p-3 space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs font-semibold text-muted-foreground">Select Quantity (Packs)</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        disabled={batchCount <= (selectedBatch.minOrderCount || 1)}
+                        onClick={() => setBatchCount(c => c - 1)}
+                        className="flex size-7 items-center justify-center rounded-lg border border-border bg-card hover:bg-muted text-foreground disabled:opacity-40"
+                      >
+                        -
+                      </button>
+                      <span className="text-sm font-bold text-foreground w-6 text-center">{batchCount}</span>
+                      <button
+                        type="button"
+                        disabled={
+                          batchCount >= (selectedBatch.maxOrderCount || 99) ||
+                          (selectedBatch.quantity * (batchCount + 1) > (product.stockQuantity ?? product.stock))
+                        }
+                        onClick={() => setBatchCount(c => c + 1)}
+                        className="flex size-7 items-center justify-center rounded-lg border border-border bg-card hover:bg-muted text-foreground disabled:opacity-40"
+                      >
+                        +
+                      </button>
+                    </div>
+                  </div>
+                  
+                  {/* Real-time remaining stock preview */}
+                  <div className="flex items-center justify-between text-xs border-t border-border pt-2 mt-1">
+                    <span className="text-muted-foreground">Units Selected: <b className="text-foreground">{selectedBatch.quantity * batchCount}</b></span>
+                    <span className="text-muted-foreground">Remaining Stock: <b className="text-foreground">{Math.max(0, (product.stockQuantity ?? product.stock) - selectedBatch.quantity * batchCount)}</b></span>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* description box */}
           <div className="mt-3 rounded-xl border border-border-strong bg-white px-4 py-3 text-[12.5px] leading-relaxed text-ink-muted dark:bg-card/50 dark:text-muted-foreground">
@@ -307,7 +527,6 @@ export default function ProductDetailsPage() {
           </button>
         </div>
         <ProductGrid products={related.data?.slice(0, 6)} loading={related.isPending} skeletonCount={6} />
-        <Dots count={4} active={0} className="mt-3.5" />
       </div>
 
       {/* Mobile sticky action bar — pill-shaped, slides down on scroll */}

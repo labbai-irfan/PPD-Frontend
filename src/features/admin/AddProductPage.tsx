@@ -20,6 +20,8 @@ const schema = z.object({
   description: z.string().min(20, 'Product description must be at least 20 characters'),
   sku: z.string().optional(),
   hsnCode: z.string().optional(),
+  unitPrice: z.string().regex(/^\d+(\.\d+)?$/, 'Unit price must be a number').optional(),
+  stockQuantity: z.string().regex(/^\d+$/, 'Stock must be a whole number').optional(),
   mrp: z.string().regex(/^\d+(\.\d+)?$/, 'Price must be a number'),
   discountPercent: z.string().optional(),
   gstPercent: z.string().optional(),
@@ -51,13 +53,43 @@ interface SpecRow {
 }
 
 interface BatchRow {
+  id?: string
+  sku: string
+  name: string
   quantity: string
-  costPrice: string
+  calculatedPrice: string
+  discountType: 'none' | 'percentage' | 'fixed'
+  discountValue: string
+  sellingPrice: string
+  pricingMode: 'auto' | 'custom'
+  displayOrder: string
+  status: 'active' | 'inactive' | 'hidden'
+  isDefault: boolean
+  image?: string
+  description?: string
+  badge: 'none' | 'popular' | 'best-seller' | 'recommended' | 'most-value' | 'limited-offer'
+  minOrderCount: string
+  maxOrderCount: string
 }
 
 const emptyFaq: FaqRow = { question: '', answer: '' }
 const emptySpec: SpecRow = { label: '', value: '' }
-const emptyBatch: BatchRow = { quantity: '', costPrice: '' }
+const emptyBatch: BatchRow = {
+  sku: '',
+  name: '',
+  quantity: '1',
+  calculatedPrice: '0',
+  discountType: 'none',
+  discountValue: '0',
+  sellingPrice: '0',
+  pricingMode: 'auto',
+  displayOrder: '0',
+  status: 'active',
+  isDefault: false,
+  badge: 'none',
+  minOrderCount: '1',
+  maxOrderCount: '99',
+}
 
 /** Repeatable-row card: FAQs, Specifications, Batches all share this shape (two fields + add/remove). */
 function RepeatableSection<T>({
@@ -154,18 +186,11 @@ export default function AddProductPage() {
   const mrp = Number(watch('mrp')) || 0
   const discountPercent = Number(watch('discountPercent')) || 0
   const gstPercent = Number(watch('gstPercent')) || 0
-  const weightPerUnit = Number(watch('weightPerUnit')) || 0
-
   const finalPrice = useMemo(() => {
     const discounted = mrp * (1 - discountPercent / 100)
     const withGst = discounted * (1 + gstPercent / 100)
     return Math.max(0, Math.round(withGst * 100) / 100)
   }, [mrp, discountPercent, gstPercent])
-
-  const availableStock = useMemo(
-    () => batches.reduce((sum, b) => sum + (Number(b.quantity) || 0), 0),
-    [batches],
-  )
 
   useEffect(() => {
     void apiClient
@@ -185,6 +210,8 @@ export default function AddProductPage() {
             description: data.description,
             sku: data.sku ?? '',
             hsnCode: data.hsnCode ?? '',
+            unitPrice: data.unitPrice != null ? String(data.unitPrice) : String(data.price),
+            stockQuantity: data.stockQuantity != null ? String(data.stockQuantity) : String(data.stock ?? 0),
             mrp: String(data.mrp),
             discountPercent: data.discountPercent != null ? String(data.discountPercent) : '',
             gstPercent: data.gstPercent != null ? String(data.gstPercent) : '',
@@ -200,14 +227,25 @@ export default function AddProductPage() {
           setSpecs(data.specs ?? [])
           setExistingTags(data.tags ?? [])
           setBatches(
-            data.batches?.length
-              ? data.batches.map((b: { quantity: number; costPrice: number }) => ({
-                  quantity: String(b.quantity),
-                  costPrice: String(b.costPrice),
-                }))
-              : data.stock > 0
-                ? [{ quantity: String(data.stock), costPrice: '0' }]
-                : [],
+            (data.batches ?? []).map((b: any) => ({
+              id: b._id || b.id,
+              sku: b.sku ?? '',
+              name: b.name ?? '',
+              quantity: String(b.quantity ?? 1),
+              calculatedPrice: String(b.calculatedPrice ?? 0),
+              discountType: b.discountType ?? 'none',
+              discountValue: String(b.discountValue ?? 0),
+              sellingPrice: String(b.sellingPrice ?? 0),
+              pricingMode: b.pricingMode ?? 'auto',
+              displayOrder: String(b.displayOrder ?? 0),
+              status: b.status ?? 'active',
+              isDefault: b.isDefault ?? false,
+              image: b.image ?? '',
+              description: b.description ?? '',
+              badge: b.badge ?? 'none',
+              minOrderCount: String(b.minOrderCount ?? 1),
+              maxOrderCount: String(b.maxOrderCount ?? 99),
+            }))
           )
         })
         .catch(() => toast.error('Failed to load product'))
@@ -219,9 +257,9 @@ export default function AddProductPage() {
       toast.error('Add at least one stock batch')
       return
     }
-    const invalidBatch = batches.some((b) => !b.quantity || !b.costPrice)
+    const invalidBatch = batches.some((b) => !b.name || !b.quantity || (b.pricingMode === 'custom' && b.sellingPrice === ''))
     if (invalidBatch) {
-      toast.error('Every batch needs a quantity and cost price')
+      toast.error('Every batch needs a name, quantity, and selling price (if Custom)')
       return
     }
 
@@ -237,8 +275,11 @@ export default function AddProductPage() {
       description: values.description,
       sku: values.sku?.trim() || undefined,
       hsnCode: values.hsnCode?.trim() || undefined,
+      unitPrice: values.unitPrice ? Number(values.unitPrice) : finalPrice,
+      stockQuantity: values.stockQuantity ? Number(values.stockQuantity) : 0,
       mrp: Number(values.mrp),
-      price: finalPrice,
+      price: values.unitPrice ? Number(values.unitPrice) : finalPrice,
+      stock: values.stockQuantity ? Number(values.stockQuantity) : 0,
       discountPercent: values.discountPercent ? Number(values.discountPercent) : undefined,
       gstPercent: values.gstPercent ? Number(values.gstPercent) : undefined,
       weightPerUnit: values.weightPerUnit ? Number(values.weightPerUnit) : undefined,
@@ -249,7 +290,40 @@ export default function AddProductPage() {
       ...(images.length ? { images } : {}),
       faqs: faqs.filter((f) => f.question.trim() && f.answer.trim()),
       specs: specs.filter((s) => s.label.trim() && s.value.trim()),
-      batches: batches.map((b) => ({ quantity: Number(b.quantity), costPrice: Number(b.costPrice) })),
+      batches: batches.map((b) => {
+        const calculatedPrice = (Number(values.unitPrice) || finalPrice) * (Number(b.quantity) || 0)
+        let sellingPrice = Number(b.sellingPrice) || 0
+        if (b.pricingMode === 'auto') {
+          let discountAmount = 0
+          const discountValue = Number(b.discountValue) || 0
+          if (b.discountType === 'percentage') {
+            discountAmount = (calculatedPrice * discountValue) / 100
+          } else if (b.discountType === 'fixed') {
+            discountAmount = discountValue
+          }
+          sellingPrice = Math.max(0, calculatedPrice - discountAmount)
+        }
+
+        return {
+          id: b.id,
+          sku: b.sku || `${values.sku || 'BATCH'}-${b.quantity}-${Math.floor(Math.random() * 1000)}`,
+          name: b.name,
+          quantity: Number(b.quantity),
+          calculatedPrice,
+          discountType: b.discountType || 'none',
+          discountValue: Number(b.discountValue || 0),
+          sellingPrice,
+          pricingMode: b.pricingMode || 'auto',
+          displayOrder: Number(b.displayOrder || 0),
+          status: b.status || 'active',
+          isDefault: b.isDefault || false,
+          image: b.image || undefined,
+          description: b.description || undefined,
+          badge: b.badge || 'none',
+          minOrderCount: Number(b.minOrderCount || 1),
+          maxOrderCount: Number(b.maxOrderCount || 99),
+        }
+      }),
       tags: [...tags],
       status,
     }
@@ -488,56 +562,175 @@ export default function AddProductPage() {
             <h2 className="font-semibold text-foreground mb-4">Inventory</h2>
             <div className="grid sm:grid-cols-2 gap-4 mb-4">
               <Input label="HSN Code" placeholder="Enter HSN Code" {...register('hsnCode')} />
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">Available Stock</label>
-                <div className="px-3 py-2.5 rounded-lg border border-border bg-muted text-foreground font-semibold">
-                  {availableStock}
-                </div>
-              </div>
+              <Input
+                label="Available Stock (Total Units)"
+                type="number"
+                placeholder="100"
+                error={errors.stockQuantity?.message}
+                {...register('stockQuantity')}
+              />
             </div>
 
-            <p className="text-sm font-semibold text-foreground mb-2">Batches</p>
-            <div className="space-y-2.5">
-              {batches.map((b, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <span className="mt-2.5 w-4 shrink-0 text-xs text-muted-foreground">{i + 1}</span>
-                  <div className="flex-1 grid grid-cols-2 gap-2">
-                    <Input
-                      type="number"
-                      placeholder="Batch Quantity"
-                      value={b.quantity}
-                      onChange={(e) => setBatches(batches.map((r, ri) => (ri === i ? { ...r, quantity: e.target.value } : r)))}
-                    />
-                    <Input
-                      type="number"
-                      placeholder="Batch Cost Price"
-                      value={b.costPrice}
-                      onChange={(e) => setBatches(batches.map((r, ri) => (ri === i ? { ...r, costPrice: e.target.value } : r)))}
-                    />
+            <p className="text-sm font-semibold text-foreground mb-2">Packages</p>
+            <div className="space-y-4">
+              {batches.map((b, i) => {
+                const calculatedPrice = Number(watch('unitPrice')) * (Number(b.quantity) || 0)
+                let sellingPrice = Number(b.sellingPrice) || 0
+                if (b.pricingMode === 'auto') {
+                  let discountAmount = 0
+                  const discountValue = Number(b.discountValue) || 0
+                  if (b.discountType === 'percentage') {
+                    discountAmount = (calculatedPrice * discountValue) / 100
+                  } else if (b.discountType === 'fixed') {
+                    discountAmount = discountValue
+                  }
+                  sellingPrice = Math.max(0, calculatedPrice - discountAmount)
+                }
+
+                const updateBatch = (patch: Partial<BatchRow>) => {
+                  setBatches(batches.map((r, ri) => (ri === i ? { ...r, ...patch } : r)))
+                }
+
+                return (
+                  <div key={i} className="p-5 rounded-2xl border border-border bg-card/30 space-y-4 relative group">
+                    <div className="flex items-center justify-between pb-2 border-b border-border">
+                      <span className="text-xs font-bold text-primary uppercase tracking-wider flex items-center gap-1.5">
+                        <span className="size-2 rounded-full bg-primary" />
+                        Package Option #{i + 1}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() => setBatches(batches.filter((_, ri) => ri !== i))}
+                        className="p-1 rounded-lg text-destructive hover:bg-destructive/10 transition-colors flex items-center justify-center cursor-pointer"
+                        aria-label="Remove batch"
+                      >
+                        <Trash2 className="size-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+                      <Input
+                        label="Batch Name"
+                        placeholder="e.g. Small Pack"
+                        value={b.name}
+                        onChange={(e) => updateBatch({ name: e.target.value })}
+                        className="h-[42px]"
+                      />
+                      <Input
+                        label="Pack size (Units)"
+                        type="number"
+                        placeholder="10"
+                        value={b.quantity}
+                        onChange={(e) => updateBatch({ quantity: e.target.value })}
+                        className="h-[42px]"
+                      />
+                      <div>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-2">Pricing Mode</label>
+                        <select
+                          className="w-full h-[42px] px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                          value={b.pricingMode}
+                          onChange={(e) => updateBatch({ pricingMode: e.target.value as 'auto' | 'custom' })}
+                        >
+                          <option value="auto">Auto (Unit × Qty)</option>
+                          <option value="custom">Custom (Override)</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-muted-foreground mb-2">Status</label>
+                        <select
+                          className="w-full h-[42px] px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                          value={b.status}
+                          onChange={(e) => updateBatch({ status: e.target.value as any })}
+                        >
+                          <option value="active">Active</option>
+                          <option value="inactive">Inactive</option>
+                          <option value="hidden">Hidden</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 items-end">
+                      {b.pricingMode === 'auto' ? (
+                        <>
+                          <div>
+                            <label className="block text-xs font-semibold text-muted-foreground mb-2">Discount Type</label>
+                            <select
+                              className="w-full h-[42px] px-3 py-2 border border-border rounded-lg bg-background text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                              value={b.discountType}
+                              onChange={(e) => updateBatch({ discountType: e.target.value as 'none' | 'percentage' | 'fixed' })}
+                            >
+                              <option value="none">No Discount</option>
+                              <option value="percentage">Percentage (%)</option>
+                              <option value="fixed">Fixed Amount (₹)</option>
+                            </select>
+                          </div>
+                          <Input
+                            label="Discount Value"
+                            type="number"
+                            disabled={b.discountType === 'none'}
+                            value={b.discountValue}
+                            onChange={(e) => updateBatch({ discountValue: e.target.value })}
+                            className="h-[42px]"
+                          />
+                          <div>
+                            <label className="block text-xs font-semibold text-muted-foreground mb-2">
+                              Selling Price (₹)
+                            </label>
+                            <div className="w-full h-[42px] px-3 py-2 border border-border rounded-lg bg-muted text-foreground text-sm font-semibold flex items-center">
+                              {formatCurrency(sellingPrice)}
+                            </div>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div>
+                            <label className="block text-xs font-semibold text-muted-foreground mb-2">
+                              Selling Price (₹)
+                            </label>
+                            <Input
+                              type="number"
+                              placeholder="Price"
+                              value={b.sellingPrice}
+                              onChange={(e) => updateBatch({ sellingPrice: e.target.value })}
+                              className="h-[42px]"
+                            />
+                          </div>
+                        </>
+                      )}
+
+                      <div className="h-[42px] flex items-center justify-center border border-border rounded-lg bg-card/20 hover:bg-card/50 transition-colors">
+                        <label className="flex items-center gap-2.5 cursor-pointer px-4 size-full select-none justify-center">
+                          <input
+                            type="checkbox"
+                            checked={b.isDefault}
+                            onChange={(e) => {
+                              const checked = e.target.checked
+                              setBatches(batches.map((r, ri) => ({
+                                ...r,
+                                isDefault: ri === i ? checked : checked ? false : r.isDefault
+                              })))
+                            }}
+                            className="size-4 rounded border-border text-primary focus:ring-primary cursor-pointer"
+                          />
+                          <span className="text-xs font-bold text-foreground">Default Option</span>
+                        </label>
+                      </div>
+
+                      {b.pricingMode === 'custom' && (
+                        <div className="sm:col-span-2" />
+                      )}
+                    </div>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => setBatches(batches.filter((_, ri) => ri !== i))}
-                    className="mt-2 shrink-0 p-1.5 rounded-lg text-destructive hover:bg-destructive/10"
-                    aria-label="Remove batch"
-                  >
-                    <Trash2 className="size-4" />
-                  </button>
-                  {weightPerUnit > 0 && b.quantity && (
-                    <span className="mt-2.5 shrink-0 text-xs text-muted-foreground">
-                      = {(weightPerUnit * Number(b.quantity)).toFixed(2)} {watch('weightUnit')}
-                    </span>
-                  )}
-                </div>
-              ))}
+                )
+              })}
             </div>
             <button
               type="button"
               onClick={() => setBatches([...batches, emptyBatch])}
-              className="mt-3 w-full rounded-lg bg-muted py-2.5 text-sm font-semibold text-foreground hover:bg-muted/70 flex items-center justify-center gap-1.5"
+              className="mt-4 w-full rounded-lg bg-muted py-2.5 text-sm font-semibold text-foreground hover:bg-muted/70 flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <Plus className="size-4" />
-              Add a Batch
+              Add a Package Option
             </button>
           </Card>
         </div>
@@ -642,20 +835,29 @@ export default function AddProductPage() {
 
           <Card className="p-6">
             <h2 className="font-semibold text-foreground mb-4">Pricing (Per Unit)</h2>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-4">
               <Input
-                label="Price (₹)"
+                label="Unit Price (₹)"
                 type="number"
-                placeholder="400"
-                error={errors.mrp?.message}
-                {...register('mrp')}
+                placeholder="10"
+                error={errors.unitPrice?.message}
+                {...register('unitPrice')}
               />
-              <Input label="Discount (%)" type="number" placeholder="0" {...register('discountPercent')} />
-              <Input label="GST (%)" type="number" placeholder="0" {...register('gstPercent')} />
-              <div>
-                <label className="block text-sm font-semibold text-foreground mb-2">Final Price (Calculated)</label>
-                <div className="px-3 py-2.5 rounded-lg border border-border bg-muted text-foreground font-semibold">
-                  {formatCurrency(finalPrice)}
+              <div className="grid grid-cols-2 gap-4">
+                <Input
+                  label="MRP (₹)"
+                  type="number"
+                  placeholder="400"
+                  error={errors.mrp?.message}
+                  {...register('mrp')}
+                />
+                <Input label="Discount (%)" type="number" placeholder="0" {...register('discountPercent')} />
+                <Input label="GST (%)" type="number" placeholder="0" {...register('gstPercent')} />
+                <div>
+                  <label className="block text-sm font-semibold text-foreground mb-2">Final Price (Calculated)</label>
+                  <div className="px-3 py-2.5 rounded-lg border border-border bg-muted text-foreground font-semibold">
+                    {formatCurrency(finalPrice)}
+                  </div>
                 </div>
               </div>
             </div>

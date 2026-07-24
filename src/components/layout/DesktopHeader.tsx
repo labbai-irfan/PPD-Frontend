@@ -4,6 +4,7 @@ import { APP_NAME, APP_TAGLINE, ROUTES } from '@/lib/constants'
 import { Icon } from '@/components/ui/Icon'
 import { CartChip } from '@/components/shared/CartChip'
 import { Logo } from '@/components/shared/Logo'
+import { useWishlistStore } from '@/store/wishlist.store'
 
 const navLinks = [
   { label: 'Home', to: ROUTES.home, end: true },
@@ -18,6 +19,7 @@ const navLinks = [
  */
 export function DesktopHeader() {
   const navigate = useNavigate()
+  const wishlistCount = useWishlistStore((s) => s.ids.length)
 
   return (
     <header className="sticky top-0 z-40 hidden border-b border-border bg-background/90 backdrop-blur-lg md:block">
@@ -60,10 +62,15 @@ export function DesktopHeader() {
         <div className="ml-auto flex items-center gap-3">
           <Link
             to={ROUTES.wishlist}
-            aria-label="Wishlist"
-            className="flex size-11 items-center justify-center rounded-full bg-card shadow-pill transition-transform hover:scale-105"
+            aria-label={`Wishlist, ${wishlistCount} items`}
+            className="relative flex size-11 items-center justify-center rounded-full bg-card shadow-pill transition-transform hover:scale-105"
           >
             <Icon name="favorite" size={20} className="text-ink-muted dark:text-muted-foreground" />
+            {wishlistCount > 0 && (
+              <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-deal text-[10px] font-bold text-white shadow-sm animate-in zoom-in-50 duration-200">
+                {wishlistCount}
+              </span>
+            )}
           </Link>
           <CartChip />
         </div>

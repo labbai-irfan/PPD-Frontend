@@ -60,7 +60,7 @@ export default function AddressesPage() {
                   </div>
                   <p className="text-sm text-muted-foreground mt-1 break-words">
                     {address.line1}
-                    {address.line2 ? `, ${address.line2}` : ''}, {address.city}, {address.state} — {address.pincode}
+                    {address.line2 ? `, ${address.line2}` : ''}, {address.city}, {address.state}, {address.country} — {address.pincode}
                   </p>
                   <p className="text-sm text-muted-foreground">Phone: +91 {address.phone}</p>
                   {!address.isDefault && (

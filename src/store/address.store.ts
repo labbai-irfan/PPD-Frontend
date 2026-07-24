@@ -26,6 +26,7 @@ export const useAddressStore = create<AddressState>()((set) => ({
     const { data } = await apiClient.post<Address>('/addresses', {
       name: input.name,
       phone: input.phone,
+      country: input.country ?? 'India',
       line1: input.line1,
       line2: input.line2,
       city: input.city,

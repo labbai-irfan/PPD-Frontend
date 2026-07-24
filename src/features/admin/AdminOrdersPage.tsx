@@ -1,9 +1,21 @@
 import { useCallback, useEffect, useState, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { Search, ChevronDown } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { apiClient } from '@/services/api/client'
+
+const STATUS_DOT_COLOR: Record<string, string> = {
+  placed: 'bg-warning',
+  confirmed: 'bg-primary',
+  processing: 'bg-primary',
+  shipped: 'bg-info',
+  'out-for-delivery': 'bg-info',
+  delivered: 'bg-success',
+  cancelled: 'bg-destructive',
+  returned: 'bg-muted-foreground',
+}
 
 interface AdminOrder {
   id: string
@@ -13,6 +25,17 @@ interface AdminOrder {
   createdAt: string
   items: { quantity: number }[]
   pricing: { total: number }
+  address: {
+    line1: string
+    line2?: string
+    city: string
+    state: string
+    pincode: string
+    country: string
+    type?: string
+    name: string
+    phone: string
+  }
 }
 
 /** Forward transitions mirroring the backend's STATUS_TRANSITIONS. */
@@ -61,7 +84,7 @@ function StatusDropdown({
   }, [])
 
   if (options.length === 0) {
-    return <span className="text-xs text-muted-foreground">final</span>
+    return <span className="text-xs font-bold text-muted-foreground uppercase tracking-wider">final</span>
   }
 
   return (
@@ -75,21 +98,20 @@ function StatusDropdown({
       </button>
       
       {open && (
-        <div className="absolute top-full left-0 mt-1 w-40 bg-card border border-border rounded-lg shadow-lg overflow-hidden z-50">
-          <div className="py-1">
-            {options.map((s) => (
-              <button
-                key={s}
-                onClick={() => {
-                  onSelect(s)
-                  setOpen(false)
-                }}
-                className="w-full text-left px-3 py-2 text-xs md:text-sm hover:bg-primary/10 hover:text-primary transition-colors capitalize font-medium"
-              >
-                {s.replace(/-/g, ' ')}
-              </button>
-            ))}
-          </div>
+        <div className="absolute top-full left-0 mt-1 w-44 bg-card border border-border rounded-xl shadow-lg overflow-hidden z-50 py-1">
+          {options.map((s) => (
+            <button
+              key={s}
+              onClick={() => {
+                onSelect(s)
+                setOpen(false)
+              }}
+              className="w-full text-left px-3.5 py-2.5 text-xs md:text-sm hover:bg-muted transition-colors capitalize font-medium flex items-center gap-2.5 text-foreground hover:text-primary"
+            >
+              <span className={`size-2 shrink-0 rounded-full ${STATUS_DOT_COLOR[s] || 'bg-muted-foreground'}`} />
+              <span>{s.replace(/-/g, ' ')}</span>
+            </button>
+          ))}
         </div>
       )}
     </div>
@@ -97,6 +119,7 @@ function StatusDropdown({
 }
 
 export default function AdminOrdersPage() {
+  const navigate = useNavigate()
   const [orders, setOrders] = useState<AdminOrder[]>([])
   const [total, setTotal] = useState(0)
   const [search, setSearch] = useState('')
@@ -160,6 +183,7 @@ export default function AdminOrdersPage() {
             <tr>
               <th className="text-left py-3 font-semibold text-muted-foreground">Order ID</th>
               <th className="text-left py-3 font-semibold text-muted-foreground">Customer</th>
+              <th className="text-left py-3 font-semibold text-muted-foreground pr-4">Full Address</th>
               <th className="text-left py-3 font-semibold text-muted-foreground">Items</th>
               <th className="text-left py-3 font-semibold text-muted-foreground">Amount</th>
               <th className="text-left py-3 font-semibold text-muted-foreground">Date</th>
@@ -170,10 +194,26 @@ export default function AdminOrdersPage() {
           <tbody>
             {orders.map((order) => {
               const nextOptions = NEXT_STATUS[order.status] ?? []
+              const fullAddress = order.address
+                ? [order.address.line1, order.address.line2, order.address.city, order.address.state, order.address.country, order.address.pincode]
+                    .filter(Boolean)
+                    .join(', ')
+                : '—'
               return (
-                <tr key={order.id} className="border-b hover:bg-muted/50 transition-colors">
-                  <td className="py-3 font-mono font-semibold text-foreground">{order.orderNumber}</td>
+                <tr
+                  key={order.id}
+                  onClick={() => navigate(`/admin/orders/${order.orderNumber}`)}
+                  className="border-b hover:bg-muted/50 transition-colors cursor-pointer"
+                >
+                  <td className="py-3 font-mono font-semibold text-foreground">
+                    <span className="text-primary hover:underline">
+                      {order.orderNumber}
+                    </span>
+                  </td>
                   <td className="py-3 text-foreground">{order.customerName}</td>
+                  <td className="py-3 text-muted-foreground max-w-[220px] truncate pr-4" title={fullAddress}>
+                    {fullAddress}
+                  </td>
                   <td className="py-3 text-muted-foreground">
                     {order.items.reduce((n, i) => n + i.quantity, 0)} items
                   </td>
@@ -186,7 +226,7 @@ export default function AdminOrdersPage() {
                       {order.status}
                     </span>
                   </td>
-                  <td className="py-3">
+                  <td className="py-3" onClick={(e) => e.stopPropagation()}>
                     <StatusDropdown
                       options={nextOptions}
                       onSelect={(val) => void handleStatusChange(order, val)}
@@ -211,11 +251,19 @@ export default function AdminOrdersPage() {
         {orders.map((order) => {
           const nextOptions = NEXT_STATUS[order.status] ?? []
           return (
-            <Card key={order.id} className="p-4">
+            <Card
+              key={order.id}
+              onClick={() => navigate(`/admin/orders/${order.orderNumber}`)}
+              className="p-4 cursor-pointer hover:shadow-md transition-all duration-200"
+            >
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-mono font-semibold text-foreground text-sm">{order.orderNumber}</p>
+                    <p className="font-mono font-semibold text-foreground text-sm">
+                      <span className="text-primary hover:underline">
+                        {order.orderNumber}
+                      </span>
+                    </p>
                     <p className="text-xs text-muted-foreground mt-0.5">{order.customerName}</p>
                   </div>
                   <span className={`px-2.5 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${STATUS_STYLE[order.status] ?? 'bg-muted'}`}>
@@ -242,11 +290,13 @@ export default function AdminOrdersPage() {
                   </div>
                 </div>
 
-                <StatusDropdown
-                  options={nextOptions}
-                  onSelect={(val) => void handleStatusChange(order, val)}
-                  className="mt-2"
-                />
+                <div onClick={(e) => e.stopPropagation()}>
+                  <StatusDropdown
+                    options={nextOptions}
+                    onSelect={(val) => void handleStatusChange(order, val)}
+                    className="mt-2"
+                  />
+                </div>
               </div>
             </Card>
           )

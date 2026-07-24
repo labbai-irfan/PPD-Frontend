@@ -17,6 +17,7 @@ import {
   Image,
   Settings,
   Warehouse,
+  Truck,
 } from 'lucide-react'
 import { Logo } from '@/components/shared/Logo'
 import { useAuthStore } from '@/store/auth.store'
@@ -33,7 +34,8 @@ const menuItems = [
   // Feature downgraded for client — re-enable by uncommenting:
   // { icon: Ticket, label: 'Coupons', path: '/admin/coupons' },
   { icon: Image, label: 'Banners', path: '/admin/banners' },
-  { icon: LayoutTemplate, label: 'Packages', path: '/admin/packages' },
+  { icon: LayoutTemplate, label: 'Combos', path: '/admin/packages' },
+  { icon: Truck, label: 'Delivery Charges', path: '/admin/delivery-charges' },
   { icon: UserCog, label: 'Admins', path: '/admin/admins' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
   // { icon: Lock, label: 'Security', path: '/admin/security' },
