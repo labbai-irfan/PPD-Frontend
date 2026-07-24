@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Eye, EyeOff, Lock, Mail, Shield, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, Lock, Mail, LockKeyhole, AlertCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -72,7 +72,7 @@ export default function AdminLoginPage() {
     <Card className="p-6 sm:p-8">
       <div className="flex justify-center mb-6">
         <div className="bg-primary/10 p-3 rounded-lg">
-          <Shield className="size-8 text-primary" />
+          <LockKeyhole className="size-8 text-primary" />
         </div>
       </div>
 

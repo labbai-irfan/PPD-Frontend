@@ -24,7 +24,6 @@ const shopLinks: DrawerLink[] = [
 
 const accountLinks: DrawerLink[] = [
   { icon: 'receipt_long', label: 'My Orders', href: ROUTES.orders },
-  { icon: 'favorite', label: 'Wishlist', href: ROUTES.wishlist },
   { icon: 'location_on', label: 'My Addresses', href: ROUTES.addresses },
 ]
 
