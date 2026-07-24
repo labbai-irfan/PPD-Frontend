@@ -225,6 +225,9 @@ export default function ProductDetailsPage() {
           </div>
 
           <h1 className="mt-3.5 text-[21px] font-bold leading-tight text-foreground md:text-2xl">{product.title}</h1>
+          {product.sku && (
+            <p className="mt-1 text-[12px] text-muted-foreground">ISBN: <span className="font-semibold text-foreground">{product.sku}</span></p>
+          )}
           {product.shortDescription && (
             <p className="mt-1 text-[13px] leading-snug text-subtle-foreground">{product.shortDescription}</p>
           )}

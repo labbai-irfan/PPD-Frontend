@@ -332,6 +332,12 @@ export default function AddProductPage() {
                   {...register('name')}
                 />
                 <Input
+                  label="ISBN"
+                  placeholder="e.g., 978-3-16-148410-0"
+                  error={errors.sku?.message}
+                  {...register('sku')}
+                />
+                <Input
                   label="Brand"
                   placeholder="e.g., PPD"
                   error={errors.brand?.message}
@@ -480,8 +486,7 @@ export default function AddProductPage() {
 
           <Card className="p-6">
             <h2 className="font-semibold text-foreground mb-4">Inventory</h2>
-            <div className="grid sm:grid-cols-3 gap-4 mb-4">
-              <Input label="SKU" placeholder="Enter SKU" {...register('sku')} />
+            <div className="grid sm:grid-cols-2 gap-4 mb-4">
               <Input label="HSN Code" placeholder="Enter HSN Code" {...register('hsnCode')} />
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-2">Available Stock</label>
