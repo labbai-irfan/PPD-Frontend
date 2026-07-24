@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { apiClient } from '@/services/api/client'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, mediaUrl } from '@/lib/utils'
 import type { ProductTag } from '@/types'
 
 const schema = z.object({
@@ -137,7 +137,7 @@ export default function AddProductPage() {
         const { data } = await apiClient.post<{ url: string }>('/admin/uploads/image', fd, {
           headers: { 'Content-Type': 'multipart/form-data' },
         })
-        setImages((prev) => [...prev, `${apiBase}${data.url}`])
+        setImages((prev) => [...prev, mediaUrl(data.url)])
       }
       toast.success(list.length > 1 ? `${list.length} images uploaded` : 'Image uploaded')
     } catch (err) {
