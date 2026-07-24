@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, mediaUrl } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
 import { useBanners, usePackages } from '@/hooks/use-catalog'
 import type { Package } from '@/types'
@@ -18,7 +18,7 @@ export function BundleBanner() {
       className="block aspect-[3/1] w-full overflow-hidden rounded-[18px] transition-transform hover:-translate-y-0.5"
     >
       <img
-        src={bundle?.image || '/components/carousel2.png'}
+        src={mediaUrl(bundle?.image) || '/components/carousel2.png'}
         alt={bundle?.title || 'Build Your Bundle'}
         loading="lazy"
         className="h-full w-full max-w-full object-cover"
@@ -60,7 +60,7 @@ function PackageMiniCard({ pkg }: { pkg: Package }) {
         <div className="flex flex-1 items-center justify-center">
           {pkg.image ? (
             <img
-              src={pkg.image}
+              src={mediaUrl(pkg.image)}
               alt={pkg.name}
               loading="lazy"
               className="max-h-[66px] max-w-full object-contain transition-transform duration-300 group-hover:scale-105"

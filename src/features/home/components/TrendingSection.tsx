@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ROUTES } from '@/lib/constants'
+import { mediaUrl } from '@/lib/utils'
 import { useProducts } from '@/hooks/use-catalog'
 import type { Product } from '@/types'
 import { Icon } from '@/components/ui/Icon'
@@ -14,7 +15,7 @@ function TrendingCard({ product }: { product: Product }) {
       className="w-[148px] shrink-0 snap-start rounded-2xl bg-white p-2.5 shadow-[0_6px_16px_rgba(120,80,20,0.12)] transition-transform hover:-translate-y-0.5 md:w-[190px]"
     >
       <div className="h-24 overflow-hidden rounded-[11px] bg-[#f5f3f1] md:h-32">
-        <img src={product.images[0]} alt={product.title} loading="lazy" className="size-full object-cover" />
+        <img src={mediaUrl(product.images[0])} alt={product.title} loading="lazy" className="size-full object-cover" />
       </div>
       <div className="mt-2 flex items-center gap-1.5">
         <Icon name="group" size={15} fill className="text-accent" />

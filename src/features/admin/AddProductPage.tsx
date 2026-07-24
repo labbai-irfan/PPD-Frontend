@@ -254,7 +254,6 @@ export default function AddProductPage() {
       batches: batches.map((b) => ({ quantity: Number(b.quantity), costPrice: Number(b.costPrice) })),
       tags: [...tags],
       status,
-      isActive: status === 'published',
     }
 
     try {

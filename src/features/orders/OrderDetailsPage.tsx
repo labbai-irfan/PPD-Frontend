@@ -46,7 +46,7 @@ export default function OrderDetailsPage() {
     )
   }
 
-  const status = orderStatusMeta[order.status]
+  const status = orderStatusMeta[order.status] ?? { label: order.status, tone: 'info' as const }
   const currentStep = timeline.findIndex((t) => t.status === order.status)
   const cancellable = order.status === 'placed' || order.status === 'confirmed'
 

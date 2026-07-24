@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useCategories } from '@/hooks/use-catalog'
+import { mediaUrl } from '@/lib/utils'
 import { Icon } from '@/components/ui/Icon'
 import { Logo } from '@/components/shared/Logo'
 
@@ -56,7 +57,7 @@ export function HouseOfStoreSection() {
               </span>
             </div>
             {category.image ? (
-              <img src={category.image} alt={category.name} loading="lazy" className="h-full w-full object-cover" />
+              <img src={mediaUrl(category.image)} alt={category.name} loading="lazy" className="h-full w-full object-cover" />
             ) : (
               <div className="flex h-full w-full items-center justify-center bg-[#faf5ec]">
                 <Icon name={category.icon} size={40} fill style={{ color: category.color || '#e5433f' }} />

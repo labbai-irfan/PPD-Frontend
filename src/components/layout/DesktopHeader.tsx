@@ -55,7 +55,6 @@ export function DesktopHeader() {
         >
           <Icon name="search" size={20} className="text-faint-foreground" />
           <span className="flex-1 truncate text-[13px] text-faint-foreground">Search by product name</span>
-          <Icon name="mic" size={20} className="text-accent" />
         </button>
 
         <div className="ml-auto flex items-center gap-3">

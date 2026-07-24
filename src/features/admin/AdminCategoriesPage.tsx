@@ -17,7 +17,7 @@ interface Category {
   parentId?: string | null
 }
 
-const emptyForm = { name: '', icon: '📦', description: '', image: '', parentId: '' }
+const emptyForm = { name: '', description: '', image: '', parentId: '' }
 
 export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -68,7 +68,6 @@ export default function AdminCategoriesPage() {
     setEditingId(cat.id)
     setForm({
       name: cat.name,
-      icon: cat.icon,
       description: cat.description ?? '',
       image: cat.image ?? '',
       parentId: cat.parentId ?? '',
@@ -87,7 +86,6 @@ export default function AdminCategoriesPage() {
     }
     const payload = {
       name: form.name.trim(),
-      icon: form.icon || '📦',
       description: form.description.trim(),
       image: form.image,
       parentId: form.parentId,
@@ -145,20 +143,11 @@ export default function AdminCategoriesPage() {
             </span>
           )}
         </div>
-        <div className="flex flex-col gap-2 sm:flex-row">
-          <Input
-            placeholder="Category name..."
-            value={form.name}
-            onChange={(e) => setField('name')(e.target.value)}
-          />
-          <Input
-            placeholder="📦"
-            title="Icon (emoji)"
-            className="sm:w-20"
-            value={form.icon}
-            onChange={(e) => setField('icon')(e.target.value)}
-          />
-        </div>
+        <Input
+          placeholder="Category name..."
+          value={form.name}
+          onChange={(e) => setField('name')(e.target.value)}
+        />
         <Input
           placeholder="Short description shown on the category card..."
           value={form.description}
@@ -238,19 +227,17 @@ export default function AdminCategoriesPage() {
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {topLevelCategories.map((cat) => (
-          <Card key={cat.id} className="p-4">
-            <div className="flex items-start justify-between">
-              <div className="min-w-0">
-                {cat.image ? (
+          <Card key={cat.id} className="p-4 overflow-hidden">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                {cat.image && (
                   <img
                     src={cat.image}
                     alt={cat.name}
                     className="mb-2 size-12 rounded-lg object-contain bg-muted p-1"
                   />
-                ) : (
-                  <div className="text-3xl mb-2">{cat.icon.length <= 3 ? cat.icon : '🏷️'}</div>
                 )}
-                <h3 className="font-semibold text-foreground">{cat.name}</h3>
+                <h3 className="font-semibold text-foreground truncate">{cat.name}</h3>
                 {cat.description && (
                   <p className="text-xs text-muted-foreground mt-0.5 line-clamp-2">{cat.description}</p>
                 )}
@@ -288,23 +275,23 @@ export default function AdminCategoriesPage() {
                 {childrenOf(cat.id).map((sub) => (
                   <div
                     key={sub.id}
-                    className="ml-2 flex items-center justify-between rounded-lg border border-primary/20 bg-gradient-to-r from-primary/5 to-transparent px-3 py-2.5 hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors"
+                    className="ml-2 flex items-center justify-between gap-2 rounded-lg border border-primary/20 bg-gradient-to-r from-primary/5 to-transparent px-3 py-2.5 hover:bg-gradient-to-r hover:from-primary/10 hover:to-transparent transition-colors overflow-hidden"
                   >
                     <div className="flex items-start gap-2.5 min-w-0 flex-1">
                       <div className="flex items-center justify-center flex-shrink-0">
                         <div className="w-1 h-6 bg-primary/50 rounded-full" />
                       </div>
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 min-w-0">
                           <p className="truncate text-sm font-semibold text-foreground">{sub.name}</p>
-                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-primary/20 text-primary flex-shrink-0">
+                          <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-primary/20 text-primary flex-shrink-0 whitespace-nowrap">
                             Sub
                           </span>
                         </div>
                         <p className="text-xs text-muted-foreground mt-0.5">{sub.productCount} products</p>
                       </div>
                     </div>
-                    <div className="flex shrink-0 gap-1.5 ml-2">
+                    <div className="flex shrink-0 gap-1.5">
                       <button
                         onClick={() => startEdit(sub)}
                         className="p-2 hover:bg-primary/10 rounded-lg text-muted-foreground hover:text-primary transition-colors"

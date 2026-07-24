@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import { cn, formatCurrency } from '@/lib/utils'
+import { cn, formatCurrency, mediaUrl } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
 import type { Product } from '@/types'
 import { useCartStore } from '@/store/cart.store'
@@ -39,7 +39,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
       <div className="relative aspect-square overflow-hidden bg-white p-2.5 dark:bg-card">
         <div className="size-full overflow-hidden rounded-[12px]">
           <img
-            src={product.images[0]}
+            src={mediaUrl(product.images[0])}
             alt={product.title}
             loading="lazy"
             className="size-full object-cover transition-transform duration-500 group-hover:scale-105"

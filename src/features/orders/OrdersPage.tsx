@@ -22,7 +22,7 @@ import {
 } from '@/features/orders/order.utils'
 
 function OrderCard({ order }: { order: Order }) {
-  const status = orderStatusMeta[order.status]
+  const status = orderStatusMeta[order.status] ?? { label: order.status, tone: 'info' as const }
   const itemCount = orderItemCount(order)
   const first = order.items[0]
 
