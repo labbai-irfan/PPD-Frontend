@@ -1,5 +1,3 @@
-import { ROUTES } from '@/lib/constants'
-
 /** Content blocks for the designed home screen sections. */
 
 export interface CategoryTile {
