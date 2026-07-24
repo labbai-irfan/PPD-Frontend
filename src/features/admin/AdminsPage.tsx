@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Plus, Trash2, Shield, User } from 'lucide-react'
+import { Plus, Trash2, User } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'

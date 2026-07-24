@@ -7,7 +7,6 @@ import { ROUTES } from '@/lib/constants'
 import { getCartTotals, useCartStore } from '@/store/cart.store'
 import { useAddressStore } from '@/store/address.store'
 import { useCheckoutStore } from '@/store/checkout.store'
-import { useOrdersStore } from '@/store/orders.store'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
@@ -38,11 +37,10 @@ function StepHeading({ step, title, done }: { step: number; title: string; done?
 
 export default function CheckoutPage() {
   const navigate = useNavigate()
-  const { items, coupon, clear } = useCartStore()
+  const { items, coupon } = useCartStore()
   const totals = getCartTotals(items, coupon)
 
   const { addresses, add, fetchAddresses, loaded } = useAddressStore()
-  const placeOrder = useOrdersStore((s) => s.placeOrder)
   const startCheckout = useCheckoutStore((s) => s.start)
 
   useEffect(() => {
@@ -54,7 +52,7 @@ export default function CheckoutPage() {
   )
   const [showAddressForm, setShowAddressForm] = useState(addresses.length === 0)
   const [payment, setPayment] = useState<CheckoutMethod>('online')
-  const [placing, setPlacing] = useState(false)
+  const [placing] = useState(false)
 
   if (items.length === 0) return <Navigate to={ROUTES.cart} replace />
 
