@@ -1,3 +1,4 @@
+// @ts-ignore
 import {
   getCountries,
   getCountryNameByCode,
@@ -20,7 +21,7 @@ export async function loadCountries(): Promise<ICountry[]> {
   if (!countriesCache) {
     countriesCache = await getCountries()
   }
-  return countriesCache
+  return countriesCache || []
 }
 
 export async function loadStates(countryCode: string): Promise<IState[]> {

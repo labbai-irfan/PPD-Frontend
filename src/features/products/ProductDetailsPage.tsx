@@ -9,7 +9,6 @@ import { useRecentlyViewedStore } from '@/store/recently-viewed.store'
 import { useIsWishlisted, useWishlistStore } from '@/store/wishlist.store'
 import type { Product, ProductFaq, ProductSpec } from '@/types'
 import { Icon } from '@/components/ui/Icon'
-import { Dots } from '@/components/ui/Dots'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
@@ -186,7 +185,7 @@ export default function ProductDetailsPage() {
   const [selectedBatchId, setSelectedBatchId] = useState<string>('')
   const [batchCount, setBatchCount] = useState<number>(1)
 
-  const selectedBatch = product?.batches?.find((b) => (b._id === selectedBatchId || b.id === selectedBatchId)) || null
+  const selectedBatch = product?.batches?.find((b) => (b._id === selectedBatchId || (b as any).id === selectedBatchId)) || null
 
   useEffect(() => {
     if (product) addRecentlyViewed(product.id)
@@ -195,7 +194,7 @@ export default function ProductDetailsPage() {
   useEffect(() => {
     if (product?.batches && product.batches.length > 0) {
       const defaultBatch = product.batches.find((b) => b.isDefault && b.status === 'active') || product.batches.find((b) => b.status === 'active')
-      const defaultId = defaultBatch?._id || defaultBatch?.id
+      const defaultId = defaultBatch?._id || (defaultBatch as any)?.id
       if (defaultBatch && defaultId) {
         setSelectedBatchId(defaultId)
         setBatchCount(1)
@@ -385,7 +384,7 @@ export default function ProductDetailsPage() {
 
                   const totalAvailable = product.stockQuantity ?? product.stock
                   const canBuy = totalAvailable >= batch.quantity && !isInactive
-                  const batchId = batch._id || batch.id || ''
+                  const batchId = batch._id || (batch as any).id || ''
                   const isSelected = selectedBatchId === batchId
 
                   // Low stock warnings
