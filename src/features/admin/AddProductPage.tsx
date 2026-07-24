@@ -121,8 +121,6 @@ export default function AddProductPage() {
   const [batches, setBatches] = useState<BatchRow[]>([])
   const [existingTags, setExistingTags] = useState<ProductTag[]>([])
 
-  const apiBase = (import.meta.env.VITE_API_BASE_URL ?? '').replace(/\/api$/, '')
-
   async function uploadFiles(files: FileList | File[]) {
     const list = Array.from(files).filter((f) => f.type.startsWith('image/'))
     if (list.length === 0) {
