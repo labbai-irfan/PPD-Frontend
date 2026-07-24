@@ -18,7 +18,7 @@ declare module '@countrystatecity/countries-browser' {
   export function getCountries(): Promise<ICountry[]>
   export function getCountryNameByCode(code: string): string
   export function getStatesOfCountry(countryCode: string): Promise<IState[]>
-  export function getStateNameByCode(code: string): string
+  export function getStateNameByCode(countryCode: string, stateCode: string): string
   export function getCitiesOfState(countryCode: string, stateCode: string): Promise<ICity[]>
   export function searchCitiesByName(countryCode: string, stateCode: string, name: string): Promise<ICity[]>
 }
