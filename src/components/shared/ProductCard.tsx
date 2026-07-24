@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { cn, formatCurrency, mediaUrl } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
+import { useDebounceBtn } from '@/hooks/use-debounce-fn'
 import type { Product } from '@/types'
 import { useCartStore } from '@/store/cart.store'
 import { Icon } from '@/components/ui/Icon'
@@ -26,6 +27,18 @@ export function ProductCard({ product, className }: ProductCardProps) {
   const revertTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => () => clearTimeout(revertTimer.current), [])
+
+  const handleAddClick = useDebounceBtn(() => {
+    if (product.variants.length > 0) {
+      navigate(ROUTES.product(product.slug))
+      return
+    }
+    addItem(product)
+    toast.success('Added to cart')
+    setJustAdded(true)
+    clearTimeout(revertTimer.current)
+    revertTimer.current = setTimeout(() => setJustAdded(false), 1200)
+  })
 
   return (
     <Link
@@ -74,15 +87,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
               onClick={(e) => {
                 e.preventDefault()
                 e.stopPropagation()
-                if (product.variants.length > 0) {
-                  navigate(ROUTES.product(product.slug))
-                  return
-                }
-                addItem(product)
-                toast.success('Added to cart')
-                setJustAdded(true)
-                clearTimeout(revertTimer.current)
-                revertTimer.current = setTimeout(() => setJustAdded(false), 1200)
+                void handleAddClick()
               }}
               className={cn(
                 'flex size-8 shrink-0 items-center justify-center rounded-full text-primary-foreground shadow-glow transition-all duration-300 hover:scale-110 active:scale-95 cursor-pointer',

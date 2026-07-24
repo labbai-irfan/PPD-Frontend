@@ -23,6 +23,7 @@ export default function AdminCategoriesPage() {
   const [categories, setCategories] = useState<Category[]>([])
   const [form, setForm] = useState(emptyForm)
   const [editingId, setEditingId] = useState<string | null>(null)
+  const [formOpen, setFormOpen] = useState(false)
   const [saving, setSaving] = useState(false)
   const [uploading, setUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -72,11 +73,13 @@ export default function AdminCategoriesPage() {
       image: cat.image ?? '',
       parentId: cat.parentId ?? '',
     })
+    setFormOpen(true)
   }
 
   const cancelEdit = () => {
     setEditingId(null)
     setForm(emptyForm)
+    setFormOpen(false)
   }
 
   const handleSave = async () => {
@@ -99,6 +102,7 @@ export default function AdminCategoriesPage() {
         await apiClient.post('/admin/categories', payload)
         toast.success('Category added')
       }
+      setFormOpen(false)
       cancelEdit()
       void load()
     } catch (e) {
@@ -127,103 +131,121 @@ export default function AdminCategoriesPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">Categories</h1>
-        <p className="text-sm text-muted-foreground mt-1">{categories.length} categories</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">Categories</h1>
+          <p className="text-sm text-muted-foreground mt-1">{categories.length} categories</p>
+        </div>
+        <Button onClick={() => { setForm(emptyForm); setEditingId(null); setFormOpen(true); }} className="gap-2">
+          <Plus className="size-4" />
+          Add Category
+        </Button>
       </div>
 
-      <Card className="p-4 space-y-3 border border-primary/30">
-        <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold text-foreground">
-            {editingId ? 'Edit category' : 'Add a category'}
-          </p>
-          {editingId && categories.find((c) => c.id === editingId)?.parentId && (
-            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold uppercase tracking-wide bg-primary/20 text-primary">
-              📁 Subcategory
-            </span>
-          )}
-        </div>
-        <Input
-          placeholder="Category name..."
-          value={form.name}
-          onChange={(e) => setField('name')(e.target.value)}
-        />
-        <Input
-          placeholder="Short description shown on the category card..."
-          value={form.description}
-          onChange={(e) => setField('description')(e.target.value)}
-        />
-
-        <div>
-          <label className="mb-1 block text-xs font-medium text-muted-foreground">Parent category</label>
-          <select
-            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            value={form.parentId}
-            onChange={(e) => setField('parentId')(e.target.value)}
-          >
-            <option value="">None — top-level category</option>
-            {parentOptions.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/jpeg,image/png,image/webp"
-            className="hidden"
-            onChange={(e) => {
-              const file = e.target.files?.[0]
-              if (file) void uploadImage(file)
-            }}
-          />
-          {form.image ? (
-            <div className="relative">
-              <img
-                src={form.image}
-                alt={form.name ? `${form.name} category image` : 'Category image preview'}
-                className="size-16 rounded-lg object-contain bg-muted p-1"
-              />
+      {formOpen ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <Card className="w-full max-w-md space-y-4 p-6">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold text-foreground">
+                {editingId ? 'Edit category' : 'Add a category'}
+              </p>
               <button
-                onClick={() => setField('image')('')}
-                className="absolute -top-2 -right-2 rounded-full bg-destructive p-0.5 text-white"
-                aria-label="Remove image"
+                onClick={cancelEdit}
+                className="p-1 hover:bg-muted rounded-lg text-muted-foreground"
+                aria-label="Close"
               >
-                <X className="size-3.5" />
+                <X className="size-5" />
               </button>
             </div>
-          ) : (
-            <div className="flex size-16 items-center justify-center rounded-lg bg-muted text-muted-foreground">
-              <ImageIcon className="size-6" />
-            </div>
-          )}
-          <Button
-            variant="outline"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="gap-2"
-          >
-            <UploadCloud className="size-4" />
-            {uploading ? 'Uploading...' : form.image ? 'Replace image' : 'Upload image'}
-          </Button>
-        </div>
 
-        <div className="flex gap-2">
-          <Button onClick={() => void handleSave()} disabled={saving || uploading} className="gap-2">
-            <Plus className="size-4" />
-            {editingId ? 'Save changes' : 'Add'}
-          </Button>
-          {editingId && (
-            <Button variant="outline" onClick={cancelEdit}>
-              Cancel
-            </Button>
-          )}
+            {editingId && categories.find((c) => c.id === editingId)?.parentId && (
+              <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded text-xs font-bold uppercase tracking-wide bg-primary/20 text-primary">
+                📁 Subcategory
+              </span>
+            )}
+
+            <Input
+              placeholder="Category name..."
+              value={form.name}
+              onChange={(e) => setField('name')(e.target.value)}
+            />
+
+            <Input
+              placeholder="Short description shown on the category card..."
+              value={form.description}
+              onChange={(e) => setField('description')(e.target.value)}
+            />
+
+            <div>
+              <label className="mb-1 block text-xs font-medium text-muted-foreground">Parent category</label>
+              <select
+                className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                value={form.parentId}
+                onChange={(e) => setField('parentId')(e.target.value)}
+              >
+                <option value="">None — top-level category</option>
+                {parentOptions.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) void uploadImage(file)
+                }}
+              />
+              {form.image ? (
+                <div className="relative">
+                  <img
+                    src={form.image}
+                    alt={form.name ? `${form.name} category image` : 'Category image preview'}
+                    className="size-16 rounded-lg object-contain bg-muted p-1"
+                  />
+                  <button
+                    onClick={() => setField('image')('')}
+                    className="absolute -top-2 -right-2 rounded-full bg-destructive p-0.5 text-white"
+                    aria-label="Remove image"
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <div className="flex size-16 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+                  <ImageIcon className="size-6" />
+                </div>
+              )}
+              <Button
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={uploading}
+                className="gap-2"
+              >
+                <UploadCloud className="size-4" />
+                {uploading ? 'Uploading...' : form.image ? 'Replace image' : 'Upload image'}
+              </Button>
+            </div>
+
+            <div className="flex gap-2 pt-2">
+              <Button onClick={() => void handleSave()} disabled={saving || uploading} className="gap-2 flex-1">
+                <Plus className="size-4" />
+                {editingId ? 'Save changes' : 'Add'}
+              </Button>
+              <Button variant="outline" onClick={cancelEdit} className="flex-1">
+                Cancel
+              </Button>
+            </div>
+          </Card>
         </div>
-      </Card>
+      ) : null}
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {topLevelCategories.map((cat) => (
