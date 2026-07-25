@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Heart, ArrowLeft } from 'lucide-react'
 import { ROUTES } from '@/lib/constants'
@@ -10,7 +11,19 @@ import { Button } from '@/components/ui/Button'
 export default function WishlistPage() {
   const navigate = useNavigate()
   const ids = useWishlistStore((s) => s.ids)
+  const remove = useWishlistStore((s) => s.remove)
   const { data, isPending } = useProductsByIds(ids)
+
+  // Automatically remove stale/deleted product IDs from wishlist
+  useEffect(() => {
+    if (!isPending && data && ids.length > 0) {
+      const fetchedIds = new Set(data.map((p: any) => p.id || p._id));
+      const staleIds = ids.filter((id) => !fetchedIds.has(id));
+      if (staleIds.length > 0) {
+        staleIds.forEach((id) => remove(id));
+      }
+    }
+  }, [data, isPending, ids, remove])
 
   if (ids.length === 0) {
     return (

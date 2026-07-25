@@ -17,6 +17,15 @@ const cardStyles = [
   { accent: 'text-[#1853A5] dark:text-[#7FB2FF]', bg: 'bg-[#EAF3FF] dark:bg-[#1e2a3d]' },
 ]
 
+const formatCategoryName = (name: string) => {
+  if (!name) return ''
+  return name
+    .toLowerCase()
+    .split(' ')
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ')
+}
+
 function CategoryCard({ category, index }: { category: Category; index: number }) {
   const style = cardStyles[index % cardStyles.length]
 
@@ -29,7 +38,7 @@ function CategoryCard({ category, index }: { category: Category; index: number }
       <div className={`relative z-10 flex flex-col justify-between p-3.5 pr-1.5 sm:p-4 ${style.bg}`}>
         <div>
           <h3 className={`line-clamp-2 break-words text-[12.5px] font-extrabold leading-[1.2] sm:text-[14.5px] ${style.accent}`}>
-            {category.name}
+            {formatCategoryName(category.name)}
           </h3>
           <p className="mt-1 line-clamp-3 text-[9.5px] font-medium leading-[1.3] text-[#6b645b] sm:text-[11px] dark:text-muted-foreground">
             {category.description || `${category.productCount} products to explore.`}

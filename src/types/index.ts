@@ -178,6 +178,15 @@ export interface Package {
   items: PackageItem[]
 }
 
+export interface BannerItem {
+  title: string
+  subtitle?: string
+  cta?: string
+  href?: string
+  image?: string
+  imageMobile?: string
+}
+
 export interface Banner {
   id: string
   title: string
@@ -185,8 +194,11 @@ export interface Banner {
   cta: string
   href: string
   image: string
+  imageMobile?: string
   /** tailwind gradient classes for the banner backdrop */
   tone: string
+  type?: 'static' | 'carousel'
+  items?: BannerItem[]
   /** where the banner renders: 'hero' = home top carousel; 'bundle' = Build-Your-Bundle band */
   placement?: 'hero' | 'bundle'
 }

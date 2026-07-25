@@ -113,7 +113,25 @@ export function BannerCarousel({ banners, loading, intervalMs = 4500, autoPlay =
                 banner.tone,
               )}
             >
-              <img src={mediaUrl(banner.image)} alt={banner.title} loading="lazy" className="w-full h-auto object-cover" />
+              {/* Desktop Image */}
+              <img
+                src={mediaUrl(banner.image)}
+                alt={banner.title}
+                loading="lazy"
+                className={cn(
+                  'w-full h-auto object-cover',
+                  banner.imageMobile ? 'hidden md:block' : 'block',
+                )}
+              />
+              {/* Mobile Image */}
+              {banner.imageMobile && (
+                <img
+                  src={mediaUrl(banner.imageMobile)}
+                  alt={banner.title}
+                  loading="lazy"
+                  className="w-full h-auto object-cover md:hidden block"
+                />
+              )}
             </Link>
           ))}
         </div>

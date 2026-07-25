@@ -253,14 +253,12 @@ export default function AddProductPage() {
   }, [id, isEditing, reset])
 
   async function submitProduct(values: FormValues, status: 'draft' | 'published') {
-    if (batches.length === 0) {
-      toast.error('Add at least one stock batch')
-      return
-    }
-    const invalidBatch = batches.some((b) => !b.name || !b.quantity || (b.pricingMode === 'custom' && b.sellingPrice === ''))
-    if (invalidBatch) {
-      toast.error('Every batch needs a name, quantity, and selling price (if Custom)')
-      return
+    if (batches.length > 0) {
+      const invalidBatch = batches.some((b) => !b.name || !b.quantity || (b.pricingMode === 'custom' && b.sellingPrice === ''))
+      if (invalidBatch) {
+        toast.error('Every batch needs a name, quantity, and selling price (if Custom)')
+        return
+      }
     }
 
     const tags = new Set(existingTags)

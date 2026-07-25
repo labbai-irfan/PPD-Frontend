@@ -35,7 +35,7 @@ function Gallery({ product }: { product: Product }) {
 
   return (
     <>
-      <div className="flex h-[294px] gap-2.5 md:h-[420px]">
+      <div className="flex gap-2.5 items-stretch">
         <div className="flex w-[70px] shrink-0 flex-col gap-2.5 overflow-y-auto no-scrollbar">
           {product.images.map((image, i) => (
             <button
@@ -55,9 +55,9 @@ function Gallery({ product }: { product: Product }) {
         <button
           type="button"
           onClick={() => setIsOpen(true)}
-          className="h-full flex-1 overflow-hidden rounded-2xl bg-card shadow-card cursor-pointer focus:outline-none transition-transform hover:scale-[1.01]"
+          className="flex-1 overflow-hidden rounded-2xl bg-card shadow-card cursor-pointer focus:outline-none transition-transform hover:scale-[1.01]"
         >
-          <img src={product.images[active]} alt={product.title} className="size-full object-cover" />
+          <img src={product.images[active]} alt={product.title} className="w-full h-auto object-cover block" />
         </button>
       </div>
 
