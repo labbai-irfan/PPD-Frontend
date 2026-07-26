@@ -26,7 +26,7 @@ const schema = z.object({
   discountPercent: z.string().optional(),
   gstPercent: z.string().optional(),
   weightPerUnit: z.string().optional(),
-  weightUnit: z.string().default('kg'),
+  weightUnit: z.string(),
   isPpdOriginal: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
   isFreeDelivery: z.boolean().optional(),
