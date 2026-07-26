@@ -26,7 +26,7 @@ const schema = z.object({
   discountPercent: z.string().optional(),
   gstPercent: z.string().optional(),
   weightPerUnit: z.string().optional(),
-  weightUnit: z.enum(['kg', 'g']),
+  weightUnit: z.string().default('kg'),
   isPpdOriginal: z.boolean().optional(),
   isFeatured: z.boolean().optional(),
   isFreeDelivery: z.boolean().optional(),
@@ -870,11 +870,82 @@ export default function AddProductPage() {
               <div>
                 <label className="block text-sm font-semibold text-foreground mb-2">Unit</label>
                 <select
-                  className="px-3 py-2.5 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary h-[42px]"
+                  className="px-3 py-2.5 border border-border rounded-lg bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary h-[42px] max-w-[150px]"
                   {...register('weightUnit')}
                 >
-                  <option value="kg">Kg</option>
-                  <option value="g">g</option>
+                  <optgroup label="Weight">
+                    <option value="kg">kg (Kilogram)</option>
+                    <option value="g">g (Gram)</option>
+                    <option value="mg">mg (Milligram)</option>
+                    <option value="lb">lb (Pound)</option>
+                    <option value="oz">oz (Ounce)</option>
+                    <option value="ton">ton (Metric Ton)</option>
+                  </optgroup>
+                  <optgroup label="Volume">
+                    <option value="l">l (Liter)</option>
+                    <option value="ml">ml (Milliliter)</option>
+                    <option value="cl">cl (Centiliter)</option>
+                    <option value="fl oz">fl oz (Fluid Ounce)</option>
+                    <option value="gal">gal (Gallon)</option>
+                  </optgroup>
+                  <optgroup label="Length">
+                    <option value="mm">mm (Millimeter)</option>
+                    <option value="cm">cm (Centimeter)</option>
+                    <option value="m">m (Meter)</option>
+                    <option value="km">km (Kilometer)</option>
+                    <option value="in">in (Inch)</option>
+                    <option value="ft">ft (Foot)</option>
+                    <option value="yd">yd (Yard)</option>
+                  </optgroup>
+                  <optgroup label="Area">
+                    <option value="sq ft">sq ft</option>
+                    <option value="sq m">sq m</option>
+                    <option value="acre">acre</option>
+                  </optgroup>
+                  <optgroup label="Quantity / Count">
+                    <option value="pcs">pcs (Pieces)</option>
+                    <option value="pc">pc (Piece)</option>
+                    <option value="unit">unit</option>
+                    <option value="pair">pair</option>
+                    <option value="set">set</option>
+                    <option value="pack">pack</option>
+                    <option value="box">box</option>
+                    <option value="carton">carton</option>
+                    <option value="bundle">bundle</option>
+                    <option value="roll">roll</option>
+                    <option value="sheet">sheet</option>
+                    <option value="bottle">bottle</option>
+                    <option value="jar">jar</option>
+                    <option value="can">can</option>
+                    <option value="tube">tube</option>
+                    <option value="sachet">sachet</option>
+                    <option value="pouch">pouch</option>
+                    <option value="bag">bag</option>
+                    <option value="strip">strip</option>
+                    <option value="blister">blister</option>
+                    <option value="capsule">capsule</option>
+                    <option value="tablet">tablet</option>
+                    <option value="vial">vial</option>
+                    <option value="ampoule">ampoule</option>
+                    <option value="stick">stick</option>
+                    <option value="packet">packet</option>
+                    <option value="dozen">dozen</option>
+                    <option value="ream">ream</option>
+                    <option value="coil">coil</option>
+                    <option value="crate">crate</option>
+                    <option value="pallet">pallet</option>
+                  </optgroup>
+                  <optgroup label="Time / Subscription">
+                    <option value="day">day</option>
+                    <option value="week">week</option>
+                    <option value="month">month</option>
+                    <option value="year">year</option>
+                  </optgroup>
+                  <optgroup label="Digital Products">
+                    <option value="license">license</option>
+                    <option value="download">download</option>
+                    <option value="seat">seat</option>
+                  </optgroup>
                 </select>
               </div>
             </div>

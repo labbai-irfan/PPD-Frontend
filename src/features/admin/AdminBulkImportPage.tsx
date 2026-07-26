@@ -68,7 +68,22 @@ interface BulkImportResult {
   warnings: string[]
 }
 
-const ALLOWED_WEIGHT_UNITS = ['kg', 'g', 'mg', 'ml', 'l', 'pcs', 'pack', 'box', 'set']
+const ALLOWED_WEIGHT_UNITS = [
+  // Weight
+  'kg', 'g', 'mg', 'lb', 'oz', 'ton',
+  // Volume
+  'l', 'ml', 'cl', 'fl oz', 'gal',
+  // Length
+  'mm', 'cm', 'm', 'km', 'in', 'ft', 'yd',
+  // Area
+  'sq ft', 'sq m', 'acre',
+  // Quantity / Count
+  'pcs', 'pc', 'unit', 'pair', 'set', 'pack', 'box', 'carton', 'bundle', 'roll', 'sheet', 'bottle', 'jar', 'can', 'tube', 'sachet', 'pouch', 'bag', 'strip', 'blister', 'capsule', 'tablet', 'vial', 'ampoule', 'stick', 'packet', 'dozen', 'ream', 'coil', 'crate', 'pallet',
+  // Time / Subscription
+  'day', 'week', 'month', 'year',
+  // Digital Products
+  'license', 'download', 'seat'
+]
 
 export default function AdminBulkImportPage() {
   const navigate = useNavigate()
@@ -185,7 +200,7 @@ export default function AdminBulkImportPage() {
     text += `\n`
 
     text += `ACCEPTED WEIGHT UNITS:\n`
-    text += `kg, g, mg, ml, l, pcs, pack, box, set (e.g. KG/Kg/kG will automatically match kg)\n\n`
+    text += `${ALLOWED_WEIGHT_UNITS.join(', ')} (e.g. KG/Kg/kG will automatically match kg)\n\n`
 
     text += `ACCEPTED BOOLEAN VALUES:\n`
     text += `true, false, yes, no, 1, 0 (e.g. YES/Yes will automatically map to true)\n\n`
@@ -907,6 +922,12 @@ export default function AdminBulkImportPage() {
                         Prices do not need symbols like ₹ or currency text. For example, typing <span className="font-semibold text-gray-800">₹500</span> or <span className="font-semibold text-gray-800">500 Rs</span> will automatically be cleaned to <span className="font-bold text-orange-650">500</span>.
                       </p>
                     </div>
+                    <div className="bg-white border border-gray-150 p-4.5 rounded-2xl shadow-xs col-span-1 md:col-span-2">
+                      <h4 className="font-bold text-gray-900 mb-2 text-sm">Image Naming & Multi-Image Rules</h4>
+                      <p className="text-xs text-gray-500 leading-relaxed font-medium">
+                        The filename in your ZIP folder must match the Product Name/Title. If you have multiple images for the same product, name them as <span className="font-semibold text-gray-800">Title.jpg</span>, <span className="font-semibold text-gray-800">Title_1.jpg</span>, or <span className="font-semibold text-gray-800">Title1.jpg</span>. Both formats (with or without underscore) work directly and are added to the product gallery, with the first matched image set as the main cover.
+                      </p>
+                    </div>
                   </div>
 
                   {/* Accepted values list */}
@@ -940,15 +961,20 @@ export default function AdminBulkImportPage() {
                       <div className="py-2.5 grid grid-cols-3 gap-2">
                         <span className="font-extrabold text-xs text-orange-600 font-mono">title, brand, category, price, mrp, stock</span>
                         <span className="col-span-2 text-xs text-gray-600 font-medium">
-                          <strong className="text-orange-950">Required.</strong> Name, manufacturer brand, category name, selling price, MRP, and stock number.
+                          <strong className="text-orange-950">Required.</strong> Name, brand, category, unit price, MRP, and stock quantity.
                         </span>
                       </div>
                       <div className="py-2.5 grid grid-cols-3 gap-2">
-                        <span className="font-extrabold text-xs text-gray-700 font-mono">tags</span>
-                        <span className="col-span-2 text-xs text-gray-600 font-medium">Words separated by commas (e.g. bestseller, organic) to help customers find products easily.</span>
+                        <span className="font-extrabold text-xs text-gray-700 font-mono">isbn, hsnCode</span>
+                        <span className="col-span-2 text-xs text-gray-600 font-medium">Unique ISBN code and HSN tax code for inventory tracking.</span>
                       </div>
                       <div className="py-2.5 grid grid-cols-3 gap-2">
-                        <span className="col-span-2 text-xs text-gray-600 font-medium">Optional descriptions, key bullet points, shipping days (e.g. 2), or return timelines.</span>
+                        <span className="font-extrabold text-xs text-gray-700 font-mono">isFeatured, isPpdOriginal, isFreeDelivery</span>
+                        <span className="col-span-2 text-xs text-gray-600 font-medium">Toggle fields (true/false) to set featured status, PPD Original branding, or offer free shipping.</span>
+                      </div>
+                      <div className="py-2.5 grid grid-cols-3 gap-2">
+                        <span className="font-extrabold text-xs text-gray-700 font-mono">specs, faqs</span>
+                        <span className="col-span-2 text-xs text-gray-600 font-medium">Key specs (e.g. Capacity: 750ml) and QA pairs separated by semicolons.</span>
                       </div>
                     </div>
                   </div>
@@ -957,21 +983,21 @@ export default function AdminBulkImportPage() {
 
               {instructionTab === 'errors' && (
                 <div className="space-y-5">
-                  <h4 className="font-extrabold text-gray-950 text-xs uppercase tracking-wider mb-2">How to avoid errors during import</h4>
+                  <h4 className="font-extrabold text-gray-950 text-xs uppercase tracking-wider mb-2">Common Import Mistakes to Avoid</h4>
 
                   <div className="space-y-4">
                     {/* Error Item 1 */}
                     <div className="bg-white border-l-4 border-rose-500 rounded-2xl p-5 shadow-xs relative overflow-hidden flex gap-4 transition hover:translate-x-1 duration-200">
                       <AlertCircle className="h-6 w-6 text-rose-500 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-extrabold text-gray-900 text-sm">Selling Price Higher Than MRP</p>
+                        <p className="font-extrabold text-gray-900 text-sm">1. Price Greater than MRP</p>
                         <p className="mt-1 text-xs text-gray-500 leading-relaxed font-medium">
-                          A product's actual price cannot exceed its Maximum Retail Price (MRP).
+                          The unit price must be less than or equal to the original Maximum Retail Price (MRP).
                         </p>
-                        <div className="mt-3 flex items-center gap-3.5 bg-rose-50/50 p-2.5 rounded-xl border border-rose-100 text-3xs font-bold uppercase tracking-wider">
-                          <span className="text-rose-700">Incorrect: Price = ₹500, MRP = ₹450</span>
+                        <div className="mt-2.5 flex items-center gap-3.5 bg-rose-50/50 p-2.5 rounded-xl border border-rose-100 text-2xs font-bold font-mono">
+                          <span className="text-rose-700">❌ Price = 500, MRP = 400</span>
                           <span className="text-gray-400">|</span>
-                          <span className="text-emerald-700">Correct: Price = ₹450, MRP = ₹500</span>
+                          <span className="text-emerald-700">✅ Price = 350, MRP = 500</span>
                         </div>
                       </div>
                     </div>
@@ -980,21 +1006,61 @@ export default function AdminBulkImportPage() {
                     <div className="bg-white border-l-4 border-rose-500 rounded-2xl p-5 shadow-xs relative overflow-hidden flex gap-4 transition hover:translate-x-1 duration-200">
                       <AlertCircle className="h-6 w-6 text-rose-500 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-extrabold text-gray-900 text-sm">Using the Same Code or Name Twice</p>
+                        <p className="font-extrabold text-gray-900 text-sm">2. Non-Existent Categories</p>
                         <p className="mt-1 text-xs text-gray-500 leading-relaxed font-medium">
-                          Each product code (SKU) or product name must be unique. The system checks your spreadsheet rows to make sure there are no duplicate values within the file or in the existing store database.
+                          The category name must match an existing category in the system exactly. Check your categories section first.
                         </p>
+                        <div className="mt-2.5 flex items-center gap-3.5 bg-rose-50/50 p-2.5 rounded-xl border border-rose-100 text-2xs font-bold font-mono">
+                          <span className="text-rose-700">❌ category = home-kitchen (doesn't exist)</span>
+                          <span className="text-gray-400">|</span>
+                          <span className="text-emerald-700">✅ category = ncert / bharatvakya</span>
+                        </div>
                       </div>
                     </div>
 
                     {/* Error Item 3 */}
+                    <div className="bg-white border-l-4 border-rose-500 rounded-2xl p-5 shadow-xs relative overflow-hidden flex gap-4 transition hover:translate-x-1 duration-200">
+                      <AlertCircle className="h-6 w-6 text-rose-500 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-extrabold text-gray-900 text-sm">3. Duplicate Product Name or ISBN</p>
+                        <p className="mt-1 text-xs text-gray-500 leading-relaxed font-medium">
+                          Each book name (title) and unique ISBN code must be unique in the system. Duplicate rows inside the spreadsheet or matching existing products in the store database will trigger errors.
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Error Item 4 */}
                     <div className="bg-white border-l-4 border-amber-500 rounded-2xl p-5 shadow-xs relative overflow-hidden flex gap-4 transition hover:translate-x-1 duration-200">
                       <AlertTriangle className="h-6 w-6 text-amber-500 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-extrabold text-gray-900 text-sm">Double Check Columns Layout</p>
+                        <p className="font-extrabold text-gray-900 text-sm">4. Invalid Weight Units</p>
                         <p className="mt-1 text-xs text-gray-500 leading-relaxed font-medium">
-                          Always use the downloadable spreadsheet template. Do not rename, remove, or rearrange any column headers to ensure the importer can read all your products successfully.
+                          Only weight units that match the product page are accepted during bulk import.
                         </p>
+                        <div className="mt-2.5 flex items-center gap-3.5 bg-amber-50/50 p-2.5 rounded-xl border border-amber-150 text-2xs font-bold font-mono">
+                          <span className="text-rose-700">❌ weightUnit = lbs / pcs / box</span>
+                          <span className="text-gray-400">|</span>
+                          <span className="text-emerald-700">✅ weightUnit = kg / g</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Error Item 5 */}
+                    <div className="bg-white border-l-4 border-amber-500 rounded-2xl p-5 shadow-xs relative overflow-hidden flex gap-4 transition hover:translate-x-1 duration-200">
+                      <AlertTriangle className="h-6 w-6 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-extrabold text-gray-900 text-sm">5. Invalid Specifications or FAQs Format</p>
+                        <p className="mt-1 text-xs text-gray-500 leading-relaxed font-medium">
+                          Always use colon (`:`) to separate label/question from value/answer, and semicolon (`;`) to separate items.
+                        </p>
+                        <div className="mt-2.5 flex flex-col gap-1.5 bg-amber-50/50 p-2.5 rounded-xl border border-amber-150 text-2xs font-bold font-mono">
+                          <div>
+                            <span className="text-rose-700">❌ specs = Material Stainless Steel, Capacity 750ml</span>
+                          </div>
+                          <div>
+                            <span className="text-emerald-700">✅ specs = Material: Stainless Steel; Capacity: 750ml</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

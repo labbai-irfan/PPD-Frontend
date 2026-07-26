@@ -94,7 +94,18 @@ function Gallery({ product }: { product: Product }) {
 function LikeChip({ product }: { product: Product }) {
   const wishlisted = useIsWishlisted(product.id)
   const toggle = useWishlistStore((s) => s.toggle)
-  const calculatedLikes = Math.floor(product.ratingCount * 12.5 + product.reviewCount * 3.2 + (product.stock > 0 ? 14 : 5))
+  const [initialWishlisted] = useState(wishlisted)
+
+  // Use the actual wishlistCount from the server if available, otherwise fallback
+  const serverCount = product.wishlistCount ?? Math.floor(product.ratingCount * 12.5 + product.reviewCount * 3.2 + (product.stock > 0 ? 14 : 5))
+  
+  let calculatedLikes = serverCount
+  if (initialWishlisted && !wishlisted) {
+    calculatedLikes = Math.max(0, serverCount - 1)
+  } else if (!initialWishlisted && wishlisted) {
+    calculatedLikes = serverCount + 1
+  }
+
   const formattedLikes = new Intl.NumberFormat('en-US', {
     notation: 'compact',
     maximumFractionDigits: 1,

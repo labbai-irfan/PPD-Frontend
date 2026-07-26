@@ -106,6 +106,7 @@ export interface Product {
   discountPercent?: number
   gstPercent?: number
   status?: 'draft' | 'published'
+  wishlistCount?: number
 }
 
 export type ProductTag = 'featured' | 'deal' | 'new' | 'bestseller' | 'trending'
