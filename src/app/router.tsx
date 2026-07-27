@@ -125,6 +125,7 @@ export const router = createBrowserRouter([
           { path: '/admin/settings', lazy: lazyPage(() => import('@/features/admin/SettingsPage')) },
           { path: '/admin/bulk-import', lazy: lazyPage(() => import('@/features/admin/AdminBulkImportPage')) },
           { path: '/admin/delivery-charges', lazy: lazyPage(() => import('@/features/admin/AdminDeliveryChargesPage')) },
+          { path: '/admin/contacts', lazy: lazyPage(() => import('@/features/admin/AdminContactsPage')) },
         ],
       },
     ],

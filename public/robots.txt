@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /checkout
+Disallow: /cart
+Disallow: /profile
+Disallow: /admin
+Disallow: /auth/
+
+Sitemap: https://popularpublishinghouse.com/sitemap.xml

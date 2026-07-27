@@ -8,6 +8,7 @@ import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { PhoneInput } from '@/components/ui/PhoneInput'
 import { CONTACT_INFO } from '@/lib/constants'
+import { apiClient } from '@/services/api/client'
 
 const schema = z.object({
   name: z.string().min(2, 'Name is required'),
@@ -24,8 +25,9 @@ export default function ContactUsPage() {
     resolver: zodResolver(schema),
   })
 
-  async function onSubmit(_values: FormValues) {
+  async function onSubmit(values: FormValues) {
     try {
+      await apiClient.post('/contacts', values)
       toast.success('Message sent successfully! We\'ll get back to you soon.')
       reset()
     } catch (error) {

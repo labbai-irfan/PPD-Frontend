@@ -8,6 +8,7 @@ import type { Product } from '@/types'
 import { Icon } from '@/components/ui/Icon'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { RatingBadge } from '@/components/ui/Rating'
+import { SEO } from '@/components/shared/SEO'
 
 function Chip({ label, onClick }: { label: string; onClick: () => void }) {
   return (
@@ -121,6 +122,7 @@ export default function SearchPage() {
       className="fixed inset-0 z-50 flex flex-col justify-end bg-[rgba(60,45,25,0.28)] backdrop-blur-[2px] md:justify-center"
       style={isMobile ? { height: `${viewportHeight}px`, bottom: 'auto' } : undefined}
     >
+      <SEO title={query ? `Search results for "${query}"` : "Search Books"} noIndex />
       <div 
         className="mx-auto flex w-full max-w-md flex-col p-3.5 pb-[calc(10px+env(safe-area-inset-bottom))] md:h-auto md:max-h-[85vh] md:max-w-xl h-full"
         style={isMobile ? { height: `${viewportHeight}px` } : undefined}

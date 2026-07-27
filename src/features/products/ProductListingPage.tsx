@@ -10,6 +10,8 @@ import { ROUTES } from '@/lib/constants'
 import { Icon } from '@/components/ui/Icon'
 import { Link } from 'react-router-dom'
 import type { Category } from '@/types'
+import { SEO } from '@/components/shared/SEO'
+import { Breadcrumbs } from '@/components/shared/Breadcrumbs'
 
 /** The design's two alternating card color schemes (red / blue). */
 const cardStyles = [
@@ -105,9 +107,14 @@ export default function ProductListingPage() {
 
   return (
     <div className="space-y-4 md:space-y-6">
+      <SEO
+        title="Explore Categories"
+        description="Explore book collections, uniforms, school bags, and stationery kits by grade, subject, and brand on Popular Book World."
+      />
       <TopBar leading="menu" />
 
       <div className="px-1">
+        <Breadcrumbs items={[{ label: 'Categories' }]} />
         <h1 className="text-[20px] font-extrabold text-foreground sm:text-2xl">Categories to Explore</h1>
         <p className="mt-0.5 text-[12.5px] font-medium text-muted-foreground sm:text-sm">
           Everything you need, in one smart kit

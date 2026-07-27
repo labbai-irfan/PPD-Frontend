@@ -18,6 +18,7 @@ import {
   Settings,
   Warehouse,
   Truck,
+  Mail,
 } from 'lucide-react'
 import { Logo } from '@/components/shared/Logo'
 import { useAuthStore } from '@/store/auth.store'
@@ -36,6 +37,7 @@ const menuItems = [
   { icon: Image, label: 'Banners', path: '/admin/banners' },
   { icon: LayoutTemplate, label: 'Combos', path: '/admin/packages' },
   { icon: Truck, label: 'Delivery Charges', path: '/admin/delivery-charges' },
+  { icon: Mail, label: 'Contacts', path: '/admin/contacts' },
   { icon: UserCog, label: 'Admins', path: '/admin/admins' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
   // { icon: Lock, label: 'Security', path: '/admin/security' },

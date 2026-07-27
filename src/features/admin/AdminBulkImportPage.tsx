@@ -1022,9 +1022,9 @@ export default function AdminBulkImportPage() {
                     <div className="bg-white border-l-4 border-rose-500 rounded-2xl p-5 shadow-xs relative overflow-hidden flex gap-4 transition hover:translate-x-1 duration-200">
                       <AlertCircle className="h-6 w-6 text-rose-500 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-extrabold text-gray-900 text-sm">3. Duplicate Product Name or ISBN</p>
+                        <p className="font-extrabold text-gray-900 text-sm">3. Duplicate Product Name & Brand</p>
                         <p className="mt-1 text-xs text-gray-500 leading-relaxed font-medium">
-                          Each book name (title) and unique ISBN code must be unique in the system. Duplicate rows inside the spreadsheet or matching existing products in the store database will trigger errors.
+                          Each combination of book name (title) and brand must be unique. Duplicate rows with the same title and brand inside the spreadsheet will trigger validation errors.
                         </p>
                       </div>
                     </div>

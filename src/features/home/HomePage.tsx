@@ -12,6 +12,8 @@ import { QuickCategories } from '@/features/home/components/QuickCategories'
 import { TrendingSection } from '@/features/home/components/TrendingSection'
 import { HouseOfStoreSection } from '@/features/home/components/HouseOfStoreSection'
 import { BundleBanner, PackagesSection } from '@/features/home/components/PackagesSection'
+import { SEO } from '@/components/shared/SEO'
+import { SchemaData } from '@/components/shared/SchemaData'
 
 function greeting(): string {
   const hour = new Date().getHours()
@@ -64,8 +66,35 @@ function RecommendedSection() {
 export default function HomePage() {
   const banners = useBanners()
 
+  const orgSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    'name': 'Popular Book World',
+    'url': window.location.origin,
+    'logo': `${window.location.origin}/ppd.png`,
+    'description': "Popular Book World — India's trusted educational book publisher since 1926.",
+  }
+
+  const websiteSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    'name': 'Popular Book World',
+    'url': window.location.origin,
+    'potentialAction': {
+      '@type': 'SearchAction',
+      'target': `${window.location.origin}/search?q={search_term_string}`,
+      'query-input': 'required name=search_term_string',
+    },
+  }
+
   return (
     <div className="mx-auto w-full max-w-7xl px-4 space-y-4 md:space-y-8">
+      <SEO
+        title="Home"
+        description="India's leading online store for academic books, school uniforms, bags, stationery and study material by Popular Book World."
+      />
+      <SchemaData data={orgSchema} />
+      <SchemaData data={websiteSchema} />
       <HomeHeader />
       <BannerCarousel banners={banners.data} loading={banners.isPending} className="mt-2 md:mt-0" />
       <QuickCategories />

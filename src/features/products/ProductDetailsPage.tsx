@@ -16,6 +16,9 @@ import { SavePill } from '@/components/shared/ProductBadge'
 import { ProductGrid } from '@/components/shared/ProductGrid'
 import { TopBar } from '@/components/shared/TopBar'
 import { useScrollHide } from '@/hooks/use-scroll-hide'
+import { SEO } from '@/components/shared/SEO'
+import { SchemaData } from '@/components/shared/SchemaData'
+import { Breadcrumbs } from '@/components/shared/Breadcrumbs'
 
 /** Vertical thumbnail rail + main image, from the design gallery. */
 function Gallery({ product }: { product: Product }) {
@@ -297,9 +300,50 @@ export default function ProductDetailsPage() {
     navigate(ROUTES.cart)
   }
 
+  const bookSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Book',
+    'name': product.title,
+    'description': product.description || product.shortDescription,
+    'image': product.images[0] || `${window.location.origin}/ppd.png`,
+    'isbn': product.sku,
+    'offers': {
+      '@type': 'Offer',
+      'price': displayedPrice,
+      'priceCurrency': 'INR',
+      'itemCondition': 'https://schema.org/NewCondition',
+      'availability': product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      'url': window.location.href,
+    },
+    'aggregateRating': product.ratingCount > 0 ? {
+      '@type': 'AggregateRating',
+      'ratingValue': product.rating,
+      'reviewCount': product.reviewCount || product.ratingCount,
+      'bestRating': '5',
+      'worstRating': '1',
+    } : undefined,
+  }
+
   return (
     <div className="pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0">
+      <SEO
+        title={product.title}
+        description={product.shortDescription || product.description || `Buy ${product.title} online at best price in India.`}
+        ogImage={product.images[0]}
+        ogType="book"
+      />
+      <SchemaData data={bookSchema} />
       <TopBar />
+
+      <div className="mt-4 px-1">
+        <Breadcrumbs
+          items={[
+            { label: 'Books', path: ROUTES.products },
+            { label: product.category, path: `/products?category=${encodeURIComponent(product.category)}` },
+            { label: product.title },
+          ]}
+        />
+      </div>
 
       <div className="md:grid md:grid-cols-2 md:gap-10">
         <div className="mt-3 md:mt-0">

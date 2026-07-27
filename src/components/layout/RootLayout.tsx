@@ -10,6 +10,7 @@ import { SearchPill } from '@/components/shared/SearchPill'
 import { useScrollHide } from '@/hooks/use-scroll-hide'
 import { useAuthStore } from '@/store/auth.store'
 import { useWishlistStore } from '@/store/wishlist.store'
+import { useSettingsStore } from '@/store/settings.store'
 
 /** Routes that show the floating search pill above the bottom nav (from the design). */
 const SEARCH_PILL_ROUTES: string[] = [ROUTES.home, ROUTES.products, ROUTES.allProducts]
@@ -29,6 +30,11 @@ export default function RootLayout() {
 
   const syncWishlist = useWishlistStore((s) => s.sync)
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+  const fetchSettings = useSettingsStore((s) => s.fetchSettings)
+
+  useEffect(() => {
+    void fetchSettings()
+  }, [fetchSettings])
 
   useEffect(() => {
     if (isAuthenticated) {

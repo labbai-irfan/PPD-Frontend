@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
 import type { ReactNode } from 'react'
+import { HelmetProvider } from 'react-helmet-async'
 import { useUiStore } from '@/store/ui.store'
 import NoInternetPage from '@/pages/NoInternetPage'
 
@@ -20,7 +21,9 @@ export function AppProviders({ children }: { children: ReactNode }) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {children}
+      <HelmetProvider>
+        {children}
+      </HelmetProvider>
       <Toaster
         position="bottom-center"
         theme={theme}
