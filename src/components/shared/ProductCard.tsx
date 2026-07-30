@@ -78,7 +78,9 @@ export function ProductCard({ product, className }: ProductCardProps) {
         </h3>
         <RatingBadge rating={product.rating} count={product.ratingCount} className="mt-1" />
         <div className="mt-auto pt-1.5">
-          <s className="text-[10px] text-faint-foreground font-inter block leading-none">{formatCurrency(product.mrp)}</s>
+          {product.mrp > product.price && (
+            <s className="text-[10px] text-faint-foreground font-inter block leading-none">{formatCurrency(product.mrp)}</s>
+          )}
           <div className="mt-1 flex items-center justify-between gap-1">
             <span className="font-urbanist text-[14px] font-extrabold text-foreground shrink-0 leading-none">{formatCurrency(product.price)}</span>
             <button

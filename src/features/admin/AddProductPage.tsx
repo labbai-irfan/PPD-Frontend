@@ -276,7 +276,7 @@ export default function AddProductPage() {
       unitPrice: values.unitPrice ? Number(values.unitPrice) : finalPrice,
       stockQuantity: values.stockQuantity ? Number(values.stockQuantity) : 0,
       mrp: Number(values.mrp),
-      price: values.unitPrice ? Number(values.unitPrice) : finalPrice,
+      price: finalPrice,
       stock: values.stockQuantity ? Number(values.stockQuantity) : 0,
       discountPercent: values.discountPercent ? Number(values.discountPercent) : undefined,
       gstPercent: values.gstPercent ? Number(values.gstPercent) : undefined,

@@ -339,7 +339,7 @@ export default function ProductDetailsPage() {
         <Breadcrumbs
           items={[
             { label: 'Books', path: ROUTES.products },
-            { label: product.category, path: `/products?category=${encodeURIComponent(product.category)}` },
+            { label: product.category, path: ROUTES.category(encodeURIComponent(product.category)) },
             { label: product.title },
           ]}
         />
@@ -404,7 +404,7 @@ export default function ProductDetailsPage() {
 
           <div className="mt-3.5 flex flex-wrap items-center gap-x-2.5 gap-y-1">
             <span className="text-[22px] font-bold text-foreground sm:text-[27px]">{formatCurrency(displayedPrice)}</span>
-            <s className="text-base text-faint-foreground">{formatCurrency(displayedMrp)}</s>
+            {save > 0 && <s className="text-base text-faint-foreground">{formatCurrency(displayedMrp)}</s>}
             {save > 0 && (
               <SavePill className="px-3 py-1.5 text-xs">
                 {discountPercent(displayedMrp, displayedPrice)}% OFF

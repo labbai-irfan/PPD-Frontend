@@ -1,25 +1,22 @@
 import { cn, discountPercent } from '@/lib/utils'
 import type { Product } from '@/types'
 
+const pillClass =
+  'inline-flex items-center justify-center rounded-full px-1.5 py-[2.5px] text-[8.5px] font-bold text-white whitespace-nowrap shrink-0 sm:px-2.5 sm:py-[3px] sm:text-[10px]'
+
 /**
- * Product badge from the design cards: own-brand items get the red
- * "PPD Original" pill, everything else a green "Save X%" pill.
+ * Product badge from the design cards: own-brand items get the red "PPD Original"
+ * pill, and any discount adds a green "Save X%" pill next to it.
  */
 export function ProductBadge({ product, className }: { product: Product; className?: string }) {
   const isOwnBrand = product.isPpdOriginal ?? product.brand === 'PPD'
   const off = discountPercent(product.mrp, product.price)
-  if (!isOwnBrand && off === 0) return null
 
   return (
-    <span
-      className={cn(
-        'inline-flex items-center justify-center rounded-full px-1.5 py-[2.5px] text-[8.5px] font-bold text-white whitespace-nowrap shrink-0 sm:px-2.5 sm:py-[3px] sm:text-[10px]',
-        isOwnBrand ? 'bg-deal' : 'bg-success',
-        className,
-      )}
-    >
-      {isOwnBrand ? 'PPD Original' : `Save ${off}%`}
-    </span>
+    <>
+      {isOwnBrand && <span className={cn(pillClass, 'bg-deal', className)}>PPD Original</span>}
+      {off > 0 && <span className={cn(pillClass, 'bg-success', className)}>Save {off}%</span>}
+    </>
   )
 }
 

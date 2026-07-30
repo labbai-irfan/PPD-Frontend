@@ -49,7 +49,7 @@ export function ProductCardHorizontal({ product, className }: ProductCardHorizon
       {/* Right Column - Details */}
       <div className="flex flex-col justify-between bg-white dark:bg-card p-3.5 sm:p-4">
         <div>
-          <div className="mb-1.5">
+          <div className="mb-1.5 flex flex-wrap items-center gap-1">
             <ProductBadge product={product} />
           </div>
           <h3 className="line-clamp-2 text-[13px] font-semibold leading-snug text-card-foreground sm:text-[14px]">
@@ -67,7 +67,9 @@ export function ProductCardHorizontal({ product, className }: ProductCardHorizon
         {/* Price and Button */}
         <div className="mt-2 flex items-center justify-between gap-2">
           <div>
-            <s className="text-[10px] text-faint-foreground font-inter block leading-none">{formatCurrency(product.mrp)}</s>
+            {product.mrp > product.price && (
+              <s className="text-[10px] text-faint-foreground font-inter block leading-none">{formatCurrency(product.mrp)}</s>
+            )}
             <span className="font-urbanist text-[15px] font-extrabold text-foreground leading-none">{formatCurrency(product.price)}</span>
           </div>
           <button
