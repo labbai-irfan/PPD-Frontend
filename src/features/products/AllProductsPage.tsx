@@ -73,7 +73,9 @@ export default function AllProductsPage() {
   const [filtersOpen, setFiltersOpen] = useState(false)
   const { data: categories } = useCategories()
 
-  const category = params.get('category') ?? undefined
+  /* Categories are multi-select: the param holds a comma-separated list of slugs. */
+  const selectedCategories = params.get('category')?.split(',').filter(Boolean) ?? []
+  const category = selectedCategories.join(',') || undefined
   const tag = (params.get('tag') as ProductTag | null) ?? undefined
   const q = params.get('q') ?? undefined
   const ppdOriginal = params.get('ppdOriginal') === 'true'
@@ -81,7 +83,7 @@ export default function AllProductsPage() {
   const page = Number(params.get('page') ?? '1')
 
   const query: ProductQuery = { category, tag, q, sort, page, pageSize: PAGE_SIZE, ppdOriginal: ppdOriginal || undefined }
-  const { data, isPending } = useProducts(query)
+  const { data, isPending, isError, refetch } = useProducts(query)
   const totalPages = Math.max(1, Math.ceil((data?.total ?? 0) / PAGE_SIZE))
 
   function update(mutate: (p: URLSearchParams) => void, resetPage = true) {
@@ -91,12 +93,20 @@ export default function AllProductsPage() {
     setParams(next)
   }
 
+  /** Add or remove one category slug, keeping the rest of the selection. */
+  function toggleCategory(slug: string) {
+    const next = selectedCategories.includes(slug)
+      ? selectedCategories.filter((s) => s !== slug)
+      : [...selectedCategories, slug]
+    update((p) => (next.length ? p.set('category', next.join(',')) : p.delete('category')))
+  }
+
   const chips: Array<{ key: string; label: string; remove: () => void }> = []
-  if (category) {
+  for (const slug of selectedCategories) {
     chips.push({
-      key: 'category',
-      label: categories?.find((c) => c.slug === category)?.name ?? category,
-      remove: () => update((p) => p.delete('category')),
+      key: `category:${slug}`,
+      label: categories?.find((c) => c.slug === slug)?.name ?? slug,
+      remove: () => toggleCategory(slug),
     })
   }
   if (tag) chips.push({ key: 'tag', label: tagLabels[tag], remove: () => update((p) => p.delete('tag')) })
@@ -107,13 +117,10 @@ export default function AllProductsPage() {
 
   /* Only top-level categories get their own chip; subcategories surface once their parent is active. */
   const topLevelCategories = categories?.filter((c) => !c.parentId) ?? []
-  const selectedCategory = categories?.find((c) => c.slug === category)
-  const subcategoryParent = selectedCategory?.parentId
-    ? categories?.find((c) => c.id === selectedCategory.parentId)
-    : selectedCategory
-  const subcategories = subcategoryParent
-    ? (categories?.filter((c) => c.parentId === subcategoryParent.id) ?? [])
-    : []
+  const activeParentIds = new Set(
+    (categories ?? []).filter((c) => selectedCategories.includes(c.slug)).map((c) => c.parentId ?? c.id),
+  )
+  const subcategories = categories?.filter((c) => c.parentId && activeParentIds.has(c.parentId)) ?? []
 
   /* Category + sort chip groups, shared by the mobile filter sheet and the lg+ sidebar. */
   const filterGroups = (
@@ -121,12 +128,12 @@ export default function AllProductsPage() {
       <p className="mb-2 text-xs font-bold uppercase tracking-wider text-muted-foreground">Category</p>
       <div className="flex flex-wrap gap-2">
         {topLevelCategories.map((c) => {
-          const active = (category ?? 'all') === c.slug
+          const active = c.slug === 'all' ? selectedCategories.length === 0 : selectedCategories.includes(c.slug)
           return (
             <button
               key={c.id}
               type="button"
-              onClick={() => update((p) => (c.slug === 'all' ? p.delete('category') : p.set('category', c.slug)))}
+              onClick={() => (c.slug === 'all' ? update((p) => p.delete('category')) : toggleCategory(c.slug))}
               className={cn(
                 'min-h-[44px] rounded-full px-4 py-2.5 text-[12.5px] font-medium shadow-soft cursor-pointer',
                 active ? 'bg-primary font-semibold text-primary-foreground' : 'bg-muted text-foreground',
@@ -142,12 +149,12 @@ export default function AllProductsPage() {
           <p className="mb-2 mt-4 text-xs font-bold uppercase tracking-wider text-muted-foreground">Subcategory</p>
           <div className="flex flex-wrap gap-2">
             {subcategories.map((sub) => {
-              const active = category === sub.slug
+              const active = selectedCategories.includes(sub.slug)
               return (
                 <button
                   key={sub.id}
                   type="button"
-                  onClick={() => update((p) => p.set('category', sub.slug))}
+                  onClick={() => toggleCategory(sub.slug)}
                   className={cn(
                     'min-h-[44px] rounded-full px-4 py-2.5 text-[12.5px] font-medium shadow-soft cursor-pointer',
                     active ? 'bg-primary font-semibold text-primary-foreground' : 'bg-muted text-foreground',
@@ -243,7 +250,15 @@ export default function AllProductsPage() {
             className="pb-1.5 pt-1 lg:hidden"
           />
 
-          {!isPending && (data?.total ?? 0) === 0 ? (
+          {isError ? (
+            /* A failed request is not an empty result — saying "no products" hides the outage */
+            <EmptyState
+              icon={<Icon name="cloud_off" size={36} />}
+              title="Couldn’t load products"
+              description="The server didn’t respond. Check your connection and try again."
+              action={<Button onClick={() => void refetch()}>Try again</Button>}
+            />
+          ) : !isPending && (data?.total ?? 0) === 0 ? (
             <EmptyState
               icon={<Icon name="search_off" size={36} />}
               title="No products match your filters"
