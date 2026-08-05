@@ -1,11 +1,10 @@
 import { apiClient } from '@/services/api/client'
 import { useAuthStore } from '@/store/auth.store'
-import type { CartItem } from '@/types'
 import {
   PaymentError,
   toPaymentError,
   type OnlineMethod,
-  type PaymentDetails,
+  type PayInput,
   type PaymentGateway,
   type PaymentIntent,
   type PaymentResult,
@@ -94,7 +93,7 @@ interface VerifyResponse {
 }
 
 export class RazorpayGateway implements PaymentGateway {
-  async pay(input: { details: PaymentDetails; items: CartItem[]; couponCode?: string }): Promise<PaymentResult> {
+  async pay(input: PayInput): Promise<PaymentResult> {
     try {
       const { data: intent } = await apiClient.post<PaymentIntent>('/payments/intent', {
         items: input.items.map((item) => ({
@@ -103,6 +102,8 @@ export class RazorpayGateway implements PaymentGateway {
           selections: item.selections ?? {},
         })),
         method: input.details.method,
+        // Shipping depends on the destination — omit it and we charge the wrong total
+        address: input.address,
         ...(input.couponCode ? { couponCode: input.couponCode } : {}),
       })
 

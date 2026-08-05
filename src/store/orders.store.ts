@@ -62,6 +62,8 @@ export const useOrdersStore = create<OrdersState>()((set, get) => ({
         id: input.address.id,
         name: input.address.name,
         phone: input.address.phone,
+        // Required by the API (min 2 chars) — omitting it rejects the whole order
+        country: input.address.country || 'India',
         line1: input.address.line1,
         line2: input.address.line2,
         city: input.address.city,

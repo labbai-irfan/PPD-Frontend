@@ -34,8 +34,23 @@ export class PaymentError extends Error {
   }
 }
 
+/** Delivery destination — shipping is priced from it, so the charge must include it. */
+export interface PaymentDestination {
+  country: string
+  state: string
+  city: string
+  pincode: string
+}
+
+export interface PayInput {
+  details: PaymentDetails
+  items: CartItem[]
+  couponCode?: string
+  address: PaymentDestination
+}
+
 export interface PaymentGateway {
-  pay(input: { details: PaymentDetails; items: CartItem[]; couponCode?: string }): Promise<PaymentResult>
+  pay(input: PayInput): Promise<PaymentResult>
 }
 
 /** Shape returned by POST /payments/intent. */

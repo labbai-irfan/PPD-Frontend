@@ -1,8 +1,8 @@
 import { apiClient } from '@/services/api/client'
-import type { CartItem } from '@/types'
 import {
   PaymentError,
   toPaymentError,
+  type PayInput,
   type PaymentDetails,
   type PaymentGateway,
   type PaymentIntent,
@@ -51,7 +51,7 @@ interface ConfirmResponse {
 }
 
 export class MockGateway implements PaymentGateway {
-  async pay(input: { details: PaymentDetails; items: CartItem[]; couponCode?: string }): Promise<PaymentResult> {
+  async pay(input: PayInput): Promise<PaymentResult> {
     try {
       const { data: intent } = await apiClient.post<PaymentIntent>('/payments/intent', {
         items: input.items.map((item) => ({
@@ -60,6 +60,7 @@ export class MockGateway implements PaymentGateway {
           selections: item.selections ?? {},
         })),
         method: input.details.method,
+        address: input.address,
         ...(input.couponCode ? { couponCode: input.couponCode } : {}),
       })
 

@@ -1,6 +1,6 @@
-import { useCallback, useState, type ReactNode } from 'react'
+import { useCallback, useRef, useState, type ReactNode } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { ArrowLeft, XCircle } from 'lucide-react'
+import { AlertTriangle, ArrowLeft, XCircle } from 'lucide-react'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 import { ROUTES } from '@/lib/constants'
@@ -21,13 +21,18 @@ const METHOD_LABELS: Record<PaymentMethodKind, string> = {
   cod: 'Cash on Delivery',
 }
 
+type PaymentInfo = { method: PaymentMethodKind; label: string; intentId?: string }
+
 export interface PaymentFlow {
   draft: CheckoutDraft | null
   /** Total payable — draft?.totals.total ?? 0 */
   amount: number
-  status: 'idle' | 'processing' | 'success' | 'failed'
+  /** 'order-failed' = charged, but the order was rejected — never offer a re-pay from here. */
+  status: 'idle' | 'processing' | 'success' | 'failed' | 'order-failed'
   error: string | null
   pay: (details: PaymentDetails) => Promise<void>
+  /** Re-submits the order against the payment already made — does not charge again. */
+  retryOrder: () => Promise<void>
   /** failed -> idle */
   reset: () => void
 }
@@ -46,21 +51,14 @@ export function usePaymentFlow(): PaymentFlow {
 
   const [status, setStatus] = useState<PaymentFlow['status']>('idle')
   const [error, setError] = useState<string | null>(null)
+  /* Survives a failed order so the retry reuses the same payment instead of charging again. */
+  const paidRef = useRef<PaymentInfo | null>(null)
 
-  const pay = useCallback(
-    async (details: PaymentDetails) => {
+  const submitOrder = useCallback(
+    async (payment: PaymentInfo) => {
       if (!draft) return
       setStatus('processing')
-      setError(null)
       try {
-        const gateway = await getPaymentGateway()
-        const result = await gateway.pay({ details, items: draft.items, couponCode: draft.couponCode })
-
-        const payment: { method: PaymentMethodKind; label: string; intentId?: string } = {
-          method: draft.method,
-          label: METHOD_LABELS[draft.method],
-          intentId: result.intentId,
-        }
         const order = await placeOrder({
           items: draft.items,
           address: draft.address,
@@ -80,6 +78,40 @@ export function usePaymentFlow(): PaymentFlow {
         clearCart()
         clearCheckout()
       } catch (err) {
+        // The money is already taken — this is an order problem, not a payment one.
+        setStatus('order-failed')
+        setError(err instanceof Error ? err.message : 'We could not create your order.')
+      }
+    },
+    [draft, navigate, placeOrder, clearCart, clearCheckout],
+  )
+
+  const pay = useCallback(
+    async (details: PaymentDetails) => {
+      if (!draft) return
+      setStatus('processing')
+      setError(null)
+      let payment: PaymentInfo
+      try {
+        const gateway = await getPaymentGateway()
+        const result = await gateway.pay({
+          details,
+          items: draft.items,
+          couponCode: draft.couponCode,
+          address: {
+            country: draft.address.country || 'India',
+            state: draft.address.state,
+            city: draft.address.city,
+            pincode: draft.address.pincode,
+          },
+        })
+        payment = {
+          method: draft.method,
+          label: METHOD_LABELS[draft.method],
+          intentId: result.intentId,
+        }
+        paidRef.current = payment
+      } catch (err) {
         // Closing the gateway window isn't a failure — return to the form quietly.
         if (err instanceof PaymentError && err.code === 'cancelled') {
           setStatus('idle')
@@ -88,17 +120,24 @@ export function usePaymentFlow(): PaymentFlow {
         }
         setStatus('failed')
         setError(err instanceof Error ? err.message : 'Payment failed. Please try again.')
+        return
       }
+
+      await submitOrder(payment)
     },
-    [draft, navigate, placeOrder, clearCart, clearCheckout],
+    [draft, submitOrder],
   )
+
+  const retryOrder = useCallback(async () => {
+    if (paidRef.current) await submitOrder(paidRef.current)
+  }, [submitOrder])
 
   const reset = useCallback(() => {
     setStatus('idle')
     setError(null)
   }, [])
 
-  return { draft, amount: draft?.totals.total ?? 0, status, error, pay, reset }
+  return { draft, amount: draft?.totals.total ?? 0, status, error, pay, retryOrder, reset }
 }
 
 export function PaymentShell({
@@ -148,7 +187,26 @@ export function PaymentShell({
 
       <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
         <div>
-          {status === 'failed' ? (
+          {status === 'order-failed' ? (
+            /* Charged but no order: never offer a re-pay, only a retry of the order itself. */
+            <Card className="flex flex-col items-center p-8 text-center">
+              <AlertTriangle className="size-12 text-warning" />
+              <h2 className="mt-4 text-lg font-bold text-foreground">Payment received — order not placed</h2>
+              <p className="mt-1.5 max-w-sm text-sm text-muted-foreground">
+                Your payment of {formatCurrency(flow.amount)} went through, but we couldn’t create the order:{' '}
+                {error}
+              </p>
+              <p className="mt-2 max-w-sm text-xs text-muted-foreground">
+                You have not been charged twice. Retrying uses the payment you already made.
+              </p>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <Button onClick={() => void flow.retryOrder()}>Retry placing order</Button>
+                <Link to={ROUTES.support} className={buttonVariants({ variant: 'outline' })}>
+                  Contact support
+                </Link>
+              </div>
+            </Card>
+          ) : status === 'failed' ? (
             <Card className="flex flex-col items-center p-8 text-center">
               <XCircle className="size-12 text-destructive" />
               <h2 className="mt-4 text-lg font-bold text-foreground">Payment failed</h2>
