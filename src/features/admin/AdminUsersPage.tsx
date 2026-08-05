@@ -4,7 +4,10 @@ import { toast } from 'sonner'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Avatar } from '@/components/ui/Avatar'
+import { Pagination } from '@/components/ui/Pagination'
 import { apiClient } from '@/services/api/client'
+
+const PAGE_SIZE = 20
 
 interface AdminUser {
   id: string
@@ -21,11 +24,14 @@ export default function AdminUsersPage() {
   const [users, setUsers] = useState<AdminUser[]>([])
   const [total, setTotal] = useState(0)
   const [search, setSearch] = useState('')
+  const [status, setStatus] = useState('')
+  const [page, setPage] = useState(1)
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
-  const load = useCallback(async (q: string) => {
+  const load = useCallback(async (q: string, p: number, s: string) => {
     try {
       const { data } = await apiClient.get<{ items: AdminUser[]; total: number }>('/admin/users', {
-        params: { ...(q ? { q } : {}), pageSize: 50 },
+        params: { ...(q ? { q } : {}), ...(s ? { status: s } : {}), page: p, pageSize: PAGE_SIZE },
       })
       setUsers(data.items)
       setTotal(data.total)
@@ -35,9 +41,9 @@ export default function AdminUsersPage() {
   }, [])
 
   useEffect(() => {
-    const t = setTimeout(() => void load(search), search ? 300 : 0)
+    const t = setTimeout(() => void load(search, page, status), search ? 300 : 0)
     return () => clearTimeout(t)
-  }, [search, load])
+  }, [search, page, status, load])
 
   const handleBan = async (user: AdminUser) => {
     try {
@@ -67,13 +73,34 @@ export default function AdminUsersPage() {
         <p className="text-sm text-muted-foreground mt-1">{total} customers</p>
       </div>
 
-      <Card className="p-3 md:p-4">
-        <Input
-          placeholder="Search by name or email..."
-          leftIcon={<Search className="size-4" />}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <Card className="grid gap-3 p-3 md:grid-cols-[1fr_14rem] md:p-4">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Search</label>
+          <Input
+            placeholder="Search by name or email..."
+            leftIcon={<Search className="size-4" />}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setPage(1)
+            }}
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Status</label>
+          <select
+            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            value={status}
+            onChange={(e) => {
+              setStatus(e.target.value)
+              setPage(1)
+            }}
+          >
+            <option value="">All users</option>
+            <option value="active">Active</option>
+            <option value="banned">Banned</option>
+          </select>
+        </div>
       </Card>
 
       {/* Desktop Table */}
@@ -200,6 +227,8 @@ export default function AdminUsersPage() {
           </Card>
         ))}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     </div>
   )
 }

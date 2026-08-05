@@ -3,7 +3,10 @@ import { Search, ThumbsUp, ThumbsDown, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
+import { Pagination } from '@/components/ui/Pagination'
 import { apiClient } from '@/services/api/client'
+
+const PAGE_SIZE = 20
 
 interface AdminReview {
   id: string
@@ -18,15 +21,23 @@ interface AdminReview {
 export default function AdminReviewsPage() {
   const [reviews, setReviews] = useState<AdminReview[]>([])
   const [pendingCount, setPendingCount] = useState(0)
+  const [total, setTotal] = useState(0)
   const [search, setSearch] = useState('')
+  const [status, setStatus] = useState('')
+  const [page, setPage] = useState(1)
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
-  const load = useCallback(async (q: string) => {
+  const load = useCallback(async (q: string, p: number, s: string) => {
     try {
-      const { data } = await apiClient.get<{ items: AdminReview[]; pendingCount: number }>(
-        '/admin/reviews',
-        { params: { ...(q ? { q } : {}), pageSize: 50 } },
-      )
+      const { data } = await apiClient.get<{
+        items: AdminReview[]
+        total: number
+        pendingCount: number
+      }>('/admin/reviews', {
+        params: { ...(q ? { q } : {}), ...(s ? { status: s } : {}), page: p, pageSize: PAGE_SIZE },
+      })
       setReviews(data.items)
+      setTotal(data.total)
       setPendingCount(data.pendingCount)
     } catch (e) {
       toast.error(e instanceof Error ? e.message : 'Failed to load reviews')
@@ -34,9 +45,9 @@ export default function AdminReviewsPage() {
   }, [])
 
   useEffect(() => {
-    const t = setTimeout(() => void load(search), search ? 300 : 0)
+    const t = setTimeout(() => void load(search, page, status), search ? 300 : 0)
     return () => clearTimeout(t)
-  }, [search, load])
+  }, [search, page, status, load])
 
   const moderate = async (id: string, action: 'approve' | 'reject') => {
     try {
@@ -66,13 +77,35 @@ export default function AdminReviewsPage() {
         <p className="text-sm text-muted-foreground mt-1">{pendingCount} pending approvals</p>
       </div>
 
-      <Card className="p-4">
-        <Input
-          placeholder="Search by product, author or title..."
-          leftIcon={<Search className="size-4" />}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <Card className="grid gap-3 p-4 md:grid-cols-[1fr_14rem]">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Search</label>
+          <Input
+            placeholder="Search by product, author or title..."
+            leftIcon={<Search className="size-4" />}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setPage(1)
+            }}
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Status</label>
+          <select
+            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            value={status}
+            onChange={(e) => {
+              setStatus(e.target.value)
+              setPage(1)
+            }}
+          >
+            <option value="">All reviews</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+          </select>
+        </div>
       </Card>
 
       <div className="space-y-3">
@@ -123,6 +156,8 @@ export default function AdminReviewsPage() {
         ))}
         {reviews.length === 0 && <p className="text-center text-muted-foreground py-8">No reviews found</p>}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     </div>
   )
 }

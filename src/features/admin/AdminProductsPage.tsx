@@ -6,7 +6,10 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { Pagination } from '@/components/ui/Pagination'
 import { apiClient } from '@/services/api/client'
+
+const PAGE_SIZE = 20
 
 interface AdminProduct {
   id: string
@@ -25,17 +28,55 @@ interface AdminProductList {
   total: number
 }
 
+interface CategoryOption {
+  id: string
+  slug: string
+  name: string
+  parentId?: string
+}
+
+/** Mirrors the params AdminProductQueryDto accepts; '' means "no filter". */
+interface Filters {
+  status: '' | 'active' | 'inactive'
+  category: string
+  stockStatus: '' | 'in-stock' | 'low' | 'out'
+  sort: 'newest' | 'name-asc' | 'stock-asc' | 'stock-desc'
+}
+
+const selectClass =
+  'w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary'
+
 export default function AdminProductsPage() {
   const [products, setProducts] = useState<AdminProduct[]>([])
+  const [categories, setCategories] = useState<CategoryOption[]>([])
   const [total, setTotal] = useState(0)
   const [search, setSearch] = useState('')
+  const [filters, setFilters] = useState<Filters>({ status: '', category: '', stockStatus: '', sort: 'newest' })
+  const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [productToDelete, setProductToDelete] = useState<AdminProduct | null>(null)
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
+  const filtersApplied = Object.values(filters).filter((v) => v && v !== 'newest').length
 
-  const load = useCallback(async (q: string) => {
+  useEffect(() => {
+    void apiClient
+      .get<CategoryOption[]>('/categories')
+      .then(({ data }) => setCategories(data.filter((c) => c.slug !== 'all')))
+      .catch(() => {})
+  }, [])
+
+  const load = useCallback(async (q: string, p: number, f: Filters) => {
     try {
       const { data } = await apiClient.get<AdminProductList>('/admin/products', {
-        params: { ...(q ? { q } : {}), pageSize: 50 },
+        params: {
+          ...(q ? { q } : {}),
+          ...(f.status ? { status: f.status } : {}),
+          ...(f.category ? { category: f.category } : {}),
+          ...(f.stockStatus ? { stockStatus: f.stockStatus } : {}),
+          sort: f.sort,
+          page: p,
+          pageSize: PAGE_SIZE,
+        },
       })
       setProducts(data.items)
       setTotal(data.total)
@@ -47,9 +88,15 @@ export default function AdminProductsPage() {
   }, [])
 
   useEffect(() => {
-    const t = setTimeout(() => void load(search), search ? 300 : 0)
+    const t = setTimeout(() => void load(search, page, filters), search ? 300 : 0)
     return () => clearTimeout(t)
-  }, [search, load])
+  }, [search, page, filters, load])
+
+  /** Any filter change re-slices the result set, so page 3 of the old set is meaningless. */
+  function setFilter(patch: Partial<Filters>) {
+    setFilters((f) => ({ ...f, ...patch }))
+    setPage(1)
+  }
 
   const handleDelete = async (id: string) => {
     try {
@@ -79,6 +126,22 @@ export default function AdminProductsPage() {
           <h1 className="text-2xl font-bold text-foreground">Products</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {loading ? 'Loading…' : `${total} products`}
+            {!loading && (filtersApplied > 0 || search) && (
+              <>
+                {' · '}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearch('')
+                    setFilters({ status: '', category: '', stockStatus: '', sort: 'newest' })
+                    setPage(1)
+                  }}
+                  className="font-semibold text-primary hover:underline"
+                >
+                  Clear filters
+                </button>
+              </>
+            )}
           </p>
         </div>
         <Link to="/admin/products/add" className="w-full sm:w-auto">
@@ -89,13 +152,86 @@ export default function AdminProductsPage() {
         </Link>
       </div>
 
-      <Card className="p-3 md:p-4">
-        <Input
-          placeholder="Search products..."
-          leftIcon={<Search className="size-4" />}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <Card className="grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-5 md:p-4">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Search</label>
+          <Input
+            placeholder="Search products..."
+            leftIcon={<Search className="size-4" />}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setPage(1)
+            }}
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Category</label>
+          <select
+            className={selectClass}
+            value={filters.category}
+            onChange={(e) => setFilter({ category: e.target.value })}
+          >
+            <option value="">All categories</option>
+            {categories
+              .filter((c) => !c.parentId)
+              .map((parent) => {
+                const subs = categories.filter((c) => c.parentId === parent.id)
+                return subs.length === 0 ? (
+                  <option key={parent.slug} value={parent.slug}>
+                    {parent.name}
+                  </option>
+                ) : (
+                  <optgroup key={parent.slug} label={parent.name}>
+                    <option value={parent.slug}>{parent.name} (all)</option>
+                    {subs.map((sub) => (
+                      <option key={sub.slug} value={sub.slug}>
+                        {sub.name}
+                      </option>
+                    ))}
+                  </optgroup>
+                )
+              })}
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Status</label>
+          <select
+            className={selectClass}
+            value={filters.status}
+            onChange={(e) => setFilter({ status: e.target.value as Filters['status'] })}
+          >
+            <option value="">All statuses</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Stock</label>
+          <select
+            className={selectClass}
+            value={filters.stockStatus}
+            onChange={(e) => setFilter({ stockStatus: e.target.value as Filters['stockStatus'] })}
+          >
+            <option value="">Any stock</option>
+            <option value="in-stock">In Stock</option>
+            <option value="low">Low Stock</option>
+            <option value="out">Out of Stock</option>
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Sort By</label>
+          <select
+            className={selectClass}
+            value={filters.sort}
+            onChange={(e) => setFilter({ sort: e.target.value as Filters['sort'] })}
+          >
+            <option value="newest">Newest</option>
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="stock-asc">Stock (Low to High)</option>
+            <option value="stock-desc">Stock (High to Low)</option>
+          </select>
+        </div>
       </Card>
 
       {/* Desktop Table */}
@@ -258,6 +394,8 @@ export default function AdminProductsPage() {
           </div>
         )}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
 
       <Modal
         open={!!productToDelete}

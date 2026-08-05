@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
 import { Modal } from '@/components/ui/Modal'
+import { Pagination } from '@/components/ui/Pagination'
 import { apiClient } from '@/services/api/client'
 
 import type { ProductBatch } from '@/types'
@@ -431,28 +432,7 @@ export default function AdminInventoryPage() {
         </table>
       </Card>
 
-      {/* Pagination */}
-      <div className="flex items-center justify-between">
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={page <= 1}
-          onClick={() => setPage((p) => Math.max(1, p - 1))}
-        >
-          Previous
-        </Button>
-        <span className="text-sm text-muted-foreground">
-          Page {page} / {totalPages}
-        </span>
-        <Button
-          variant="outline"
-          size="sm"
-          disabled={page >= totalPages}
-          onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-        >
-          Next
-        </Button>
-      </div>
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
 
       {/* Save changes bar */}
       {Object.keys(stockEdits).length > 0 && (

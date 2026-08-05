@@ -4,7 +4,10 @@ import { Search, ChevronDown } from 'lucide-react'
 import { toast } from 'sonner'
 import { Card } from '@/components/ui/Card'
 import { Input } from '@/components/ui/Input'
+import { Pagination } from '@/components/ui/Pagination'
 import { apiClient } from '@/services/api/client'
+
+const PAGE_SIZE = 20
 
 const STATUS_DOT_COLOR: Record<string, string> = {
   placed: 'bg-warning',
@@ -123,13 +126,16 @@ export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<AdminOrder[]>([])
   const [total, setTotal] = useState(0)
   const [search, setSearch] = useState('')
+  const [status, setStatus] = useState('')
+  const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
+  const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
 
-  const load = useCallback(async (q: string) => {
+  const load = useCallback(async (q: string, p: number, s: string) => {
     try {
       const { data } = await apiClient.get<{ items: AdminOrder[]; total: number }>(
         '/admin/orders',
-        { params: { ...(q ? { q } : {}), pageSize: 50 } },
+        { params: { ...(q ? { q } : {}), ...(s ? { status: s } : {}), page: p, pageSize: PAGE_SIZE } },
       )
       setOrders(data.items)
       setTotal(data.total)
@@ -141,9 +147,9 @@ export default function AdminOrdersPage() {
   }, [])
 
   useEffect(() => {
-    const t = setTimeout(() => void load(search), search ? 300 : 0)
+    const t = setTimeout(() => void load(search, page, status), search ? 300 : 0)
     return () => clearTimeout(t)
-  }, [search, load])
+  }, [search, page, status, load])
 
   const handleStatusChange = async (order: AdminOrder, status: string) => {
     try {
@@ -167,13 +173,37 @@ export default function AdminOrdersPage() {
         </p>
       </div>
 
-      <Card className="p-3 md:p-4">
-        <Input
-          placeholder="Search by order number or customer..."
-          leftIcon={<Search className="size-4" />}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <Card className="grid gap-3 p-3 md:grid-cols-[1fr_14rem] md:p-4">
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Search</label>
+          <Input
+            placeholder="Search by order number or customer..."
+            leftIcon={<Search className="size-4" />}
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value)
+              setPage(1)
+            }}
+          />
+        </div>
+        <div>
+          <label className="mb-1 block text-xs font-medium text-muted-foreground">Status</label>
+          <select
+            className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            value={status}
+            onChange={(e) => {
+              setStatus(e.target.value)
+              setPage(1)
+            }}
+          >
+            <option value="">All statuses</option>
+            {Object.keys(STATUS_STYLE).map((s) => (
+              <option key={s} value={s} className="capitalize">
+                {s.replace(/-/g, ' ')}
+              </option>
+            ))}
+          </select>
+        </div>
       </Card>
 
       {/* Desktop Table */}
@@ -307,6 +337,8 @@ export default function AdminOrdersPage() {
           </div>
         )}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onChange={setPage} />
     </div>
   )
 }
