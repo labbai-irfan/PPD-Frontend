@@ -8,23 +8,35 @@ interface PaginationProps {
   className?: string
 }
 
+/**
+ * First page, last page, and the current page with a neighbour either side —
+ * so the next page is always one click away, not an arrow-step. Always emits at
+ * most 7 slots, and keeps that width near the edges so the bar doesn't jump.
+ */
+export function pageWindow(page: number, totalPages: number): Array<number | '…'> {
+  if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1)
+
+  const start = Math.max(2, Math.min(page - 1, totalPages - 4))
+  const end = Math.min(totalPages - 1, Math.max(page + 1, 5))
+
+  const slots: Array<number | '…'> = [1]
+  if (start > 2) slots.push('…')
+  for (let i = start; i <= end; i++) slots.push(i)
+  if (end < totalPages - 1) slots.push('…')
+  slots.push(totalPages)
+  return slots
+}
+
 /** Circular page dots with arrows, from the design listing screens. */
 export function Pagination({ page, totalPages, onChange, className }: PaginationProps) {
   if (totalPages <= 1) return null
 
-  const pages: Array<number | '…'> =
-    totalPages <= 4
-      ? Array.from({ length: totalPages }, (_, i) => i + 1)
-      : page <= 2
-        ? [1, 2, '…', totalPages]
-        : page >= totalPages - 1
-          ? [1, '…', totalPages - 1, totalPages]
-          : [1, '…', page, totalPages]
+  const pages = pageWindow(page, totalPages)
 
   const circle = 'flex size-[30px] items-center justify-center rounded-full text-[13px] font-semibold'
 
   return (
-    <div className={cn('flex items-center justify-center gap-2.5 py-4', className)}>
+    <div className={cn('flex flex-wrap items-center justify-center gap-2.5 py-4', className)}>
       <button
         type="button"
         aria-label="Previous page"

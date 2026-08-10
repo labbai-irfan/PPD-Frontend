@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -141,6 +141,8 @@ function RepeatableSection<T>({
 export default function AddProductPage() {
   const navigate = useNavigate()
   const { id } = useParams()
+  /* The list passes the page/filters it was showing so we return there, not to page 1. */
+  const backToList = (useLocation().state as { from?: string } | null)?.from ?? '/admin/products'
   const isEditing = !!id
   const [categories, setCategories] = useState<CategoryOption[]>([])
   const [images, setImages] = useState<string[]>([])
@@ -334,7 +336,7 @@ export default function AddProductPage() {
         await apiClient.post('/admin/products', payload)
         toast.success(status === 'draft' ? 'Saved as draft' : 'Product published')
       }
-      navigate('/admin/products')
+      navigate(backToList)
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to save product')
     }
@@ -357,7 +359,7 @@ export default function AddProductPage() {
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => navigate('/admin/products')}
+            onClick={() => navigate(backToList)}
             className="p-2 rounded-lg hover:bg-muted text-muted-foreground"
           >
             <ArrowLeft className="size-5" />
@@ -372,7 +374,7 @@ export default function AddProductPage() {
           </div>
         </div>
         <div className="hidden sm:flex gap-3">
-          <Button type="button" variant="outline" onClick={() => navigate('/admin/products')}>
+          <Button type="button" variant="outline" onClick={() => navigate(backToList)}>
             Cancel
           </Button>
           <Button

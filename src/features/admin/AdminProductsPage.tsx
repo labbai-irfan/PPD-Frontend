@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { Plus, Search, Edit2, Trash2, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/Button'
@@ -47,16 +47,29 @@ const selectClass =
   'w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary'
 
 export default function AdminProductsPage() {
+  /*
+   * Page and filters live in the URL, not component state: editing a product and
+   * coming back must land on the page you left, and browser Back must restore it.
+   */
+  const [params, setParams] = useSearchParams()
+  const search = params.get('q') ?? ''
+  const page = Number(params.get('page') ?? '1')
+  const filters: Filters = {
+    status: (params.get('status') as Filters['status']) ?? '',
+    category: params.get('category') ?? '',
+    stockStatus: (params.get('stockStatus') as Filters['stockStatus']) ?? '',
+    sort: (params.get('sort') as Filters['sort']) ?? 'newest',
+  }
+
   const [products, setProducts] = useState<AdminProduct[]>([])
   const [categories, setCategories] = useState<CategoryOption[]>([])
   const [total, setTotal] = useState(0)
-  const [search, setSearch] = useState('')
-  const [filters, setFilters] = useState<Filters>({ status: '', category: '', stockStatus: '', sort: 'newest' })
-  const [page, setPage] = useState(1)
   const [loading, setLoading] = useState(true)
   const [productToDelete, setProductToDelete] = useState<AdminProduct | null>(null)
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE))
   const filtersApplied = Object.values(filters).filter((v) => v && v !== 'newest').length
+  /** The list URL to return to after editing — carried along as router state. */
+  const listUrl = `/admin/products${params.toString() ? `?${params}` : ''}`
 
   useEffect(() => {
     void apiClient
@@ -65,16 +78,21 @@ export default function AdminProductsPage() {
       .catch(() => {})
   }, [])
 
-  const load = useCallback(async (q: string, p: number, f: Filters) => {
+  /* Keyed on the query string, not the derived objects — those are new every render. */
+  const queryString = params.toString()
+
+  const load = useCallback(async (qs: string) => {
+    const sp = new URLSearchParams(qs)
+    const pick = (key: string) => (sp.get(key) ? { [key]: sp.get(key) } : {})
     try {
       const { data } = await apiClient.get<AdminProductList>('/admin/products', {
         params: {
-          ...(q ? { q } : {}),
-          ...(f.status ? { status: f.status } : {}),
-          ...(f.category ? { category: f.category } : {}),
-          ...(f.stockStatus ? { stockStatus: f.stockStatus } : {}),
-          sort: f.sort,
-          page: p,
+          ...pick('q'),
+          ...pick('status'),
+          ...pick('category'),
+          ...pick('stockStatus'),
+          sort: sp.get('sort') ?? 'newest',
+          page: Number(sp.get('page') ?? '1'),
           pageSize: PAGE_SIZE,
         },
       })
@@ -88,14 +106,28 @@ export default function AdminProductsPage() {
   }, [])
 
   useEffect(() => {
-    const t = setTimeout(() => void load(search, page, filters), search ? 300 : 0)
+    const t = setTimeout(() => void load(queryString), search ? 300 : 0)
     return () => clearTimeout(t)
-  }, [search, page, filters, load])
+  }, [queryString, search, load])
 
-  /** Any filter change re-slices the result set, so page 3 of the old set is meaningless. */
-  function setFilter(patch: Partial<Filters>) {
-    setFilters((f) => ({ ...f, ...patch }))
-    setPage(1)
+  /**
+   * Writes one search param. Every change except paging drops `page`, since page 3
+   * of the old result set is meaningless once the set changes.
+   */
+  function update(key: string, value: string, opts?: { keepPage?: boolean; replace?: boolean }) {
+    const next = new URLSearchParams(params)
+    if (value) next.set(key, value)
+    else next.delete(key)
+    if (!opts?.keepPage) next.delete('page')
+    setParams(next, { replace: opts?.replace })
+  }
+
+  function setFilter(key: keyof Filters, value: string) {
+    update(key, key === 'sort' && value === 'newest' ? '' : value)
+  }
+
+  function setPage(next: number) {
+    update('page', next > 1 ? String(next) : '', { keepPage: true })
   }
 
   const handleDelete = async (id: string) => {
@@ -131,11 +163,7 @@ export default function AdminProductsPage() {
                 {' · '}
                 <button
                   type="button"
-                  onClick={() => {
-                    setSearch('')
-                    setFilters({ status: '', category: '', stockStatus: '', sort: 'newest' })
-                    setPage(1)
-                  }}
+                  onClick={() => setParams(new URLSearchParams())}
                   className="font-semibold text-primary hover:underline"
                 >
                   Clear filters
@@ -144,7 +172,7 @@ export default function AdminProductsPage() {
             )}
           </p>
         </div>
-        <Link to="/admin/products/add" className="w-full sm:w-auto">
+        <Link to="/admin/products/add" state={{ from: listUrl }} className="w-full sm:w-auto">
           <Button className="gap-2 w-full sm:w-auto justify-center">
             <Plus className="size-4" />
             Add Product
@@ -159,10 +187,8 @@ export default function AdminProductsPage() {
             placeholder="Search products..."
             leftIcon={<Search className="size-4" />}
             value={search}
-            onChange={(e) => {
-              setSearch(e.target.value)
-              setPage(1)
-            }}
+            /* replace: typing shouldn't push a history entry per keystroke */
+            onChange={(e) => update('q', e.target.value, { replace: true })}
           />
         </div>
         <div>
@@ -170,7 +196,7 @@ export default function AdminProductsPage() {
           <select
             className={selectClass}
             value={filters.category}
-            onChange={(e) => setFilter({ category: e.target.value })}
+            onChange={(e) => setFilter('category', e.target.value)}
           >
             <option value="">All categories</option>
             {categories
@@ -199,7 +225,7 @@ export default function AdminProductsPage() {
           <select
             className={selectClass}
             value={filters.status}
-            onChange={(e) => setFilter({ status: e.target.value as Filters['status'] })}
+            onChange={(e) => setFilter('status', e.target.value)}
           >
             <option value="">All statuses</option>
             <option value="active">Active</option>
@@ -211,7 +237,7 @@ export default function AdminProductsPage() {
           <select
             className={selectClass}
             value={filters.stockStatus}
-            onChange={(e) => setFilter({ stockStatus: e.target.value as Filters['stockStatus'] })}
+            onChange={(e) => setFilter('stockStatus', e.target.value)}
           >
             <option value="">Any stock</option>
             <option value="in-stock">In Stock</option>
@@ -224,7 +250,7 @@ export default function AdminProductsPage() {
           <select
             className={selectClass}
             value={filters.sort}
-            onChange={(e) => setFilter({ sort: e.target.value as Filters['sort'] })}
+            onChange={(e) => setFilter('sort', e.target.value)}
           >
             <option value="newest">Newest</option>
             <option value="name-asc">Name (A-Z)</option>
@@ -292,7 +318,7 @@ export default function AdminProductsPage() {
                   </div>
                 </td>
                 <td className="py-3 flex gap-1.5">
-                  <Link to={`/admin/products/${product.id}/edit`}>
+                  <Link to={`/admin/products/${product.id}/edit`} state={{ from: listUrl }}>
                     <button className="p-2 hover:bg-primary/10 rounded-lg text-primary transition-colors" title="Edit">
                       <Edit2 className="size-4" />
                     </button>
@@ -368,7 +394,7 @@ export default function AdminProductsPage() {
               </div>
             </div>
             <div className="flex gap-2 mt-3 pt-3 border-t">
-              <Link to={`/admin/products/${product.id}/edit`} className="flex-1">
+              <Link to={`/admin/products/${product.id}/edit`} state={{ from: listUrl }} className="flex-1">
                 <button className="w-full p-2 text-xs font-medium text-primary hover:bg-primary/10 rounded-lg transition-colors">
                   Edit
                 </button>
