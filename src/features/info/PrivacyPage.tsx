@@ -1,8 +1,10 @@
 import { Card } from '@/components/ui/Card'
+import SEO from '@/components/shared/SEO'
 
 export default function PrivacyPage() {
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
+      <SEO title="Privacy Policy" />
       <h1 className="text-2xl font-bold text-foreground">Privacy Policy</h1>
 
       <Card className="p-4 md:p-6 prose dark:prose-invert max-w-none">

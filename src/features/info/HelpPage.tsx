@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { ChevronDown, Search } from 'lucide-react'
 import { Input } from '@/components/ui/Input'
+import SEO from '@/components/shared/SEO'
 import { Card } from '@/components/ui/Card'
 
 interface FaqItem {
@@ -75,6 +76,7 @@ export default function HelpPage() {
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-6">
+      <SEO title="Help & FAQ" description="Answers about orders, delivery, returns and payments." />
       <div>
         <h1 className="text-2xl font-bold text-foreground">Help & FAQ</h1>
         <p className="mt-2 text-sm text-muted-foreground">Find answers to common questions</p>

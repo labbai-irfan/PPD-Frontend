@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { SavePill } from '@/components/shared/ProductBadge'
 import { TopBar } from '@/components/shared/TopBar'
+import SEO from '@/components/shared/SEO'
 
 export default function PackageDetailPage() {
   const { slug = '' } = useParams()
@@ -79,6 +80,7 @@ export default function PackageDetailPage() {
 
   return (
     <div className="pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0">
+      <SEO title={pkg.name} description={pkg.description || undefined} ogImage={pkg.image || undefined} ogType="product" />
       <TopBar />
 
       {pkg.image && (

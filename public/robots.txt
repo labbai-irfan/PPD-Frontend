@@ -3,7 +3,10 @@ Allow: /
 Disallow: /checkout
 Disallow: /cart
 Disallow: /profile
+Disallow: /orders
+Disallow: /wishlist
 Disallow: /admin
 Disallow: /auth/
+Disallow: /search
 
-Sitemap: https://popularpublishinghouse.com/sitemap.xml
+Sitemap: https://popularbookworld.com/api/sitemap.xml

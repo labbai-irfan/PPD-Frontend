@@ -1,9 +1,14 @@
 import { Card } from '@/components/ui/Card'
 import { CheckCircle } from 'lucide-react'
+import SEO from '@/components/shared/SEO'
 
 export default function AboutPage() {
   return (
     <div className="mx-auto w-full max-w-4xl space-y-8">
+      <SEO
+        title="About Us"
+        description="India's trusted destination for educational and stationery products since 1926 — Popular Publishers and Distributors."
+      />
       <div>
         <h1 className="text-2xl md:text-3xl font-bold text-foreground">About PPD Store</h1>
         <p className="mt-3 text-base md:text-lg text-muted-foreground">

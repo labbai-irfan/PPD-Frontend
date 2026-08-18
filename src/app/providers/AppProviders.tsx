@@ -1,8 +1,9 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { Toaster } from 'sonner'
-import type { ReactNode } from 'react'
-import { HelmetProvider } from 'react-helmet-async'
+import { useEffect, type ReactNode } from 'react'
 import { useUiStore } from '@/store/ui.store'
+import { useSettingsStore } from '@/store/settings.store'
+import { SEOTags } from '@/components/shared/SEO'
 import NoInternetPage from '@/pages/NoInternetPage'
 
 const queryClient = new QueryClient({
@@ -18,12 +19,17 @@ const queryClient = new QueryClient({
 
 export function AppProviders({ children }: { children: ReactNode }) {
   const theme = useUiStore((s) => s.theme)
+  const fetchSettings = useSettingsStore((s) => s.fetchSettings)
+
+  /* App-wide config (site name, SEO defaults) — needed by SEOTags on every route, admin included */
+  useEffect(() => {
+    void fetchSettings()
+  }, [fetchSettings])
 
   return (
     <QueryClientProvider client={queryClient}>
-      <HelmetProvider>
-        {children}
-      </HelmetProvider>
+      <SEOTags />
+      {children}
       <Toaster
         position="bottom-center"
         theme={theme}

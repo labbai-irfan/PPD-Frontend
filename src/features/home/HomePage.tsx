@@ -89,10 +89,9 @@ export default function HomePage() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 space-y-4 md:space-y-8">
-      <SEO
-        title="Home"
-        description="India's leading online store for academic books, school uniforms, bags, stationery and study material by Popular Book World."
-      />
+      {/* No overrides: the home page is the front door, so the admin's
+          SEO Title / Description / Keywords from Settings apply verbatim. */}
+      <SEO />
       <SchemaData data={orgSchema} />
       <SchemaData data={websiteSchema} />
       <HomeHeader />

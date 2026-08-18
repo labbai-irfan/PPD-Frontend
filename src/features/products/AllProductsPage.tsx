@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { ProductGrid } from '@/components/shared/ProductGrid'
 import { TopBar } from '@/components/shared/TopBar'
+import SEO from '@/components/shared/SEO'
 
 const PAGE_SIZE = 15
 
@@ -202,8 +203,14 @@ export default function AllProductsPage() {
     </>
   )
 
+  const seoTitle =
+    selectedCategories.length === 1
+      ? (categories?.find((c) => c.slug === selectedCategories[0])?.name ?? 'All Products')
+      : 'All Products'
+
   return (
     <div className="mx-auto w-full max-w-7xl px-4">
+      <SEO title={seoTitle} description={`Shop ${seoTitle.toLowerCase()} online — books, stationery and school essentials.`} />
       <TopBar />
 
       <div className="lg:grid lg:grid-cols-[16rem_1fr] lg:gap-8">

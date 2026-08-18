@@ -6,12 +6,17 @@ import { Icon } from '@/components/ui/Icon'
 import { Skeleton } from '@/components/ui/Skeleton'
 import { EmptyState } from '@/components/ui/EmptyState'
 import { TopBar } from '@/components/shared/TopBar'
+import SEO from '@/components/shared/SEO'
 
 export default function PackagesListPage() {
   const { data: packages, isPending } = usePackages()
 
   return (
     <div>
+      <SEO
+        title="Shop by Combos"
+        description="Ready-made school book and stationery combos — everything you need for the year in one bundle."
+      />
       <TopBar leading="menu" />
 
       <div className="px-1 pt-1">
