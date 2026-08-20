@@ -12,6 +12,7 @@ import { EmptyState } from '@/components/ui/EmptyState'
 import { ProductGrid } from '@/components/shared/ProductGrid'
 import { TopBar } from '@/components/shared/TopBar'
 import SEO from '@/components/shared/SEO'
+import { SITE_URL } from '@/lib/constants'
 
 const PAGE_SIZE = 15
 
