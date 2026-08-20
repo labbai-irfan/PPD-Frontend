@@ -300,20 +300,36 @@ export default function ProductDetailsPage() {
     navigate(ROUTES.cart)
   }
 
+  const getSpecValue = (label: string) => product.specs?.find(s => s.label.toLowerCase() === label.toLowerCase())?.value
+  const authorName = getSpecValue('author')
+  const publisherName = getSpecValue('publisher') || product.brand
+  const language = getSpecValue('language')
+  const edition = getSpecValue('edition')
+
   const bookSchema = {
     '@context': 'https://schema.org',
     '@type': 'Book',
     'name': product.title,
     'description': product.description || product.shortDescription,
-    'image': product.images[0] || `${window.location.origin}/ppd.png`,
-    'isbn': product.sku,
+    'image': product.images[0] || `${SITE_URL}/ppd.png`,
+    'isbn': product.sku && product.sku !== 'NA' ? product.sku : undefined,
+    'author': authorName ? {
+      '@type': 'Person',
+      'name': authorName,
+    } : undefined,
+    'publisher': publisherName ? {
+      '@type': 'Organization',
+      'name': publisherName,
+    } : undefined,
+    'inLanguage': language,
+    'bookEdition': edition,
     'offers': {
       '@type': 'Offer',
       'price': displayedPrice,
       'priceCurrency': 'INR',
       'itemCondition': 'https://schema.org/NewCondition',
-      'availability': product.stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      'url': window.location.href,
+      'availability': outOfStock ? 'https://schema.org/OutOfStock' : 'https://schema.org/InStock',
+      'url': `${SITE_URL}/products/PPD/${product.slug}`,
     },
     'aggregateRating': product.ratingCount > 0 ? {
       '@type': 'AggregateRating',
@@ -330,7 +346,9 @@ export default function ProductDetailsPage() {
         title={product.title}
         description={product.shortDescription || product.description || `Buy ${product.title} online at best price in India.`}
         ogImage={product.images[0]}
+        ogImageAlt={product.title}
         ogType="book"
+        author={product.brand}
       />
       <SchemaData data={bookSchema} />
       <TopBar />

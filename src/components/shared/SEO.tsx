@@ -11,6 +11,11 @@ interface SEOProps {
   ogImage?: string
   ogType?: 'website' | 'book' | 'profile' | 'product'
   noIndex?: boolean
+  ogLocale?: string
+  ogImageAlt?: string
+  twitterSite?: string
+  twitterCreator?: string
+  author?: string
 }
 
 /*
@@ -56,7 +61,12 @@ export function SEOTags() {
       <title>{finalTitle}</title>
       <meta name="description" content={finalDesc} />
       <meta name="keywords" content={finalKeywords} />
-      {page?.noIndex && <meta name="robots" content="noindex, nofollow" />}
+      <meta name="author" content={page?.author || settings?.siteName || 'PPD'} />
+      {page?.noIndex ? (
+        <meta name="robots" content="noindex, nofollow" />
+      ) : (
+        <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+      )}
 
       {/* Canonical URL */}
       <link rel="canonical" href={currentUrl} />
@@ -68,12 +78,20 @@ export function SEOTags() {
       <meta property="og:description" content={finalDesc} />
       <meta property="og:image" content={ogImage} />
       <meta property="og:url" content={currentUrl} />
+      <meta property="og:locale" content={page?.ogLocale || 'en_IN'} />
+      {page?.ogImageAlt && <meta property="og:image:alt" content={page.ogImageAlt} />}
 
       {/* Twitter Cards */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={finalTitle} />
       <meta name="twitter:description" content={finalDesc} />
       <meta name="twitter:image" content={ogImage} />
+      <meta name="twitter:url" content={currentUrl} />
+      {(page?.twitterSite || '@popularbookworld') && (
+        <meta name="twitter:site" content={page?.twitterSite || '@popularbookworld'} />
+      )}
+      {page?.twitterCreator && <meta name="twitter:creator" content={page.twitterCreator} />}
+      {page?.ogImageAlt && <meta name="twitter:image:alt" content={page.ogImageAlt} />}
     </>
   )
 }

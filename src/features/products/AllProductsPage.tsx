@@ -203,14 +203,22 @@ export default function AllProductsPage() {
     </>
   )
 
-  const seoTitle =
-    selectedCategories.length === 1
-      ? (categories?.find((c) => c.slug === selectedCategories[0])?.name ?? 'All Products')
-      : 'All Products'
+  const activeCategory = selectedCategories.length === 1
+    ? categories?.find((c) => c.slug === selectedCategories[0])
+    : null
+
+  const seoTitle = activeCategory ? activeCategory.name : 'All Products'
+  const seoDescription = activeCategory?.description
+    ? activeCategory.description
+    : `Shop ${seoTitle.toLowerCase()} online — books, stationery and school essentials.`
+
+  const canonicalUrl = activeCategory
+    ? `${SITE_URL}/products/all?category=${activeCategory.slug}`
+    : `${SITE_URL}/products/all`
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4">
-      <SEO title={seoTitle} description={`Shop ${seoTitle.toLowerCase()} online — books, stationery and school essentials.`} />
+      <SEO title={seoTitle} description={seoDescription} canonicalUrl={canonicalUrl} />
       <TopBar />
 
       <div className="lg:grid lg:grid-cols-[16rem_1fr] lg:gap-8">
@@ -223,12 +231,17 @@ export default function AllProductsPage() {
         </aside>
 
         <div className="min-w-0">
-          <div className="flex items-center justify-between gap-2 pt-2.5">
-            <h1 className="text-[19px] font-bold text-foreground sm:text-2xl">All Products</h1>
-            {chips.length > 0 && (
-              <span className="shrink-0 text-[13px] font-semibold text-link">
-                {chips.length} {chips.length === 1 ? 'Filter' : 'Filters'} Applied
-              </span>
+          <div className="flex flex-col gap-1.5 pt-2.5">
+            <div className="flex items-center justify-between gap-2">
+              <h1 className="text-[19px] font-bold text-foreground sm:text-2xl">{seoTitle}</h1>
+              {chips.length > 0 && (
+                <span className="shrink-0 text-[13px] font-semibold text-link">
+                  {chips.length} {chips.length === 1 ? 'Filter' : 'Filters'} Applied
+                </span>
+              )}
+            </div>
+            {activeCategory?.description && (
+              <p className="text-[13px] text-subtle-foreground max-w-2xl leading-relaxed">{activeCategory.description}</p>
             )}
           </div>
 

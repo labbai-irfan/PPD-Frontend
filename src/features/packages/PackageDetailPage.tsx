@@ -80,7 +80,7 @@ export default function PackageDetailPage() {
 
   return (
     <div className="pb-[calc(6rem+env(safe-area-inset-bottom))] md:pb-0">
-      <SEO title={pkg.name} description={pkg.description || undefined} ogImage={pkg.image || undefined} ogType="product" />
+      <SEO title={pkg.name} description={pkg.description || undefined} ogImage={pkg.image || undefined} ogImageAlt={pkg.name} ogType="product" />
       <TopBar />
 
       {pkg.image && (
