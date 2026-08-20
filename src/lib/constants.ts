@@ -1,5 +1,7 @@
 export const APP_NAME = 'PPD'
 export const APP_TAGLINE = 'Everything for School'
+/** Canonical origin for SEO tags — www and apex both serve the site, search engines must see one. */
+export const SITE_URL = 'https://popularbookworld.com'
 export const BRAND_LINE = "India's Trusted Educational Publisher since 1926"
 
 /** Change these two lines to re-localize pricing app-wide. */

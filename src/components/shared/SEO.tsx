@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { create } from 'zustand'
 import { useSettingsStore } from '@/store/settings.store'
+import { SITE_URL } from '@/lib/constants'
 
 interface SEOProps {
   title?: string
@@ -44,9 +45,10 @@ export function SEOTags() {
   const finalDesc = page?.description || defaultDesc
   const finalKeywords = page?.keywords || defaultKeywords
   /* /ppd.png ships in public/; the old banner URL pointed at a file (and domain) that doesn't exist */
-  const ogImage = page?.ogImage || `${window.location.origin}/ppd.png`
-  /* Canonical never carries query strings — ?page=2&sort=… must not fragment ranking */
-  const currentUrl = page?.canonicalUrl || `${window.location.origin}${window.location.pathname}`
+  const ogImage = page?.ogImage || `${SITE_URL}/ppd.png`
+  /* Pinned origin (www and apex both serve the site) and no query strings —
+     every host/filter variant must declare the same canonical page. */
+  const currentUrl = page?.canonicalUrl || `${SITE_URL}${window.location.pathname}`
 
   return (
     <>
