@@ -306,13 +306,18 @@ export default function ProductDetailsPage() {
   const language = getSpecValue('language')
   const edition = getSpecValue('edition')
 
-  const bookSchema = {
+  const productSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Book',
+    '@type': ['Product', 'Book'],
     'name': product.title,
     'description': product.description || product.shortDescription,
-    'image': product.images[0] || `${SITE_URL}/ppd.png`,
+    'image': product.images && product.images.length > 0 ? product.images : [`${SITE_URL}/ppd.png`],
+    'sku': product.sku && product.sku !== 'NA' ? product.sku : product.id,
     'isbn': product.sku && product.sku !== 'NA' ? product.sku : undefined,
+    'brand': product.brand ? {
+      '@type': 'Brand',
+      'name': product.brand,
+    } : undefined,
     'author': authorName ? {
       '@type': 'Person',
       'name': authorName,
@@ -350,7 +355,7 @@ export default function ProductDetailsPage() {
         ogType="book"
         author={product.brand}
       />
-      <SchemaData data={bookSchema} />
+      <SchemaData data={productSchema} />
       <TopBar />
 
       <div className="mt-4 px-1">
